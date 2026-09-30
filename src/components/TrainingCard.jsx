@@ -7,6 +7,9 @@ function TrainingCard({
   instructor,
   registeredCount,
   maxCapacity,
+  isRegistered,
+  onRegister,
+  onUnregister,
 }) {
     
 const isFull = registeredCount >= maxCapacity
@@ -29,8 +32,18 @@ const isFull = registeredCount >= maxCapacity
         Places filled: {registeredCount} / {maxCapacity}
       </p>
 
-      <button type="button" disabled={isFull}>
-        {isFull ? 'Registration full' : 'Register'}
+      <button 
+        type="button" 
+        onClick={isRegistered ? onUnregister : onRegister} 
+        disabled={isFull}
+        aria-disabled={isFull}
+      >
+        {isFull 
+          ? 'Registration full' 
+          : isRegistered
+            ?'Unregistered'
+            :'Register'
+        }
       </button>
     </article>
   )

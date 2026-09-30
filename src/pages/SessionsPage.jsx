@@ -1,6 +1,10 @@
+import { useEffect, useState } from 'react';
 import TrainingCard from '../components/TrainingCard'
 
-const sessions = [
+
+function SessionsPage() {
+  const [registeredSessionIds, setRegisteredSessionIds] = useState([])
+  const [sessions, setSessions] = useState ([
         {
           id: 1,
           title: 'Introduction to Artificial Intelligence',
@@ -22,14 +26,35 @@ const sessions = [
           time: '14:00',
           duration: '60 minutes',
           instructor: '7.77 Security Team',
-          registeredCount: 100,
+          registeredCount: 99,
           maxCapacity: 100,
         },
-      ] 
+      ] );
+  function handleRegister(sessionId){
+    setRegisteredSessionIds((currentIds) => [...currentIds, sessionId]);
 
+    setSessions(
+      sessions.map((session) => 
+        session.id === sessionId
+        ? { ...session, registeredCount: session.registeredCount + 1 }
+        : session
+      )
+    )
+  }
+  function handleUnregister(sessionId) {
+    setRegisteredSessionIds((currentIds) =>
+      currentIds.filter((id) => id !== sessionId)
+    );
 
+    setSessions(
+      sessions.map((session) =>
+        session.id === sessionId
+          ? { ...session, registeredCount: session.registeredCount - 1 }
+          : session
+      )
+    );
+  }
 
-function SessionsPage() {
   return (
     <main>
       <h1>Upcoming training sessions</h1>
@@ -47,6 +72,9 @@ function SessionsPage() {
             instructor={session.instructor}
             registeredCount={session.registeredCount}
             maxCapacity={session.maxCapacity}
+            isRegistered={registeredSessionIds.includes(session.id)}
+            onRegister={ () => handleRegister(session.id)}
+            onUnregister={() => handleUnregister(session.id)}
           />
         ))}
       </section>
