@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 function PublicHeader () {
     return(
-        <header>
+        <header className="public-header">
             <p>7.77</p>
 
             <nav aria-label='Public navigation'>
