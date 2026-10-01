@@ -1,23 +1,22 @@
-import PublicHeader from "../components/PublicHeader"
-import { Link } from 'react-router-dom'
+import PublicHeader from '../components/PublicHeader'
+import HeroBanner from '../components/HeroBanner'
 
 function HomePage() {
   return (
     <>
-        <PublicHeader />
+      <PublicHeader />
 
-        <main>
-            <section>
-                <p>Algérie Télécom</p>
+      <main className="home-page">
+        <HeroBanner />
 
-                <h1>Learn, connect, and grow with 7.77.</h1>
+        <section className="page-content">
+          <h2>Explore our training programmes</h2>
 
-                <p>
-                    Discover online training sessions designed for particpants aged 7 to 77
-                </p>
-                <Link to="/signup">Get started</Link>
-            </section>
-        </main>
+          <p>
+            Online learning opportunities for participants aged 7 to 77.
+          </p>
+        </section>
+      </main>
     </>
   )
 }
