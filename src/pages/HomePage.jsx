@@ -1,6 +1,10 @@
 import PublicHeader from '../components/PublicHeader'
 import HeroBanner from '../components/HeroBanner'
-
+import PlatformIntro from '../components/PlatformIntro'
+import HowItWorks from '../components/HowItWorks'
+import HomeCta from '../components/HomeCta'
+import PublicFooter from '../components/PublicFooter'
+import './HomePage.css'
 function HomePage() {
   return (
     <>
@@ -8,15 +12,12 @@ function HomePage() {
 
       <main className="home-page">
         <HeroBanner />
-
-        <section className="page-content">
-          <h2>Explore our training programmes</h2>
-
-          <p>
-            Online learning opportunities for participants aged 7 to 77.
-          </p>
-        </section>
+        <PlatformIntro />
+        <HowItWorks />
+        <HomeCta />
+        <PublicFooter />
       </main>
+     
     </>
   )
 }

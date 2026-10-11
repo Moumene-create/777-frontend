@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
+import './FolderIllustration.css'
 
 const documents = [
   { id: 1, offsetX: 42, offsetY: -30, rotation: 12 },

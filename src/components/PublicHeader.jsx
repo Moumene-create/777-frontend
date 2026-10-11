@@ -1,15 +1,107 @@
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
+import logo from '../assets/logo_777_blue.png'
+import { useState } from 'react'
+import './PublicHeader.css'
+function PublicHeader() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  return (
+    <header className="public-header">
+       <Link className="public-header__logobouton" to="/">
+        <img className="public-header__logo" src={logo} alt="Algérie Télécom 7.77" />
+      </Link>
+    <button
+        className="public-header__menu-button"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-controls="mobile-navigation"
+        aria-expanded={isMenuOpen}
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+        Menu
+        </button>
+      <nav
+        id="mobile-navigation"
+        className={`public-header__actions ${isMenuOpen ? 'public-header__actions--open' : ''}`}
+        aria-label="Public navigation"
+        >
+            <button
+  className="public-header__close-button"
+  type="button"
+  aria-label="Close navigation menu"
+  onClick={() => setIsMenuOpen(false)}
+>
+  ×
+</button>
+        
+          
+        <NavLink
+          className={({ isActive }) =>
+            `public-header__login ${
+              isActive ? 'public-header__signup' : ''
+            }`
+          }
+          to="/"
+          end
+        >
+          Home
+        </NavLink>
 
-function PublicHeader () {
-    return(
-        <header className="public-header">
-            <p>7.77</p>
+        <NavLink
+          className={({ isActive }) =>
+            `public-header__login ${
+              isActive ? 'public-header__signup' : ''
+            }`
+          }
+          to="/login"
+        >
+          Log in
+        </NavLink>
 
-            <nav aria-label='Public navigation'>
-                <Link to="/login">log in</Link>
-                <Link to='/signup'>Creat account</Link>
-            </nav>
-        </header>
-    )
+        <NavLink
+          className={({ isActive }) =>
+            `public-header__login ${
+              isActive ? 'public-header__signup' : ''
+            }`
+          }
+          to="/signin"
+        >
+          Create account
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            `public-header__login ${
+              isActive ? 'public-header__signup' : ''
+            }`
+          }
+          to="/sessions"
+        >
+          Sessions
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            `public-header__login ${
+              isActive ? 'public-header__signup' : ''
+            }`
+          }
+          to="/contribute"
+        >
+          Contribute
+        </NavLink>
+
+        <NavLink
+          className={({ isActive }) =>
+            `public-header__login ${
+              isActive ? 'public-header__signup' : ''
+            }`
+          }
+          to="/about"
+        >
+          About us
+        </NavLink>
+      </nav>
+
+    </header>
+  )
 }
+
 export default PublicHeader

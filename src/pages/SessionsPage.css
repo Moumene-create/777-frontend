@@ -1,0 +1,19 @@
+.sessions-page__title {
+    display : flex;
+    margin-top: 15px;
+    margin-bottom: 19px;
+    justify-content: center;
+}
+
+.session-page__sub_title {
+    display : flex;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+main.page_width {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem clamp(2rem, 6vw, 7rem) 4rem;
+}

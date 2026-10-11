@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-
+import logoAT from '../assets/logo_AT_white.png'
+import logoMobilis from '../assets/logo_mobilis_white.png'
+import logoMinistry from '../assets/logo-ministry-white.png'
+import logocolor from "../assets/logo_777_black.png"
+import './HeroBanner.css'
 const slides = [
   {
     image:
         'https://media.licdn.com/dms/image/v2/D4D22AQHZ7w8oJOPUQQ/feedshare-image-high-res/B4DZ_1T8igJIAU-/0/1786527075550?e=1792627200&v=beta&t=WP67I7J7skMCpPdUCwOaojnTmNx9_WrZylgsnrxF8Xs',
     alt: 'People collaborating during a training session',
   },
-  {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQG2jEwSCCLteA/feedshare-image-high-res/B4DZ_1UxX9J4AU-/0/1786527291668?e=1792627200&v=beta&t=cJz_PgStVQiH8eg1zpbk3jN9LVapnLjf5NTjUqJ2Fzs',
-    alt: 'Students learning together',
-  },
+
   {
     image:
       'https://media.licdn.com/dms/image/v2/D4D22AQHer6Laud5UIg/feedshare-image-high-res/B4DaCKfAsiKsAU-/0/1789029780628?e=1792627200&v=beta&t=gbktTM1mrtBO5PxarXYP_JNO1ahhG4rTi--k1jNPXXU',
@@ -88,16 +88,27 @@ const currentSlide = slides[currentSlideIndex]
 
       <div className="hero-banner__content">
 
-        <h1>Digital skills for every generation.</h1>
-
+        <h1>Digital skills for every generation</h1>
+        
         <p className="hero-banner__description">
           From 7 to 77, empowered by digital.
         </p>
 
-        <Link className="hero-banner__button" to="/login">
-          View programmes
+        <Link className="hero-banner__button" to="/sessions">
+          Join the programmes
         </Link>
+      
+
+        <div className="hero-banner__partner-logos">
+      
+          <img src={logoMinistry} alt="Ministry of Post and Telecommunications" />
+
+        </div>
+
+        
       </div>
+    
+        
     </section>
   )
 }

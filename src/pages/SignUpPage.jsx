@@ -1,6 +1,9 @@
+import PublicHeader from '../components/PublicHeader'
+
 function SignUpPage() {
   return (
     <main>
+      <PublicHeader />
       <h1>Create your account</h1>
 
       <p>

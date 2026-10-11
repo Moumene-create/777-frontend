@@ -1,0 +1,35 @@
+.platform-intro {
+  padding: clamp(4rem, 9vw, 8rem);
+  background-color: #f7fafc;
+}
+
+.platform-intro__content {
+  width: min(100%, 48rem);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.platform-intro__eyebrow {
+  margin: 0 0 0.75rem;
+  color: #1379b8;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: clamp(.5rem, 1vw, 1rem);
+}
+
+.platform-intro h2 {
+  margin: 0;
+  color: #0b2540;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.1;
+}
+
+.platform-intro p:not(.platform-intro__eyebrow) {
+  max-width: 40rem;
+  margin: 1.25rem auto 0;
+  color: #52677c;
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.7;
+}

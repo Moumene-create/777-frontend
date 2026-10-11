@@ -1,9 +1,12 @@
+import { Link } from 'react-router-dom'
+import './TrainingCard.css'
 const DEFAULT_INSTRUCTOR_PHOTOS = {
   '7.77 Training Team': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
   '7.77 Security Team': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80',
 }
 
 function TrainingCard({
+  id = '',
   title = '',
   description = '',
   date = '',
@@ -102,34 +105,42 @@ function TrainingCard({
           </div>
         </div>
 
-        {/* CTA Button */}
-        <button
-          type="button"
-          className={`training-card__button ${
-            isRegistered
-              ? 'training-card__button--registered'
-              : isFull
-                ? 'training-card__button--full'
-                : 'training-card__button--register'
-          }`}
-          onClick={isRegistered ? onUnregister : onRegister}
-          disabled={isFull && !isRegistered}
-          aria-disabled={isFull && !isRegistered}
+      
+        <Link
+          className="training-card__button"
+          to={`/sessions/${id}`}
         >
-          {isFull && !isRegistered ? (
-            'Registration full'
-          ) : isRegistered ? (
-            <>
-              <span className="training-card__btn-text-enrolled">Enrolled</span>
-              <span className="training-card__btn-text-cancel">Cancel registration</span>
-            </>
-          ) : (
-            'Register'
-          )}
-        </button>
+          View details
+        </Link>
       </div>
     </article>
   )
 }
 
 export default TrainingCard
+
+  {/* CTA Button */}
+        //  <button
+        //   type="button"
+        //   className={`training-card__button ${
+        //     isRegistered
+        //       ? 'training-card__button--registered'
+        //       : isFull
+        //         ? 'training-card__button--full'
+        //         : 'training-card__button--register'
+        //   }`}
+        //   onClick={isRegistered ? onUnregister : onRegister}
+        //   disabled={isFull && !isRegistered}
+        //   aria-disabled={isFull && !isRegistered}
+        // >
+        //   {isFull && !isRegistered ? (
+        //     'Registration full'
+        //   ) : isRegistered ? (
+        //     <>
+        //       <span className="training-card__btn-text-enrolled">Enrolled</span>
+        //       <span className="training-card__btn-text-cancel">Cancel registration</span>
+        //     </>
+        //   ) : (
+        //     'Register'
+        //   )}
+        // </button> 

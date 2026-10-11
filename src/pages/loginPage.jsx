@@ -1,9 +1,9 @@
+import PublicHeader from '../components/PublicHeader'
+
 function LoginPage() {
-
-
-  
   return (
     <main>
+      <PublicHeader />
       <h1>Log in</h1>
 
       <p>Access your 7.77 Training Platform account.</p>
