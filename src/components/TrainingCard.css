@@ -231,18 +231,22 @@
 }
 
 .training-card__button {
-  width: 100%;
-  margin-top: auto;
-  padding: 13px 20px;
+  margin-left : auto;
+  margin-right : auto;
+  padding: 1rem ;
+  padding-left: 3rem;
+  padding-right: 3rem;
   border-radius: var(--radius-inner);
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   cursor: pointer;
   border: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 
@@ -304,18 +308,34 @@
 }
 
 
+
+
 .training-card__button_view {
-  width: auto;
-  margin-top: auto;
-  padding: 13px 20px;
-  border-radius: var(--radius-inner);
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  padding: 0.9rem 1.2rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 500;
   cursor: pointer;
   border: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  text-align: center;
-  margin-bottom: -5px;
+}
+
+.training-card__button_view--details {
+  background-color: #0d2458;
+  color: white;
+  padding  : 1rem;
+  font-size: medium;
+}
+
+.training-card__button_view--details:hover {
+  background-color: #1e293b;
+}
+
+.training-card__button_view:visited,
+.training-card__button_view:hover,
+.training-card__button_view:active {
+  text-decoration: none;
 }

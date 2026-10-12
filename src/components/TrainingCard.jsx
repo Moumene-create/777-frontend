@@ -105,13 +105,14 @@ function TrainingCard({
           </div>
         </div>
 
-      
-        <Link
-          className="training-card__button"
-          to={`/sessions/${id}`}
-        >
-          View details
-        </Link>
+        
+          <Link
+            className="training-card__button training-card__button_view--details"
+            to={`/sessions/${id}`}
+          >
+            View details
+          </Link>
+       
       </div>
     </article>
   )

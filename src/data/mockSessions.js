@@ -7,10 +7,12 @@ export const mockSessions = [{
           date: '15 October 2026',
           time: '10:00',
           duration: '90 minutes',
-          instructor: '7.77 Training Team',
+          instructor: 'Frihaoui Mohammed',
           instructorImage: 'https://media.licdn.com/dms/image/v2/D4D22AQEUS7WVH6sNpg/feedshare-image-high-res/B4DaAPXGOZJUAU-/0/1786964108854?e=1792627200&v=beta&t=zb2r6YCNHX6BtCHSeanto4a36QDL_foBSEEGL6LZRrE',
           registeredCount: 23,
           maxCapacity: 100,
+          Description : 'Discover the basics of artificial intelligence, including how machines learn from data, where AI is used in everyday life, and what its limits are. This session gives a simple, beginner-friendly overview with practical examples from search, recommendations, chatbots, and image recognition. Discover the basics of artificial intelligence, including how machines learn from data, where AI is used in everyday life, and what its limits are. This session gives a simple, beginner-friendly overview with practical examples from search, recommendations, chatbots, and image recognition.Discover the basics of artificial intelligence, including how machines learn from data, where AI is used in everyday life, and what its limits are. This session gives a simple, beginner-friendly overview with practical examples from search, recommendations, chatbots, and image recognition.Discover the basics of artificial intelligence, including how machines learn from data, where AI is used in everyday life, and what its limits are. This session gives a simple, beginner-friendly overview with practical examples from search, recommendations, chatbots, and image recognition.',
+          Prerequisites : 'No prior knowledge is required. Basic computer use and curiosity about how intelligent systems work are enough.',
         },
         {
           id: 2,
@@ -24,6 +26,8 @@ export const mockSessions = [{
           instructorImage: 'https://media.licdn.com/dms/image/v2/D4D22AQExQFoVipHtHA/feedshare-image-high-res/B4DaAPXD9SHQAY-/0/1786964099676?e=1792627200&v=beta&t=kVzFrOFAFbe-VDYDxqXOg1sSt0VHApr8eH4kScNDmYs',
           registeredCount: 99,
           maxCapacity: 100,
+          Description : 'Learn the essential principles of cybersecurity and why protecting personal and organizational data matters. This session introduces common threats such as weak passwords, phishing, malware, and unsafe browsing habits, with simple advice for staying secure online.',
+          Prerequisites : 'No technical background is required. Participants should be comfortable using email, web browsers, and everyday online services.',
         },
         {
           id: 3,
@@ -37,6 +41,8 @@ export const mockSessions = [{
           instructorImage: 'https://media.licdn.com/dms/image/v2/D4D22AQGqmqyHQLVNrw/feedshare-image-high-res/B4DaAPXDoyHgAU-/0/1786964098432?e=1792627200&v=beta&t=MzgRIxjphTYrz8i7iLSTLTrycDsHkWHwgIolajBvxnc',
           registeredCount: 64,
           maxCapacity: 100,
+          Description : 'This session focuses on recognizing suspicious emails, fake websites, and social engineering tactics used to steal information. Participants will practice spotting warning signs and learn safe habits for clicking links, downloading files, and sharing personal data online.',
+          Prerequisites : 'No previous cybersecurity knowledge is needed. A basic understanding of email and internet navigation is recommended.',
         },
         {
           id: 4,
@@ -50,4 +56,6 @@ export const mockSessions = [{
           instructorImage: 'https://media.licdn.com/dms/image/v2/D4D22AQEiduJT5U0B_w/feedshare-image-high-res/B4DaAPXAoaJgAU-/0/1786964085977?e=1792627200&v=beta&t=G8cBxcP9ntSyPS7WSVVY2TEtW_manZE1caaElLirVXg',
           registeredCount: 100,
           maxCapacity: 100,
+          Description : 'Explore how weak passwords put accounts at risk and how stronger protection methods can reduce that risk. This session covers password best practices, password managers, multi-factor authentication, and simple steps to secure online accounts.',
+          Prerequisites : 'Participants should already use at least one online account such as email or social media. No technical experience is required.',
         },]

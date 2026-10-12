@@ -1,37 +1,13 @@
-import { useEffect, useState } from 'react';
 import TrainingCard from '../components/TrainingCard'
 import FolderIllustration from '../components/FolderIllustration'
 import PublicHeader from '../components/PublicHeader'
 import './SessionsPage.css'
-import { mockSessions } from '../data/mockSessions'
-function SessionsPage() {
-  const [registeredSessionIds, setRegisteredSessionIds] = useState([])
-  const [sessions, setSessions] = useState (mockSessions);
-  function handleRegister(sessionId){
-    setRegisteredSessionIds((currentIds) => [...currentIds, sessionId]);
-
-    setSessions(
-      sessions.map((session) => 
-        session.id === sessionId
-        ? { ...session, registeredCount: session.registeredCount + 1 }
-        : session
-      )
-    )
-  }
-  function handleUnregister(sessionId) {
-    setRegisteredSessionIds((currentIds) =>
-      currentIds.filter((id) => id !== sessionId)
-    );
-
-    setSessions(
-      sessions.map((session) =>
-        session.id === sessionId
-          ? { ...session, registeredCount: session.registeredCount - 1 }
-          : session
-      )
-    );
-  }
-
+function SessionsPage({
+  sessions,
+  registeredSessionIds,
+  onRegister,
+  onUnregister,
+}) {
   return (
     <main className='page_width'>
       
@@ -58,9 +34,9 @@ function SessionsPage() {
             instructorImage={session.instructorImage}
             registeredCount={session.registeredCount}
             maxCapacity={session.maxCapacity}
-            // isRegistered={registeredSessionIds.includes(session.id)}
-            // onRegister={ () => handleRegister(session.id)}
-            // onUnregister={() => handleUnregister(session.id)}
+            isRegistered={registeredSessionIds.includes(session.id)}
+            onRegister={ () => onRegister(session.id)}
+            onUnregister={() => onUnregister(session.id)}
           />
         )))}
       </section>

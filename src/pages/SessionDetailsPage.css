@@ -19,13 +19,14 @@
 
 .session-details {
   display: grid;
-  grid-template-columns: minmax(900px, 100px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
   overflow: hidden;
   background: #ffffff;
   border: 1px solid #dce5ed;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgb(15 41 66 / 10%);
   margin-top: 2rem;
+  margin-bottom: -1rem;
 }
 
 .session-details__sidebar {
@@ -38,9 +39,9 @@
 }
 
 .session-details__image {
-  width: 100%;
-  height : 100%;
+  
   object-fit: cover;
+  aspect-ratio: 16 / 9;
   border-radius: 12px;
 }
 
@@ -59,6 +60,7 @@
   gap: 0.2rem;
   padding: 0.7rem 0;
   border-bottom: 1px solid #e8edf2;
+  
 }
 
 .session-details__schedule-item:last-child {
@@ -68,20 +70,22 @@
 .session-details__schedule-item span,
 .session-details__capacity span {
   color: #5c6b78;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 700;
 }
 
 .session-details__schedule-item strong,
 .session-details__capacity strong {
   color: #1a3a5c;
+  font-size: 0.95rem;
 }
 
 .session-details__capacity {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  padding: 1rem;
+  padding: 0.75rem;
+  padding-left: 1rem;
   background: #ffffff;
   border: 1px solid #dce5ed;
   border-radius: 12px;
@@ -94,8 +98,11 @@
 
 .session-details__instructor {
   margin: 0 0 0.5rem;
+  margin-top: -1.5rem;
+  margin-bottom: 1.5rem;
   color: #55738d;
   font-weight: 700;
+  font-size: x-large ;
 }
 
 .session-details__title {
@@ -147,6 +154,13 @@
   }
 
   .session-details__main {
-    padding: 1.5rem;
+    padding: 2rem;
   }
+
+  .session-details-page {
+    width: 110%;
+    max-width: 1600px;
+    margin: 0 ;
+    padding: 2rem clamp(2rem, 6vw, 7rem) 4rem;
+    }
 }
