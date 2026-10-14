@@ -7,11 +7,18 @@ function SessionsPage({
   registeredSessionIds,
   onRegister,
   onUnregister,
+  isAuthenticated,
+  currentUser,
+  onLogout,
 }) {
   return (
     <main className='page_width'>
       
-      <PublicHeader />
+      <PublicHeader
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onLogout={onLogout}
+      />
 
       <h1 className='sessions-page__title'>Upcoming training sessions</h1>
    

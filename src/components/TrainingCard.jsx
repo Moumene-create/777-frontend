@@ -119,29 +119,3 @@ function TrainingCard({
 }
 
 export default TrainingCard
-
-  {/* CTA Button */}
-        //  <button
-        //   type="button"
-        //   className={`training-card__button ${
-        //     isRegistered
-        //       ? 'training-card__button--registered'
-        //       : isFull
-        //         ? 'training-card__button--full'
-        //         : 'training-card__button--register'
-        //   }`}
-        //   onClick={isRegistered ? onUnregister : onRegister}
-        //   disabled={isFull && !isRegistered}
-        //   aria-disabled={isFull && !isRegistered}
-        // >
-        //   {isFull && !isRegistered ? (
-        //     'Registration full'
-        //   ) : isRegistered ? (
-        //     <>
-        //       <span className="training-card__btn-text-enrolled">Enrolled</span>
-        //       <span className="training-card__btn-text-cancel">Cancel registration</span>
-        //     </>
-        //   ) : (
-        //     'Register'
-        //   )}
-        // </button> 

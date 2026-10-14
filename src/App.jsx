@@ -10,7 +10,8 @@ import { mockSessions } from './data/mockSessions'
 function App() {
   const [registeredSessionIds, setRegisteredSessionIds] = useState([])
   const [sessions, setSessions] = useState(mockSessions)
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
 function handleRegister(sessionId) {
   const isAlreadyRegistered = registeredSessionIds.includes(sessionId)
 
@@ -29,7 +30,15 @@ function handleRegister(sessionId) {
     )
   )
 }
+function handleLogin(userData) {
+  setIsAuthenticated(true)
+  setCurrentUser(userData)
+}
 
+function handleLogout() {
+  setIsAuthenticated(false)
+  setCurrentUser(null)
+}
 function handleUnregister(sessionId) {
   const isRegistered = registeredSessionIds.includes(sessionId)
 
@@ -66,6 +75,9 @@ function handleUnregister(sessionId) {
             registeredSessionIds={registeredSessionIds}
             onRegister={handleRegister}
             onUnregister={handleUnregister}
+            isAuthenticated={isAuthenticated}
+            currentUser={currentUser}
+            onLogout={handleLogout}
           />
         }
       />
