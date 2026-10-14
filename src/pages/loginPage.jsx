@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
+import './LoginPage.css'
 
 function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
@@ -16,44 +17,49 @@ function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
   }
 
   return (
-    <main>
+    <main className="auth-page">
       <PublicHeader
         isAuthenticated={isAuthenticated}
         currentUser={currentUser}
         onLogout={onLogout}
       />
 
-      <h1>Log in</h1>
+      <section className="auth-page__section">
+        <div className="auth-card">
+          <div className="auth-card__header">
+            <h1>Log in</h1>
+            <p>Access your 7.77 Training Platform account.</p>
+          </div>
 
-      <p>Access your 7.77 Training Platform account.</p>
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <div className="auth-form__field">
+              <label htmlFor="email">Email address</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+              />
+            </div>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email address</label>
+            <div className="auth-form__field">
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+              />
+            </div>
 
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-          />
+            <button className="auth-form__submit" type="submit">
+              Log in
+            </button>
+          </form>
         </div>
-
-        <div>
-          <label htmlFor="password">Password</label>
-
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-          />
-        </div>
-
-        <button type="submit">Log in</button>
-      </form>
+      </section>
     </main>
   )
 }

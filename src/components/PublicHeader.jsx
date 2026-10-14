@@ -18,7 +18,7 @@ function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
         Menu
-        </button>
+    </button>
       <nav
         id="mobile-navigation"
         className={`public-header__actions ${isMenuOpen ? 'public-header__actions--open' : ''}`}

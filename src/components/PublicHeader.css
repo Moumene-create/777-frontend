@@ -64,7 +64,7 @@
 }
 
 .public-header__logobouton {
-  padding: 0.35rem 0.2rem;
+  padding: 0.35rem 0rem;
   
 }
 
@@ -85,9 +85,15 @@
   display: none;
 }
 
+.public-header__close-button {
+  display: none;
+}
+
+
+
 @media (max-width: 48rem) {
   .public-header {
-    width: min(59% - 1.5rem, 30rem);
+    width: min(59% - 0.9rem, 30rem);
   }
 
   .public-header__menu-button {
@@ -135,12 +141,12 @@
     justify-content: center;
     text-align: center;
   }
+   .public-header__logo {
+  display: block;
+  height: 2rem;
+  width : 4rem;
+  gap :2rem;
 }
-.public-header__close-button {
-  display: none;
-}
-
-@media (max-width: 48rem) {
   .public-header__close-button {
     display: inline-flex;
     align-items: center;
@@ -156,8 +162,7 @@
     line-height: 1;
     cursor: pointer;
   }
-}
-@media (prefers-reduced-motion: reduce) {
+
   .hero-banner__button {
     transition: none;
   }
@@ -166,3 +171,5 @@
     transform: none;
   }
 }
+
+
