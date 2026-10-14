@@ -16,6 +16,7 @@
   backdrop-filter: blur(12px) saturate(150%);
   box-sizing: border-box;
 }
+.public-header__logout,
 .public-header__brand,
 .public-header__login,
 .public-header__signup {
@@ -48,6 +49,18 @@
     rgb(85, 122, 207) 
   );
   color: #ffffff;
+}
+
+.public-header__logout {
+  padding-right: 1.6rem;
+  color: #0b2540;
+  opacity : 1;
+  border : none;
+  background-color:none ;
+  background : none ; 
+  font-size: medium;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  cursor: pointer;
 }
 
 .public-header__logobouton {

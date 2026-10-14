@@ -64,9 +64,31 @@ function handleUnregister(sessionId) {
 
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignUpPage />} />
+      <Route 
+      path="/" 
+      element={<HomePage 
+      onLogin={handleLogin}
+      isAuthenticated={isAuthenticated}
+      currentUser={currentUser}
+      onLogout={handleLogout}
+      />} />
+      <Route
+        path="/login"
+        element={<LoginPage
+        onLogin={handleLogin}
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+      />}
+      />
+      <Route 
+        path="/signup" 
+        element={<SignUpPage
+        onLogin={handleLogin}
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+      />} />
       <Route
         path="/sessions"
         element={

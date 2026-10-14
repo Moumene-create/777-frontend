@@ -66,7 +66,7 @@ function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
 
           <button
             type="button"
-            className="public-header__login"
+            className="public-header__logout"
             onClick={onLogout}
           >
             Log out

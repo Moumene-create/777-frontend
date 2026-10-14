@@ -5,10 +5,14 @@ import HowItWorks from '../components/HowItWorks'
 import HomeCta from '../components/HomeCta'
 import PublicFooter from '../components/PublicFooter'
 import './HomePage.css'
-function HomePage() {
+function HomePage({ onLogin, isAuthenticated, currentUser, onLogout }) {
   return (
     <>
-      <PublicHeader />
+      <PublicHeader
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onLogout={onLogout}
+      />
 
       <main className="home-page">
         <HeroBanner />
