@@ -1,9 +1,15 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import logo from '../assets/logo_777_blue.png'
 import { useState } from 'react'
 import './PublicHeader.css'
 function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const navigate = useNavigate()
+
+  function handleLogoutClick() {
+    onLogout()
+    navigate('/')
+  }
   return (
     <header className="public-header">
        <Link className="public-header__logobouton" to="/">
@@ -67,7 +73,7 @@ function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
           <button
             type="button"
             className="public-header__logout"
-            onClick={onLogout}
+            onClick={handleLogoutClick}
           >
             Log out
           </button>

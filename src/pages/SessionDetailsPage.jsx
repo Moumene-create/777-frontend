@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import './SessionDetailsPage.css'
 import PublicHeader from '../components/PublicHeader'
 
@@ -7,12 +8,12 @@ function SessionDetailsPage({
   registeredSessionIds,
   onRegister,
   onUnregister,
+  isAuthenticated, currentUser, onLogout
 }) {
   const { sessionId } = useParams()
-
+  const navigate = useNavigate()
   const session = sessions.find(
-  (mockSession) => mockSession.id === Number(sessionId)
-)
+  (mockSession) => mockSession.id === Number(sessionId))
   
   if (!session) {
     return (
@@ -31,12 +32,12 @@ function SessionDetailsPage({
   )
 
   return (
-
-    
     <main className="session-details-page">
-      <PublicHeader />
-      
-
+      <PublicHeader
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onLogout={onLogout}
+      />
       <article className="session-details">
         <section className="session-details__main">
           <h1 className="session-details__title">{session.title}</h1>
@@ -54,33 +55,26 @@ function SessionDetailsPage({
 
             <p>{session.Prerequisites}</p>
           </section>
-
-          {/* <p
-            className={`session-details__availability ${
-              isFull ? 'session-details__availability--full' : ''
-            }`}
-          >
-            {isFull
-              ? 'No more places'
-              : `${spotsRemaining} ${spotsRemaining === 1 ? 'place' : 'places'}  remaining.`}
-          </p> */}
-
           <button
             type="button"
             className={`training-card__button ${
+
+
               isRegistered
                 ? 'training-card__button--registered'
                 : isFull
                   ? 'training-card__button--full'
                   : 'training-card__button--register'
             }`}
-            onClick={() => {
-              if (isRegistered) {
-                onUnregister(session.id)
-              } else {
-                onRegister(session.id)
-              }
-            }}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  navigate('/login')
+                } else if (isRegistered) {
+                  onUnregister(session.id)
+                } else {
+                  onRegister(session.id)
+                }
+              }}
             disabled={isFull && !isRegistered}
             aria-disabled={isFull && !isRegistered}
           >
@@ -94,6 +88,11 @@ function SessionDetailsPage({
             ) : (
               'Register'
             )}
+
+
+
+
+            
           </button>
         </section>
         <aside className="session-details__sidebar">
@@ -134,8 +133,6 @@ function SessionDetailsPage({
           </div>
           </div>
         </aside>
-
-        
       </article>
     </main>
   )

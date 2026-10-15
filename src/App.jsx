@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/loginPage'
@@ -111,6 +111,9 @@ function handleUnregister(sessionId) {
             registeredSessionIds={registeredSessionIds}
             onRegister={handleRegister}
             onUnregister={handleUnregister}
+            isAuthenticated={isAuthenticated}
+            currentUser={currentUser}
+            onLogout={handleLogout}
           />
         }
       />
