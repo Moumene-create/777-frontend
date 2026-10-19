@@ -39,7 +39,16 @@ function getAgeCategory(age) {
 function SignUpPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
   const [dateOfBirth, setDateOfBirth] = useState('')
-
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    dateOfBirth: '',
+    ageCategory: '',
+    wilaya: '',
+    password: '',
+  });
   const age = useMemo(() => getAgeFromDateOfBirth(dateOfBirth), [dateOfBirth])
   const ageCategory = useMemo(() => getAgeCategory(age), [age])
 
