@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
+import './SignUpPage.css'
+import logo from '../assets/logo_7.svg'
 
 function getAgeFromDateOfBirth(dateOfBirth) {
   if (!dateOfBirth) return null
@@ -47,7 +49,8 @@ function SignUpPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
     const formData = new FormData(event.target)
 
     const userData = {
-      name: formData.get('name'),
+      firstname: formData.get('firstname'),
+      lastname : formData.get('lastname'),
       email: formData.get('email'),
       phone: formData.get('phone'),
       dateOfBirth: formData.get('dateOfBirth'),
@@ -59,103 +62,127 @@ function SignUpPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
     navigate('/sessions')
   }
 
-  return (
-    <main>
-      <PublicHeader
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        onLogout={onLogout}
-      />
+return (
+  <main className="ran-page">
+    <PublicHeader
+      isAuthenticated={isAuthenticated}
+      currentUser={currentUser}
+      onLogout={onLogout}
+    />
+    <section className="ran-page__section ran-page__section--split">
+  <div className="signup-layout">
+    <div className="signup-layout__image">
+      <img src={logo} alt="7.77 training platform" />
+    </div>
 
-      <h1>Create your account</h1>
-
-      <p>
-        Join the 7.77 Training Platform to discover and register for training
-        sessions.
-      </p>
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Full name</label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            autoComplete="name"
-            required
-          />
+    <div className="signup-layout__content">
+      <div className="ran-card ran-card--signup">
+        <div className="ran-card__header">
+          <h1>Create your account</h1>
+          <p>
+            Join the 7.77 Training Platform to discover and register for
+            training sessions.
+          </p>
         </div>
 
-        <div>
-          <label htmlFor="email">Email address</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-          />
-        </div>
+        <form className="ran-form" onSubmit={handleSubmit}>
+          <div className="ran-form__field">
+            <label htmlFor="firstname">First name</label>
+            <input
+              id="firstname"
+              name="firstname"
+              type="text"
+              autoComplete="name"
+              required
+            />
+          </div>
+          <div className="ran-form__field">
+            <label htmlFor="lastname">Last name</label>
+            <input
+              id="lastname"
+              name="lastname"
+              type="text"
+              autoComplete="name"
+              required
+            />
+          </div>
 
-        <div>
-          <label htmlFor="phone">Phone number</label>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            autoComplete="tel"
-            required
-          />
-        </div>
+          <div className="ran-form__field">
+            <label htmlFor="email">Email address</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+            />
+          </div>
 
-        <div>
-          <label htmlFor="dateOfBirth">Date of birth</label>
-          <input
-            id="dateOfBirth"
-            name="dateOfBirth"
-            type="date"
-            value={dateOfBirth}
-            onChange={(event) => setDateOfBirth(event.target.value)}
-            required
-          />
-        </div>
+          <div className="ran-form__field">
+            <label htmlFor="phone">Phone number</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              required
+            />
+          </div>
 
-        <div>
-          <label htmlFor="ageCategory">Age category</label>
-          <input
-            id="ageCategory"
-            name="ageCategory"
-            type="text"
-            value={ageCategory}
-            readOnly
-          />
-        </div>
+          <div className="ran-form__field">
+            <label htmlFor="dateOfBirth">Date of birth</label>
+            <input
+              id="dateOfBirth"
+              name="dateOfBirth"
+              type="date"
+              value={dateOfBirth}
+              onChange={(event) => setDateOfBirth(event.target.value)}
+              required
+            />
+          </div>
 
-        <div>
-          <label htmlFor="wilaya">Wilaya</label>
-          <input
-            id="wilaya"
-            name="wilaya"
-            type="text"
-            required
-          />
-        </div>
+          <div className="ran-form__field">
+            <label htmlFor="ageCategory">Age category</label>
+            <input
+              id="ageCategory"
+              name="ageCategory"
+              type="text"
+              value={ageCategory}
+              readOnly
+            />
+          </div>
 
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            required
-          />
-        </div>
+          <div className="ran-form__field">
+            <label htmlFor="wilaya">Wilaya</label>
+            <input
+              id="wilaya"
+              name="wilaya"
+              type="text"
+              required
+            />
+          </div>
 
-        <button type="submit">Create account</button>
-      </form>
-    </main>
-  )
+          <div className="ran-form__field">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              required
+            />
+          </div>
+
+          <button className="ran-form__submit" type="submit">
+            Create account
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+  </main>
+)
 }
 
 export default SignUpPage
