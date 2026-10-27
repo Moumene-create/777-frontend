@@ -4,57 +4,61 @@ import logoAT from '../assets/logo_AT_white.png'
 import logoMobilis from '../assets/logo_mobilis_white.png'
 import logoMinistry from '../assets/logo-ministry-white.png'
 import logocolor from "../assets/logo_777_black.png"
+import image_1 from "../assets/image_1.jpg"
+import image_2 from "../assets/image_2.jpg"
+import image_3 from "../assets/image_3.jpg"
+import image_4 from "../assets/image_4.jpg"
+import image_5 from "../assets/image_5.jpg"
+import image_6 from "../assets/image_6.jpg"
+import image_7 from "../assets/image_7.jpg"
+import image_8 from "../assets/image_8.jpg"
+import image_9 from "../assets/image_9.jpg"
+import image_10 from "../assets/image_10.jpg"
+import image_11 from "../assets/image_11.jpg"
+
+
 import './HeroBanner.css'
 const slides = [
   {
     image:
-        'https://media.licdn.com/dms/image/v2/D4D22AQHZ7w8oJOPUQQ/feedshare-image-high-res/B4DZ_1T8igJIAU-/0/1786527075550?e=1792627200&v=beta&t=WP67I7J7skMCpPdUCwOaojnTmNx9_WrZylgsnrxF8Xs',
+        image_1,
     alt: 'People collaborating during a training session',
   },
 
   {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQHer6Laud5UIg/feedshare-image-high-res/B4DaCKfAsiKsAU-/0/1789029780628?e=1792627200&v=beta&t=gbktTM1mrtBO5PxarXYP_JNO1ahhG4rTi--k1jNPXXU',
+    image:image_2,
     alt: 'Person participating in online learning',
   },
    {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQFbXacMgkp8DA/feedshare-image-high-res/B4DaCKfAqQGkAU-/0/1789029780450?e=1792627200&v=beta&t=nbQMWuobMrckL7QWxgRQT0CFNdQ8YcD2_PDfJVK17gc',
+    image:image_3,
     alt: 'Person participating in online learning',
   },
    {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQGEA87T9AJ4dw/feedshare-image-high-res/B4DaCKfAmFKQAU-/0/1789029780320?e=1792627200&v=beta&t=uVRrE1Nfv3Udii8QudGfmxBoCpfLG4k1BYTbTmk5Vo4',
+    image:image_4,
     alt: 'Person participating in online learning',
   },
    {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQExQFoVipHtHA/feedshare-image-high-res/B4DaAPXD9SHQAY-/0/1786964099676?e=1792627200&v=beta&t=kVzFrOFAFbe-VDYDxqXOg1sSt0VHApr8eH4kScNDmYs',
+    image:image_5,
     alt: 'Person participating in online learning',
   },
    {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQGqmqyHQLVNrw/feedshare-image-high-res/B4DaAPXDoyHgAU-/0/1786964098432?e=1792627200&v=beta&t=MzgRIxjphTYrz8i7iLSTLTrycDsHkWHwgIolajBvxnc',
+    image:image_6,
     alt: 'Person participating in online learning',
   },
   {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQEiduJT5U0B_w/feedshare-image-high-res/B4DaAPXAoaJgAU-/0/1786964085977?e=1792627200&v=beta&t=G8cBxcP9ntSyPS7WSVVY2TEtW_manZE1caaElLirVXg',
+    image:image_7,
     alt: 'Person participating in online learning',
   },
   {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQEUS7WVH6sNpg/feedshare-image-high-res/B4DaAPXGOZJUAU-/0/1786964108854?e=1792627200&v=beta&t=zb2r6YCNHX6BtCHSeanto4a36QDL_foBSEEGL6LZRrE',
+    image:image_8,
     alt: 'Person participating in online learning',
   },
   {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQGdE-XyifsaaQ/feedshare-image-high-res/B4DaAPXGUTGwAU-/0/1786964109623?e=1792627200&v=beta&t=EXc2U4cb-mn2X9N6qQxK7Ne1gfMAO8NezqEJvfddICo',
+    image:image_9,
     alt: 'Person participating in online learning',
   },
   {
-    image:
-      'https://media.licdn.com/dms/image/v2/D4D22AQH-p968ZlpwuQ/feedshare-image-high-res/B4DaAPXGqxGkAU-/0/1786964110740?e=1792627200&v=beta&t=r6fzYZml0NOkrMsd2V3dexIi0lO6xovRc8l0cnlHNVs',
+    image:image_10,
     alt: 'Person participating in online learning',
   },
 ]

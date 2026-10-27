@@ -80,6 +80,7 @@ main.ran-page {
   border: 1px solid #cbd5e1;
   border-radius: 14px;
   padding: 14px 19px;
+  padding-top:1.05rem;
   font-size: 1rem;
   background-color: #f5f5f5;
   color: #0f172a;
@@ -90,6 +91,7 @@ main.ran-page {
 
 .ran-form__field input::placeholder {
   color: #94a3b8;
+  padding-top: 1rem;
 }
 
 .ran-form__field input:focus {
@@ -99,7 +101,7 @@ main.ran-page {
 
 .ran-form__submit {
   margin-top: 8px;
-  width: 100%;
+  width: 30%;
   border: none;
   border-radius: 14px;
   padding: 14px 18px;
@@ -110,6 +112,13 @@ main.ran-page {
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.2s ease,
     box-shadow 0.2s ease;
+  margin-bottom: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+    display : center;
+  align-items: center;
+  justify-content: center;
+  margin-left:35% ;
 }
 
 .ran-form__submit:hover {
@@ -169,6 +178,26 @@ main.ran-page {
   background: transparent;
 }
 
+.ran-form__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ran-form__alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.ran-form__error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #b3261e;
+  margin-bottom: -1rem;
+}
+
+
 @media (max-width: 1500px) {
   .signup-layout {
     grid-template-columns: 1fr;
@@ -197,24 +226,38 @@ main.ran-page {
     font-size: 1.75rem;
   }
 
-.ran-form__field {
-  width: 60%;
-  display:center;
-  align-items: center;
-  gap: 1px;
-  margin-right : 2rem;
-}
+  .ran-form__field {
+    width: 60%;
+    display:center;
+    align-items: center;
+    gap: 1px;
+    margin-right : 2rem;
+  }
 
   .ran-form {
     grid-template-columns: 1fr;
     margin-left : 2rem;
     margin-right : -12rem;
   }
-
   .ran-form__submit {
-    grid-column: auto;
-    width: 60%;
+    margin-top: 8px;
+    
+    border: none;
+    border-radius: 14px;
+    padding: 14px 18px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease,
+      box-shadow 0.2s ease;
+     margin-left:14% ;
+        display : center;
+  align-items: center;
+  justify-content: center;
   }
+
 }
 .ran-card--signup {
   max-width: 520px;

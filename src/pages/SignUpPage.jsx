@@ -4,11 +4,11 @@ import PublicHeader from '../components/PublicHeader'
 import './SignUpPage.css'
 import logo from '../assets/logo_7.svg'
 
-function getAgeFromDateOfBirth(dateOfBirth) {
-  if (!dateOfBirth) return null
+function getAgeFromdateOfBirth(date_of_birth) {
+  if (!date_of_birth) return null
 
   const today = new Date()
-  const birthDate = new Date(dateOfBirth)
+  const birthDate = new Date(date_of_birth)
 
   let age = today.getFullYear() - birthDate.getFullYear()
   const monthDifference = today.getMonth() - birthDate.getMonth()
@@ -36,40 +36,51 @@ function getAgeCategory(age) {
   return 'Outside current platform categories'
 }
 
-function SignUpPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
+function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
-  const [dateOfBirth, setDateOfBirth] = useState('')
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     email: '',
-    phone: '',
-    dateOfBirth: '',
-    ageCategory: '',
+    phone_number: '',
+    date_of_birth: '',
     wilaya: '',
     password: '',
   });
-  const age = useMemo(() => getAgeFromDateOfBirth(dateOfBirth), [dateOfBirth])
+
+  const handleChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }; 
+  const age = useMemo(() => getAgeFromdateOfBirth(formData.date_of_birth), [formData.date_of_birth])
   const ageCategory = useMemo(() => getAgeCategory(age), [age])
-
+  const isPasswordTooShort = formData.password.length > 0 && formData.password.length < 8;
+  const isPhonenumberTooshort =  formData.phone_number.length > 0 && formData.phone_number.length < 10;
+  const isPhonenumberToolong =  formData.phone_number.length > 0 && formData.phone_number.length > 10 ;
+  const isPhonenumberInvalid = isPhonenumberTooshort || isPhonenumberToolong ; 
+  const isFormInvalid = isPasswordTooShort || isPhonenumberInvalid ;
   function handleSubmit(event) {
-    event.preventDefault()
+  event.preventDefault();
 
-    const formData = new FormData(event.target)
+  const userData = {
+    first_name: formData.first_name,
+    last_name: formData.last_name,
+    email: formData.email,
+    phone_number: formData.phone_number,
+    date_of_birth: formData.date_of_birth,
+    ageCategory: ageCategory,
+    wilaya: formData.wilaya,
+    password: formData.password,
+  };
 
-    const userData = {
-      firstname: formData.get('firstname'),
-      lastname : formData.get('lastname'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      dateOfBirth: formData.get('dateOfBirth'),
-      ageCategory,
-      wilaya: formData.get('wilaya'),
-    }
-
-    onLogin(userData)
-    navigate('/sessions')
-  }
+  onLogin(userData);
+  navigate('/sessions');
+}
 
 return (
   <main className="ran-page">
@@ -96,56 +107,67 @@ return (
 
         <form className="ran-form" onSubmit={handleSubmit}>
           <div className="ran-form__field">
-            <label htmlFor="firstname">First name</label>
+            <label htmlFor="first_name">First name</label>
             <input
-              id="firstname"
-              name="firstname"
+              id = "first_name"
               type="text"
+              name="first_name"
+              value={formData.first_name}
+              onChange={handleChange}
               autoComplete="name"
               required
             />
           </div>
           <div className="ran-form__field">
-            <label htmlFor="lastname">Last name</label>
+            <label htmlFor="last_name">Last name</label>
             <input
-              id="lastname"
-              name="lastname"
+              id="last_name"
+              name="last_name"
               type="text"
+              value={formData.last_name}
+              onChange={handleChange}
               autoComplete="name"
               required
             />
           </div>
 
           <div className="ran-form__field">
-            <label htmlFor="email">Email address</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-            />
+          <label htmlFor="email">Email address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            autoComplete="email"
+            required
+          />
           </div>
 
           <div className="ran-form__field">
-            <label htmlFor="phone">Phone number</label>
+            <label htmlFor="phone_number">Phone number</label>
             <input
-              id="phone"
-              name="phone"
+              id="phone_number"
+              name="phone_number"
               type="tel"
+              value={formData.phone_number}
+              onChange={handleChange}              
               autoComplete="tel"
               required
+              minLength={10}
+              maxLength={10}
             />
+
           </div>
 
           <div className="ran-form__field">
-            <label htmlFor="dateOfBirth">Date of birth</label>
+            <label htmlFor="date_of_birth">Date of birth</label>
             <input
-              id="dateOfBirth"
-              name="dateOfBirth"
+              id="date_of_birth"
+              name="date_of_birth"
               type="date"
-              value={dateOfBirth}
-              onChange={(event) => setDateOfBirth(event.target.value)}
+              value={formData.date_of_birth}
+              onChange={handleChange}
               required
             />
           </div>
@@ -167,6 +189,8 @@ return (
               id="wilaya"
               name="wilaya"
               type="text"
+              value={formData.wilaya}
+              onChange={handleChange}
               required
             />
           </div>
@@ -177,12 +201,27 @@ return (
               id="password"
               name="password"
               type="password"
+              value={formData.password}
+              onChange={handleChange}
               autoComplete="new-password"
               required
+              minLength={8}
             />
-          </div>
 
-          <button className="ran-form__submit" type="submit">
+
+
+          </div>
+            {isPhonenumberInvalid && (
+              <p className="ran-form__error">
+                Phone number must be exactly 10 characters.
+              </p>
+            )}
+            {isPasswordTooShort && (
+              <p className="ran-form__error">
+                Password must be at least 8 characters.
+              </p>
+            )}
+          <button className="ran-form__submit" type="submit" disabled={isFormInvalid}>
             Create account
           </button>
         </form>

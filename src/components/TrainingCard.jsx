@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import './TrainingCard.css'
+
 const DEFAULT_INSTRUCTOR_PHOTOS = {
   '7.77 Training Team': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
   '7.77 Security Team': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80',
