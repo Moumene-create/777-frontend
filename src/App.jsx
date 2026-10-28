@@ -6,6 +6,7 @@ import LoginPage from './pages/loginPage'
 import SessionsPage from './pages/SessionsPage'
 import SessionDetailsPage from './pages/SessionDetailsPage'
 import { mockSessions } from './data/mockSessions'
+import { isBeforeRegistrationCutoff } from './utils/sessionStatus';
 
 function App() {
   const [registeredSessionIds, setRegisteredSessionIds] = useState([])
@@ -13,22 +14,30 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
 function handleRegister(sessionId) {
-  const isAlreadyRegistered = registeredSessionIds.includes(sessionId)
+  const session = sessions.find((item) => item.id === sessionId);
 
-  if (isAlreadyRegistered) {
-    return
+  if (!isAuthenticated || !session) return;
+
+  if (!session.targetAgeCategories.includes(currentUser?.ageCategory)) {
+    return;
   }
 
-  setRegisteredSessionIds((currentIds) => [...currentIds, sessionId])
+  if (registeredSessionIds.includes(sessionId)) return;
+  if (session.registeredCount >= session.maxCapacity) return;
+  if (!isBeforeRegistrationCutoff(session)) return;
+
+  setRegisteredSessionIds((currentIds) => [
+    ...currentIds,
+    sessionId,
+  ]);
 
   setSessions((currentSessions) =>
-    currentSessions.map((session) =>
-      session.id === sessionId &&
-      session.registeredCount < session.maxCapacity
-        ? { ...session, registeredCount: session.registeredCount + 1 }
-        : session
+    currentSessions.map((item) =>
+      item.id === sessionId
+        ? { ...item, registeredCount: item.registeredCount + 1 }
+        : item
     )
-  )
+  );
 }
 function handleLogin(userData) {
   setIsAuthenticated(true)
@@ -41,7 +50,10 @@ function handleLogout() {
 }
 function handleUnregister(sessionId) {
   const isRegistered = registeredSessionIds.includes(sessionId)
+  const session = sessions.find((item) => item.id === sessionId);
 
+  if (!isAuthenticated || !session) return;
+  if (!isBeforeRegistrationCutoff(session)) return;
   if (!isRegistered) {
     return
   }

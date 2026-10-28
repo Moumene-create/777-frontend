@@ -5,16 +5,17 @@ import './LoginPage.css'
 function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
 
-  function handleSubmit(event) {
-    event.preventDefault()
+function handleSubmit(event) {
+  event.preventDefault()
 
-    onLogin({
-      name: 'Participant',
-      email: event.target.email.value,
-    })
+  onLogin({
+    name: 'Participant',
+    email: event.target.email.value,
+    ageCategory: '11-14',
+  })
 
-    navigate('/sessions')
-  }
+  navigate('/sessions')
+}
 
   return (
     <main className="auth-page">

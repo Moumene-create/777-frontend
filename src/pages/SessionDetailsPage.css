@@ -104,6 +104,21 @@
   font-weight: 700;
   font-size: x-large ;
 }
+.session-details__status {
+  margin: 0 0 0.5rem;
+  margin-top: -1rem;
+  margin-bottom: .5rem;
+  color: #000000d2;
+  font-weight: 600;
+  font-size: x-large ;
+  border:none;
+  border-radius: 1rem;
+  padding-right:-4rem;
+  width: fit-content;
+   background-color: #dbeafe; 
+   padding: 8px 12px;
+  font-size: medium;
+}
 
 .session-details__title {
   margin: 0 0 2rem;
@@ -137,6 +152,21 @@
 .session-details__availability--full {
   color: #a61b1b;
 }
+
+.session-details__cutoff-message {
+  color :  #a61b1b;
+  font-size: 700;
+  font : bold;
+  font-weight: 700;
+  border:none;
+
+  font-size: x-large ;
+  display: bottom;
+  font-size: large;
+  bottom: 0;
+}
+
+
 
 @media (max-width: 760px) {
   .session-details {

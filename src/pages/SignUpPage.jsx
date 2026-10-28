@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
 import './SignUpPage.css'
 import logo from '../assets/logo_7.svg'
+import { registerUser } from '../services/auth';
 
 function getAgeFromdateOfBirth(date_of_birth) {
   if (!date_of_birth) return null
@@ -47,7 +48,7 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
     wilaya: '',
     password: '',
   });
-
+  // const [submitStatus, setSubmitStatus] = useState('');
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -57,6 +58,7 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
       [name]: value,
     }));
   }; 
+
   const age = useMemo(() => getAgeFromdateOfBirth(formData.date_of_birth), [formData.date_of_birth])
   const ageCategory = useMemo(() => getAgeCategory(age), [age])
   const isPasswordTooShort = formData.password.length > 0 && formData.password.length < 8;
@@ -64,23 +66,41 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
   const isPhonenumberToolong =  formData.phone_number.length > 0 && formData.phone_number.length > 10 ;
   const isPhonenumberInvalid = isPhonenumberTooshort || isPhonenumberToolong ; 
   const isFormInvalid = isPasswordTooShort || isPhonenumberInvalid ;
-  function handleSubmit(event) {
-  event.preventDefault();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  const userData = {
-    first_name: formData.first_name,
-    last_name: formData.last_name,
-    email: formData.email,
-    phone_number: formData.phone_number,
-    date_of_birth: formData.date_of_birth,
-    ageCategory: ageCategory,
-    wilaya: formData.wilaya,
-    password: formData.password,
-  };
 
-  onLogin(userData);
-  navigate('/sessions');
-}
+
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    setSubmitError('');
+    setIsSubmitting(true);
+
+    const userData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      dateOfBirth: formData.dateOfBirth,
+      wilaya: formData.wilaya,
+      password: formData.password,
+    };
+
+    try {
+      // TODO: reconnect when backend is available
+      // await registerUser(userData);
+
+      onLogin(userData);
+      navigate('/sessions');
+    } catch (error) {
+      setSubmitError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+  
 
 return (
   <main className="ran-page">
@@ -221,8 +241,23 @@ return (
                 Password must be at least 8 characters.
               </p>
             )}
-          <button className="ran-form__submit" type="submit" disabled={isFormInvalid}>
-            Create account
+
+            {/* {submitStatus === 'success' && (
+              <p className="ran-form__success">
+                Account created successfully.
+              </p>
+            )} */}
+            {submitError && (
+              <p className="ran-form__error">
+                {submitError}
+              </p>
+            )}
+          <button
+            className="ran-form__submit"
+            type="submit"
+            disabled={isFormInvalid || isSubmitting}
+          >
+            {isSubmitting ? 'Creating account...' : 'Create account'}
           </button>
         </form>
       </div>

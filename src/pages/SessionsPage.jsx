@@ -11,6 +11,11 @@ function SessionsPage({
   currentUser,
   onLogout,
 }) {
+  const visibleSessions = isAuthenticated
+  ? sessions.filter((session) =>
+      session.targetAgeCategories.includes(currentUser?.ageCategory)
+    )
+  : sessions
   return (
     <main className='page_width'>
       
@@ -24,11 +29,11 @@ function SessionsPage({
    
       {/* <p className='session-page__sub_title'>Discover sessions available for you.</p> */}
       <section className="sessions-grid" aria-label="Available training sessions">
-        {sessions.length ===0 ? (
+        {visibleSessions.length === 0 ===0 ? (
           <p>No training sessions are available right now. Please check again later.</p>
         ):(
         
-          sessions.map((session) => (
+          visibleSessions.map((session) => (
           <TrainingCard
             key={session.id}
             id={session.id}

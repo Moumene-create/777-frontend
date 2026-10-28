@@ -2,29 +2,38 @@ import image_2 from "../assets/image_2.jpg"
 import image_5 from "../assets/image_5.jpg"
 import image_10 from "../assets/image_10.jpg"
 import image_11 from "../assets/image_11.jpg"
+import image_4 from "../assets/image_4.jpg"
 export const mockSessions = [{
           id: 1,
           title: 'Introduction to Artificial Intelligence',
+          targetAgeCategories: ['18-23'],
+
           description:
             'Discover the foundations of artificial intelligence and how it is used in everyday life.',
           date: '15 October 2026',
           time: '10:00',
-          duration: '90 minutes',
+          duration: '61 minutes',
+          startDateTime: '2026-10-28T18:01:00+01:00',
+          durationMinutes: 60,
           instructor: 'Frihaoui Mohammed',
           instructorImage: image_5,
           registeredCount: 23,
           maxCapacity: 100,
           Description : 'Discover the basics of artificial intelligence, including how machines learn from data, where AI is used in everyday life, and what its limits are. This session gives a simple, beginner-friendly overview with practical examples from search, recommendations, chatbots, and image recognition. Discover the basics of artificial intelligence, including how machines learn from data, where AI is used in everyday life, and what its limits are. This session gives a simple, beginner-friendly overview with practical examples from search, recommendations, chatbots, and image recognition.Discover the basics of artificial intelligence, including how machines learn from data, where AI is used in everyday life, and what its limits are. This session gives a simple, beginner-friendly overview with practical examples from search, recommendations, chatbots, and image recognition.Discover the basics of artificial intelligence, including how machines learn from data, where AI is used in everyday life, and what its limits are. This session gives a simple, beginner-friendly overview with practical examples from search, recommendations, chatbots, and image recognition.',
           Prerequisites : 'No prior knowledge is required. Basic computer use and curiosity about how intelligent systems work are enough.',
+          
         },
         {
           id: 2,
           title: 'Cybersecurity Basics',
           description:
             'Learn practical habits for protecting your personal data and online accounts.',
+          targetAgeCategories: ['24-30'],
           date: '22 October 2026',
           time: '14:00',
           duration: '60 minutes',
+          startDateTime: '2026-10-22T14:00:00+01:00',
+          durationMinutes: 60,
           instructor: '7.77 Security Team',
           instructorImage: image_10,
           registeredCount: 99,
@@ -37,9 +46,12 @@ export const mockSessions = [{
           title: 'Cybersecurity Basics',
           description:
             'Learn practical habits for protecting your personal data and online accounts.',
+          targetAgeCategories: ['18-23'],
           date: '22 October 2026',
           time: '14:00',
           duration: '60 minutes',
+          startDateTime: '2026-10-22T14:00:00+01:00',
+          durationMinutes: 60,
           instructor: '7.77 Security Team',
           instructorImage: image_11,
           registeredCount: 64,
@@ -52,13 +64,36 @@ export const mockSessions = [{
           title: 'Cybersecurity Basics',
           description:
             'Learn practical habits for protecting your personal data and online accounts.',
-          date: '22 October 2026',
+          date: '28 October 2026',
+          targetAgeCategories: ['11-14'],
           time: '14:00',
           duration: '60 minutes',
+          startDateTime: '2026-10-28T12:00:00+01:00',
+          durationMinutes: 60,
           instructor: '7.77 Security Team',
           instructorImage: image_2,
           registeredCount: 100,
           maxCapacity: 100,
           Description : 'Explore how weak passwords put accounts at risk and how stronger protection methods can reduce that risk. This session covers password best practices, password managers, multi-factor authentication, and simple steps to secure online accounts.',
           Prerequisites : 'Participants should already use at least one online account such as email or social media. No technical experience is required.',
-        },]
+        },
+      {
+        id: 5,
+        title: 'Introduction to Web Development',
+        description:
+          'Discover how websites work and the roles of HTML, CSS, and JavaScript.',
+        date: '5 November 2026',
+        targetAgeCategories: ['31-45'],
+        time: '14:00',
+        duration: '90 minutes',
+        startDateTime: '2026-11-05T14:00:00+01:00',
+        durationMinutes: 90,
+        instructor: '7.77 Training Team',
+        instructorImage: image_4,
+        registeredCount: 12,
+        maxCapacity: 100,
+        Description:
+          'Explore the basic building blocks of a website through beginner-friendly examples of HTML, CSS, and JavaScript.',
+        Prerequisites:
+          'No programming experience is required.',
+      },]

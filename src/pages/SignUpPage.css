@@ -196,6 +196,17 @@ main.ran-page {
   color: #b3261e;
   margin-bottom: -1rem;
 }
+/* .ran-form__success {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: #2e7d32;
+  margin-bottom: -1rem;
+} */
+ .ran-form__error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #b3261e;
+}
 
 
 @media (max-width: 1500px) {
