@@ -127,6 +127,18 @@
   overflow: hidden;
   min-height: 2.9rem;
 }
+.training-card__description_age {
+  color: var(--text-muted);
+  font-size: 0.915rem;
+  line-height: 1.6;
+  display: -webkit-box;
+  /* -webkit-line-clamp: 2; */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.9rem;
+  margin-top: -5%;
+  margin-bottom: -5%;
+}
 
 
 .training-card__details {

@@ -29,13 +29,12 @@ function SessionsPage({
    
       {/* <p className='session-page__sub_title'>Discover sessions available for you.</p> */}
       <section className="sessions-grid" aria-label="Available training sessions">
-        {visibleSessions.length === 0 ===0 ? (
+        {visibleSessions.length ===0 ? (
           <p>No training sessions are available right now. Please check again later.</p>
         ):(
         
           visibleSessions.map((session) => (
           <TrainingCard
-            key={session.id}
             id={session.id}
             title={session.title}
             description={session.description}
@@ -47,7 +46,8 @@ function SessionsPage({
             registeredCount={session.registeredCount}
             maxCapacity={session.maxCapacity}
             isRegistered={registeredSessionIds.includes(session.id)}
-            onRegister={ () => onRegister(session.id)}
+            targetAgeCategories={session.targetAgeCategories}
+            onRegister={() => onRegister(session.id)}
             onUnregister={() => onUnregister(session.id)}
           />
         )))}

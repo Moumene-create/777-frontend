@@ -6,7 +6,7 @@ import image_4 from "../assets/image_4.jpg"
 export const mockSessions = [{
           id: 1,
           title: 'Introduction to Artificial Intelligence',
-          targetAgeCategories: ['18-23'],
+          targetAgeCategories: ['18-23', '24-30'],
 
           description:
             'Discover the foundations of artificial intelligence and how it is used in everyday life.',

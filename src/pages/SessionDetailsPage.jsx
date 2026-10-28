@@ -18,7 +18,15 @@ function SessionDetailsPage({
 }) {
   const { sessionId } = useParams()
   const navigate = useNavigate()
+  const [now, setNow] = useState(() => new Date())
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setNow(new Date())
+    }, 1000)
+
+    return () => clearInterval(intervalId)
+  }, [])
   const session = sessions.find(
     (mockSession) => mockSession.id === Number(sessionId)
   )
@@ -37,17 +45,24 @@ function SessionDetailsPage({
       </main>
     )
   }
-
+  
   const isRegistered = registeredSessionIds.includes(session.id)
   const isFull = session.registeredCount >= session.maxCapacity
   const sessionStatus = getSessionStatus(session, now)
-
+  
   const isRegistrationClosed =
     !isBeforeRegistrationCutoff(session, now)
+  const isEligible = session.targetAgeCategories.includes(
+  currentUser?.ageCategory
+)
 
+  const eligibilityMessage = isEligible
+    ? null
+    : 'This session is not available for your age category.'
   const isActionDisabled =
-    isRegistrationClosed || (isFull && !isRegistered)
-
+    isRegistrationClosed ||
+    (isFull && !isRegistered) ||
+    !isEligible
   function handleRegistrationClick() {
     if (isActionDisabled) return
 
@@ -62,15 +77,7 @@ function SessionDetailsPage({
       onRegister(session.id)
     }
   }
-  const [now, setNow] = useState(() => new Date())
 
-useEffect(() => {
-  const intervalId = setInterval(() => {
-    setNow(new Date())
-  }, 1000)
-
-  return () => clearInterval(intervalId)
-}, [])
 
   return (
     <main className="session-details-page">
@@ -149,7 +156,11 @@ useEffect(() => {
               </span>
             </div>
           </div>
-
+          {eligibilityMessage && (
+            <p className="session-details__eligibility-message">
+              {eligibilityMessage}
+            </p>
+          )}
           <button
             type="button"
             className={`training-card__button ${

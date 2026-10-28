@@ -16,8 +16,10 @@ function TrainingCard({
   instructor = '',
   instructorImage,
   registeredCount = 0,
-  maxCapacity = 100,
+  maxCapacity = '',
   isRegistered = false,
+  targetAgeCategories=[],
+  currentUserAgeCategory = '',
   onRegister,
   onUnregister,
 }) {
@@ -30,7 +32,11 @@ function TrainingCard({
     instructorImage ||
     DEFAULT_INSTRUCTOR_PHOTOS[instructor] ||
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80'
+  const isEligible = targetAgeCategories.includes(currentUserAgeCategory)
 
+  const eligibilityMessage = isEligible
+    ? null
+    : 'This session is not available for your age category.'
   return (
     <article
       className={`training-card 
@@ -54,7 +60,9 @@ function TrainingCard({
         <h2 className="training-card__title">
           {title}
         </h2>
-
+        <p className="training-card__description_age">
+        <strong>Open to : </strong> {targetAgeCategories.join(', ')}
+      </p>
         <p className="training-card__description">
           {description}
         </p>
@@ -108,7 +116,7 @@ function TrainingCard({
 
         
           <Link
-            className="training-card__button training-card__button_view--details"
+            className="training-card__button training-card__button_view--details" 
             to={`/sessions/${id}`}
           >
             View details
