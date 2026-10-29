@@ -20,8 +20,10 @@ function TrainingCard({
   isRegistered = false,
   targetAgeCategories=[],
   currentUserAgeCategory = '',
+  isCompleted = false,
   onRegister,
   onUnregister,
+  
 }) {
   const isFull = registeredCount >= maxCapacity
   const spotsRemaining = Math.max(0, maxCapacity - registeredCount)
@@ -40,9 +42,10 @@ function TrainingCard({
   return (
     <article
       className={`training-card 
-      ${isRegistered ? 'training-card--registered' : ''} 
-      ${isFull ? 'training-card--full' : ''} 
-      ${isUrgent ? 'training-card--urgent' : ''}`}
+        ${isRegistered ? 'training-card--registered' : ''} 
+        ${isFull ? 'training-card--full' : ''} 
+        ${isUrgent ? 'training-card--urgent' : ''}
+        ${isCompleted ? 'training-card--completed' : ''}`}
     >
       {/* Top Banner: Instructor Photo with seamless fade-out gradient */}
       <div className="training-card__instructor-banner">
@@ -57,6 +60,11 @@ function TrainingCard({
 
       {/* Card Content Body */}
       <div className="training-card__body">
+        {isCompleted && (
+          <p className="training-card__completed-label">
+            Session completed
+          </p>
+        )}
         <h2 className="training-card__title">
           {title}
         </h2>

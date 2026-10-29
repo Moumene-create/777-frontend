@@ -11,6 +11,16 @@ function SessionsPage({
   currentUser,
   onLogout,
 }) {
+  const now = new Date()
+
+  const isSessionCompleted = (session) => {
+    const sessionEndTime = new Date(session.startDateTime)
+    sessionEndTime.setMinutes(
+      sessionEndTime.getMinutes() + session.durationMinutes
+    )
+
+    return sessionEndTime < now
+  }
   const visibleSessions = isAuthenticated
   ? sessions.filter((session) =>
       session.targetAgeCategories.includes(currentUser?.ageCategory)
@@ -49,6 +59,7 @@ function SessionsPage({
             targetAgeCategories={session.targetAgeCategories}
             onRegister={() => onRegister(session.id)}
             onUnregister={() => onUnregister(session.id)}
+            isCompleted={isSessionCompleted(session)}
           />
         )))}
       </section>

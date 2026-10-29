@@ -350,3 +350,13 @@
 .training-card__button_view:active {
   text-decoration: none;
 }
+
+.training-card--completed {
+  opacity: 0.65;
+  filter: grayscale(0.6);
+}
+
+.training-card__completed-label {
+  font-weight: 600;
+  color: #6b7280;
+}
