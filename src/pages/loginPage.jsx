@@ -11,7 +11,7 @@ function handleSubmit(event) {
   onLogin({
     name: 'Participant',
     email: event.target.email.value,
-    ageCategory: '11-14',
+    ageCategory: '18-23',
   })
 
   navigate('/sessions')

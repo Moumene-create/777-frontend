@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import SignUpPage from './pages/SignUpPage'
@@ -9,10 +9,53 @@ import { mockSessions } from './data/mockSessions'
 import { isBeforeRegistrationCutoff } from './utils/sessionStatus';
 
 function App() {
-  const [registeredSessionIds, setRegisteredSessionIds] = useState([])
-  const [sessions, setSessions] = useState(mockSessions)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [currentUser, setCurrentUser] = useState(null)
+  const [registeredSessionIds, setRegisteredSessionIds] = useState(() => {
+  const savedIds = localStorage.getItem('registeredSessionIds')
+
+  return savedIds ? JSON.parse(savedIds) : []
+})
+  const [sessions] = useState(mockSessions)
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem('currentUser')
+
+    return savedUser ? JSON.parse(savedUser) : null
+  })
+
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => localStorage.getItem('currentUser') !== null
+  )
+  useEffect(() => {
+  if (currentUser) {
+    localStorage.setItem('currentUser', JSON.stringify(currentUser))
+  } else {
+    localStorage.removeItem('currentUser')
+  }
+}, [currentUser])
+useEffect(() => {
+  localStorage.setItem(
+    'registeredSessionIds',
+    JSON.stringify(registeredSessionIds)
+  )
+}, [registeredSessionIds])
+const sessionsWithLiveCounts = sessions.map((session) => {
+  const isCurrentlyRegistered = registeredSessionIds.includes(session.id)
+
+  return {
+    ...session,
+    registeredCount: isCurrentlyRegistered
+      ? session.registeredCount + 1
+      : session.registeredCount,
+  }
+})
+function handleUnregister(sessionId) {
+  if (!isAuthenticated) return;
+  if (!registeredSessionIds.includes(sessionId)) return;
+
+  setRegisteredSessionIds((currentIds) =>
+    currentIds.filter((id) => id !== sessionId)
+  );
+}
+
 function handleRegister(sessionId) {
   const session = sessions.find((item) => item.id === sessionId);
 
@@ -26,41 +69,10 @@ function handleRegister(sessionId) {
   if (session.registeredCount >= session.maxCapacity) return;
   if (!isBeforeRegistrationCutoff(session)) return;
 
-  setRegisteredSessionIds((currentIds) => [
-    ...currentIds,
-    sessionId,
-  ]);
-
-  setSessions((currentSessions) =>
-    currentSessions.map((item) =>
-      item.id === sessionId
-        ? { ...item, registeredCount: item.registeredCount + 1 }
-        : item
-    )
-  );
-}
-function handleLogin(userData) {
-  setIsAuthenticated(true)
-  setCurrentUser(userData)
-}
-
-function handleLogout() {
-  setIsAuthenticated(false)
-  setCurrentUser(null)
-}
-function handleUnregister(sessionId) {
-  const isRegistered = registeredSessionIds.includes(sessionId)
-  const session = sessions.find((item) => item.id === sessionId);
-
-  if (!isAuthenticated || !session) return;
-  if (!isBeforeRegistrationCutoff(session)) return;
-  if (!isRegistered) {
-    return
-  }
-
-  setRegisteredSessionIds((currentIds) =>
-    currentIds.filter((id) => id !== sessionId)
-  )
+    setRegisteredSessionIds((currentIds) => [
+      ...currentIds,
+      sessionId,
+    ])
 
   setSessions((currentSessions) =>
     currentSessions.map((session) =>
@@ -73,6 +85,15 @@ function handleUnregister(sessionId) {
     )
   )
 }
+function handleLogin(userData) {
+  setIsAuthenticated(true)
+  setCurrentUser(userData)
+}
+function handleLogout() {
+  setIsAuthenticated(false)
+  setCurrentUser(null)
+}
+
 
   return (
     <Routes>
@@ -105,7 +126,7 @@ function handleUnregister(sessionId) {
         path="/sessions"
         element={
           <SessionsPage
-            sessions={sessions}
+            sessions={sessionsWithLiveCounts}
             registeredSessionIds={registeredSessionIds}
             onRegister={handleRegister}
             onUnregister={handleUnregister}
@@ -119,7 +140,7 @@ function handleUnregister(sessionId) {
         path="/sessions/:sessionId"
         element={
           <SessionDetailsPage
-            sessions={sessions}
+            sessions={sessionsWithLiveCounts}
             registeredSessionIds={registeredSessionIds}
             onRegister={handleRegister}
             onUnregister={handleUnregister}

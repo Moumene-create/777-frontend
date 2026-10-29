@@ -357,6 +357,7 @@
 }
 
 .training-card__completed-label {
+  margin-top: -10%;
   font-weight: 600;
   color: #6b7280;
 }

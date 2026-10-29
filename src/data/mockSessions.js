@@ -82,7 +82,7 @@ export const mockSessions = [{
         description:
           'Discover how websites work and the roles of HTML, CSS, and JavaScript.',
         date: '5 October 2026',
-        targetAgeCategories: ['31-45'],
+        targetAgeCategories: ['18-23'],
         time: '14:00',
         duration: '90 minutes',
         startDateTime: '2026-10-05T14:00:00+01:00',

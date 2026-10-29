@@ -45,6 +45,7 @@ function SessionsPage({
         
           visibleSessions.map((session) => (
           <TrainingCard
+            key={session.id}
             id={session.id}
             title={session.title}
             description={session.description}

@@ -79,11 +79,11 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
     setIsSubmitting(true);
 
     const userData = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
+      firstName: formData.first_name,
+      lastName: formData.last_name,
       email: formData.email,
       phone: formData.phone,
-      dateOfBirth: formData.dateOfBirth,
+      dateOfBirth: formData.date_of_birth,
       wilaya: formData.wilaya,
       password: formData.password,
     };
@@ -217,8 +217,7 @@ return (
 
           <div className="ran-form__field">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
+            <input id="password"
               name="password"
               type="password"
               value={formData.password}
