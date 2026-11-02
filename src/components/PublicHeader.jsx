@@ -59,26 +59,26 @@ function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
         Sessions
       </NavLink>
 
-      {isAuthenticated ? (
-        <>
-          <NavLink
-            className={({ isActive }) =>
-              `public-header__login ${isActive ? 'public-header__signup' : ''}`
-            }
-            to="/my-sessions"
-          >
-            My sessions
-          </NavLink>
+        {isAuthenticated ? (
+          <>
+            <NavLink
+              className={({ isActive }) =>
+                `public-header__login ${isActive ? 'public-header__signup' : ''}`
+              }
+              to="/my-sessions"
+            >
+              My sessions
+            </NavLink>
 
-          <button
-            type="button"
-            className="public-header__logout"
-            onClick={handleLogoutClick}
-          >
-            Log out
-          </button>
-        </>
-      ) : (
+            <button
+              type="button"
+              className="public-header__logout"
+              onClick={handleLogoutClick}
+            >
+              Log out
+            </button>
+          </>
+        ) : (
         <>
           <NavLink
             className={({ isActive }) =>

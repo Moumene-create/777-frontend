@@ -7,6 +7,7 @@ import SessionsPage from './pages/SessionsPage'
 import SessionDetailsPage from './pages/SessionDetailsPage'
 import { mockSessions } from './data/mockSessions'
 import { isBeforeRegistrationCutoff } from './utils/sessionStatus';
+import MySessionsPage from './pages/MySessionsPage'
 
 function App() {
   const [registeredSessionIds, setRegisteredSessionIds] = useState(() => {
@@ -74,16 +75,6 @@ function handleRegister(sessionId) {
       sessionId,
     ])
 
-  setSessions((currentSessions) =>
-    currentSessions.map((session) =>
-      session.id === sessionId
-        ? {
-            ...session,
-            registeredCount: Math.max(0, session.registeredCount - 1),
-          }
-        : session
-    )
-  )
 }
 function handleLogin(userData) {
   setIsAuthenticated(true)
@@ -144,6 +135,18 @@ function handleLogout() {
             registeredSessionIds={registeredSessionIds}
             onRegister={handleRegister}
             onUnregister={handleUnregister}
+            isAuthenticated={isAuthenticated}
+            currentUser={currentUser}
+            onLogout={handleLogout}
+          />
+        }
+      />
+      <Route
+        path="/my-sessions"
+        element={
+          <MySessionsPage
+            sessions={sessionsWithLiveCounts}
+            registeredSessionIds={registeredSessionIds}
             isAuthenticated={isAuthenticated}
             currentUser={currentUser}
             onLogout={handleLogout}

@@ -1,0 +1,16 @@
+.my-sessions__title {
+  margin-bottom: 24px;
+}
+
+.my-sessions__list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.my-sessions__item {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
