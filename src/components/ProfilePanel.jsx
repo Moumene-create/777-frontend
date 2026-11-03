@@ -106,7 +106,7 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
           isEditing ? 'profile-panel__surface--editing' : ''
         }`}
       >
-        <div className="profile-panel__toolbar">
+        <div className="profile-panel__toolbar" hidden={isEditing}>
         {!isEditing && (
           <button
             type="button"
@@ -116,16 +116,6 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
             update profile
           </button>
         )}
-        <div
-        className="profile-panel__folder"
-        hidden={isEditing}
-      >
-        <FolderIllustration
-          documentImage={folderImage}
-          label="Mes certificats"
-          onOpenChange={onCertificatesOpenChange}
-        />
-      </div>
       </div>
         <div className="profile-panel__avatar" aria-hidden="true">
           {initials}
@@ -245,7 +235,7 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
                 <dd>{profile.email || 'Non renseigné'}</dd>
               </div>
               <div>
-                <dt>Téléphone</dt>
+                <dt>Phone</dt>
                 <dd>{profile.phone || 'Non renseigné'}</dd>
               </div>
               <div>
@@ -253,12 +243,27 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
                 <dd>{profile.wilaya || 'Non renseignée'}</dd>
               </div>
               <div>
-                <dt>Catégorie d’âge</dt>
+                <dt>Date of birth</dt>
+                <dd>{profile.dateOfBirth || 'Non renseignée'}</dd>
+              </div>
+              <div>
+                <dt>Age category</dt>
                 <dd>{currentUser?.ageCategory || 'Non renseignée'}</dd>
               </div>
             </dl>
           </div>
         )}
+
+        <div
+        className="profile-panel__folder"
+        hidden={isEditing}
+      >
+        <FolderIllustration
+          documentImage={folderImage}
+          label="Certificates"
+          onOpenChange={onCertificatesOpenChange}
+        />
+      </div>
       </div>
 
       {message && <p role="status">{message}</p>}

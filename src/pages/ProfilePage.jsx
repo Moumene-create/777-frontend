@@ -37,8 +37,8 @@ export default function ProfilePage({
       hidden={!showCertificates}
     >
     
-      <h3>Mes certificats</h3>
-      <p>Aucun certificat disponible pour le moment.</p>
+      <h3>Certificats</h3>
+      <p>No certificate available at the moment.</p>
     </div>
  
 </section>

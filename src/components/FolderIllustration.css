@@ -1,14 +1,16 @@
-
 .folder-illustration {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  width: 240px;
+  gap: 12px;
+  width: 100%;
+  max-width: 220px;
+  margin: 0;
   padding: 0;
   border: 0;
   background: transparent;
   color: var(--primary-navy);
+  font: inherit;
   cursor: pointer;
 }
 
@@ -21,46 +23,50 @@
 .folder-illustration__scene {
   position: relative;
   display: block;
-  width: 210px;
-  height: 225px;
+  width: 100%;
+  aspect-ratio: 1.1;
   perspective: 800px;
 }
 
-.folder-illustration__back {
+.folder-illustration__back,
+.folder-illustration__flap {
   position: absolute;
-  bottom: 10px;
-  left: -5px;
+  bottom: 5%;
+  left: 10%;
   display: block;
-  width: 150px;
-  height: 100px;
+  width: 80%;
+  height: 52%;
   border-radius: 14px;
-  background: #2563eb;
+}
+
+.folder-illustration__back {
+  background: var(--primary-blue);
   box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.35);
-  
 }
 
 .folder-illustration__documents {
   position: absolute;
-  bottom: 14px;
-  left: 30px;
+  bottom: 8%;
+  left: 50%;
   display: block;
-  width: 103px;
-  height: 100px;
+  width: 0;
+  height: 55%;
 }
 
 .folder-illustration__document {
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: -35px;
   display: flex;
   flex-direction: column;
   gap: 7px;
+  box-sizing: border-box;
   width: 70px;
   height: 100px;
-  padding: 18px 11px;
-  border: 1px solid #e2e8f0;
-  border-radius: 11px;
-  background: #ffffff;
+  padding: 10px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--card-bg);
   box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
   transform-origin: bottom center;
 }
@@ -90,33 +96,21 @@
 }
 
 .folder-illustration__flap {
-  position: absolute;
-  bottom: 10px;
-  left: -5px;
-  display: block;
-  width: 150px;
-  height: 100px;
   border: 1px solid #60a5fa;
-  border-radius: 14px;
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.72),
-    rgba(37, 99, 235, 0.92)
-  );
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.72), rgba(37, 99, 235, 0.92));
   box-shadow: inset 0 0 9px rgba(255, 255, 255, 0.2);
   transform-origin: bottom center;
   transform-style: preserve-3d;
   backface-visibility: hidden;
-  
 }
 
 .folder-illustration__flap::before {
   content: '';
   position: absolute;
-  top: -20px;
-  left: 0;
-  width: 84px;
-  height: 28px;
+  top: -18px;
+  left: -1px;
+  width: 44%;
+  height: 24px;
   border: 1px solid #60a5fa;
   border-bottom: 0;
   border-radius: 12px 12px 0 0;
@@ -126,20 +120,12 @@
 .folder-illustration__label {
   font-size: 0.875rem;
   font-weight: 700;
-  margin-right: 3.85rem;
-  margin-top:-1rem
+  text-align: center;
 }
+
 .folder-illustration__certificate {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-@media (max-width: 600px) {
-  .folder-illustration {
-    width: 100%;
-  }
-}
-* {
-  box-sizing: border-box;
 }
