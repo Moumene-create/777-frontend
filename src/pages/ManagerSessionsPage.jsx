@@ -1,6 +1,7 @@
 import PublicHeader from '../components/PublicHeader'
 import { getSessionStatus } from '../utils/sessionStatus'
 import './ManagerSessionsPage.css'
+import { Link } from 'react-router-dom'
 
 export default function ManagerSessionsPage({
   sessions = [],
@@ -22,10 +23,13 @@ export default function ManagerSessionsPage({
         <p className="manager-sessions__eyebrow">Session manager</p>
         <h1>Session management</h1>
         <p>Review training sessions and registration counts.</p>
+        <Link to="/manager/sessions/new">
+        Create session
+        </Link>
       </header>
 
       <p className="manager-sessions__notice">
-        Development preview — mock data, no management actions enabled.
+        Development preview : mock data, no management actions enabled.
       </p>
 
       {sessions.length === 0 ? (

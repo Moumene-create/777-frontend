@@ -12,6 +12,7 @@ import ProfilePage from './pages/ProfilePage'
 import { calculateAgeCategory } from './utils/ageCategory'
 import { isWithinJoinWindow } from './utils/sessionStatus'
 import ManagerSessionsPage from './pages/ManagerSessionsPage'
+import CreateSessionPage from './pages/CreateSessionPage'
 
 const testSession = {
   startDateTime: '2026-11-04T14:00:00+01:00',
@@ -229,6 +230,22 @@ function handleUpdateProfile(updatedData) {
           isAuthenticated ? (
             <ManagerSessionsPage
               sessions={sessionsWithLiveCounts}
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+              onLogout={handleLogout}
+            />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+    )}
+    {import.meta.env.DEV && (
+      <Route
+        path="/manager/sessions/new"
+        element={
+          isAuthenticated ? (
+            <CreateSessionPage
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
               onLogout={handleLogout}
