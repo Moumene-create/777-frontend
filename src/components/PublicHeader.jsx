@@ -69,7 +69,14 @@ function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
             >
               My sessions
             </NavLink>
-
+              <NavLink
+                className={({ isActive }) =>
+                  `public-header__login ${isActive ? 'public-header__signup' : ''}`
+                }
+                to="/profile"
+              >
+                Profile
+              </NavLink>
             <button
               type="button"
               className="public-header__logout"

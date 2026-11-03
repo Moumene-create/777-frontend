@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
 import './LoginPage.css'
+import FolderIllustration from '../components/FolderIllustration'
 
 function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
@@ -62,6 +63,7 @@ function handleSubmit(event) {
         </div>
       </section>
     </main>
+    
   )
 }
 

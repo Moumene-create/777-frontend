@@ -52,17 +52,20 @@ function SessionDetailsPage({
   
   const isRegistrationClosed =
     !isBeforeRegistrationCutoff(session, now)
-  const isEligible = session.targetAgeCategories.includes(
-  currentUser?.ageCategory
-)
+    
+  const isEligible = isAuthenticated
+    ? session.targetAgeCategories.includes(currentUser?.ageCategory)
+    : true
 
   const eligibilityMessage = isEligible
     ? null
     : 'This session is not available for your age category.'
+
   const isActionDisabled =
     isRegistrationClosed ||
     (isFull && !isRegistered) ||
     !isEligible
+
   function handleRegistrationClick() {
     if (isActionDisabled) return
 
@@ -109,7 +112,7 @@ function SessionDetailsPage({
             <p>{session.Prerequisites}</p>
           </section>
           <p className="session-details__cutoff-message">
-              Note : Registration and cancellation close one hour before the
+              Note: Registration and cancellation close one hour before the
               session starts.
             </p>
         </section>

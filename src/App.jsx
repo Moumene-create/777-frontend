@@ -8,6 +8,8 @@ import SessionDetailsPage from './pages/SessionDetailsPage'
 import { mockSessions } from './data/mockSessions'
 import { isBeforeRegistrationCutoff } from './utils/sessionStatus';
 import MySessionsPage from './pages/MySessionsPage'
+import ProfilePage from './pages/ProfilePage'
+import { calculateAgeCategory } from './utils/ageCategory'
 
 function App() {
   const [registeredSessionIds, setRegisteredSessionIds] = useState(() => {
@@ -84,7 +86,16 @@ function handleLogout() {
   setIsAuthenticated(false)
   setCurrentUser(null)
 }
+function handleUpdateProfile(updatedData) {
+  const ageCategory = calculateAgeCategory(updatedData.dateOfBirth)
 
+  setCurrentUser((currentUser) => ({
+    ...currentUser,
+    ...updatedData,
+    fullName: `${updatedData.firstName} ${updatedData.lastName}`.trim(),
+    ageCategory,
+  }))
+}
 
   return (
     <Routes>
@@ -151,6 +162,21 @@ function handleLogout() {
             currentUser={currentUser}
             onLogout={handleLogout}
           />
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          isAuthenticated ? (
+            <ProfilePage
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+              onLogout={handleLogout}
+              onUpdateProfile={handleUpdateProfile}
+            />
+          ) : (
+            <Navigate to="/login" replace />
+          )
         }
       />
     </Routes>

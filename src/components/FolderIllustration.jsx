@@ -8,21 +8,26 @@ const documents = [
   { id: 3, offsetX: -40, offsetY: -32, rotation: -8 },
 ]
 
-function FolderIllustration() {
+function FolderIllustration({  documentImage,
+  label = 'View training documents',
+onOpenChange,}) {
   const [isOpen, setIsOpen] = useState(false)
   const shouldReduceMotion = useReducedMotion()
 
   const handleToggle = () => {
-    setIsOpen((currentValue) => !currentValue)
-  }
+    const nextIsOpen = !isOpen
 
+    setIsOpen(nextIsOpen)
+    onOpenChange?.(nextIsOpen)
+  }
+  
   return (
     <button
       type="button"
       className="folder-illustration"
       onClick={handleToggle}
       aria-pressed={isOpen}
-      aria-label={isOpen ? 'Close training documents folder' : 'Open training documents folder'}
+      aria-label={label}
     >
       <span className="folder-illustration__scene" aria-hidden="true">
         <span className="folder-illustration__back" />
@@ -43,10 +48,20 @@ function FolderIllustration() {
                 damping: 14,
               }}
             >
-              <span className="folder-illustration__document-title" />
-              <span className="folder-illustration__document-line" />
-              <span className="folder-illustration__document-line" />
-              <span className="folder-illustration__document-line" />
+              {documentImage ? (
+              <img
+                className="folder-illustration__certificate"
+                src={documentImage}
+                alt=""
+              />
+            ) : (
+              <>
+                <span className="folder-illustration__document-title" />
+                <span className="folder-illustration__document-line" />
+                <span className="folder-illustration__document-line" />
+                <span className="folder-illustration__document-line" />
+              </>
+)}
             </motion.span>
           ))}
         </span>
@@ -65,7 +80,7 @@ function FolderIllustration() {
       </span>
 
       <span className="folder-illustration__label">
-        {isOpen ? 'Training documents open' : 'View training documents'}
+        {label}
       </span>
     </button>
   )

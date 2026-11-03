@@ -1,0 +1,233 @@
+.profile-panel {
+  width: 100%;
+}
+
+.profile-panel__toolbar {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  margin: 0;
+}
+
+.profile-panel__surface {
+  position: relative;
+  padding-top: 96px;  
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+  min-height: 340px;
+  padding: clamp(24px, 4vw, 64px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 28px;
+  /* background: linear-gradient(
+    115deg,
+    #9be3f3,
+    var(--bg-soft-blue) ,
+    #9be3f3
+  ); */
+  background: linear-gradient(
+    115deg,
+    #cdf0f8,
+    var(--bg-soft-blue) ,
+     #cdf0f8
+  );
+  position: relative;
+  padding-top: 96px;
+}
+
+.profile-panel__surface--editing {
+    background: linear-gradient(
+        115deg,
+        #cdf0f8,
+        var(--bg-soft-blue) ,
+        #cdf0f8
+    );
+}
+
+.profile-panel__avatar {
+  display: grid;
+  place-items: center;
+  width: 220px;
+  height: 220px;
+  justify-self: center;
+  border: 5px solid var(--accent-cyan);
+  border-radius: 50%;
+  background: var(--bg-soft-blue);
+  box-shadow: inset 0 0 0 8px var(--card-bg);
+  color: var(--primary-navy);
+  font-size: 4rem;
+  font-weight: 700;
+}
+
+.profile-panel h1 {
+  margin: 0 0 24px;
+  color: var(--primary-navy);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  overflow-wrap: anywhere;
+  
+}
+
+.profile-panel__role {
+  margin: 0 0 4px;
+  color: var(--text-muted);
+  margin-top: -3rem;
+}
+
+.profile-panel__information,
+.profile-panel__form {
+  min-width: 0;
+}
+
+.profile-panel__details {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  
+}
+
+.profile-panel__details > div {
+  display: grid;
+  grid-template-columns: 145px minmax(0, 1fr);
+  gap: 12px;
+  
+}
+
+.profile-panel__details dt {
+  color: var(--text-muted);
+  
+}
+
+.profile-panel__details dd {
+  margin: 0;
+  color: var(--text-main);
+  
+  overflow-wrap: anywhere;
+  
+}
+
+.profile-panel__form fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  
+}
+
+.profile-panel__legend {
+  margin-bottom: 24px;
+  color: var(--text-muted);
+  
+}
+
+.profile-panel__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 20px;
+  
+}
+
+.profile-panel__field {
+  position: relative;
+  display: block;
+  min-width: 0;
+  
+}
+
+.profile-panel__field--wide {
+  grid-column: 1 / -1;
+}
+
+.profile-panel__field > span {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  padding: 0 6px;
+  background: #e7e7e7;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-radius: 1rem;
+}
+
+.profile-panel__field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 58px;
+  padding: 16px;
+  border: 1px solid var(--border-hover);
+  border-radius: 9px;
+  background: var(--card-bg);
+  color: var(--text-main);
+  font: inherit;
+}
+
+.profile-panel__hint {
+  margin: 20px 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.profile-panel__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.profile-panel button {
+  padding: 12px 22px;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-panel__primary {
+  border: 1px solid var(--button-blue);
+  background: var(--button-blue);
+  color: white;
+}
+
+.profile-panel__primary:hover {
+  background: var(--button-blue-hover);
+}
+
+.profile-panel__cancel {
+  border: 1px solid var(--border-subtle);
+  background: var(--card-bg);
+  color: var(--primary-navy);
+}
+
+.profile-panel input:focus-visible,
+.profile-panel button:focus-visible {
+  outline: 3px solid var(--primary-blue);
+  outline-offset: 3px;
+}
+
+.profile-panel button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+@media (max-width: 760px) {
+  .profile-panel__surface {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .profile-panel__avatar {
+    width: 140px;
+    height: 140px;
+    font-size: 2.5rem;
+  }
+
+  .profile-panel__fields {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-panel__details > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}

@@ -1,0 +1,12 @@
+main.profile-layout {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 24px 0 64px;
+}
+
+.profile-page {
+  width: 100%;
+  margin-top: 32px;
+  padding-inline: clamp(16px, 4vw, 64px);
+}

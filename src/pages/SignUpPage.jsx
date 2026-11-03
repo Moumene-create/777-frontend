@@ -85,6 +85,7 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
       phone: formData.phone,
       dateOfBirth: formData.date_of_birth,
       wilaya: formData.wilaya,
+      ageCategory,
       password: formData.password,
     };
 

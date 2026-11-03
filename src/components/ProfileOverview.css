@@ -1,0 +1,221 @@
+.profile-overview {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  margin-top : -100pt;
+}
+
+.profile-overview__banner {
+  height: 290px;
+  background: linear-gradient(
+    180deg,
+    var(--primary-navy),
+
+    var(--button-blue),
+    
+    var(--accent-cyan)
+
+    /* #ffffff */
+  );
+}
+
+.profile-overview__header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 64px 32px 32px;
+}
+
+.profile-overview__avatar {
+  position: absolute;
+  top: -55px;
+  left: 132px;
+  display: grid;
+  place-items: center;
+  width: 110px;
+  height: 110px;
+  border: 5px solid var(--card-bg);
+  border-radius: 50%;
+  background: var(--bg-soft-blue);
+  color: var(--primary-navy);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.profile-overview__identity {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-overview__identity h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  overflow-wrap: anywhere;
+}
+
+.profile-overview__identity p {
+  margin: 8px 0 12px;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.profile-overview__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-overview__badges span {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-soft-blue);
+  color: var(--primary-navy);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.profile-overview__edit {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: var(--radius-inner);
+  background: var(--button-blue);
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-overview__edit:hover {
+  background: var(--button-blue-hover);
+}
+
+.profile-overview__activity {
+  padding: 28px 32px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.profile-overview__activity h2,
+.profile-overview__activity h3 {
+  margin: 0 0 16px;
+  color: var(--primary-navy);
+}
+
+.profile-overview__activity h2 {
+  font-size: 1.4rem;
+}
+
+.profile-overview__activity h3 {
+  font-size: 1.05rem;
+}
+
+.profile-overview__activity-grid {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  align-items: start;
+  gap: 32px;
+}
+
+.profile-overview__folder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-inner);
+  background: var(--card-bg);
+  color: var(--primary-navy);
+  font: inherit;
+  cursor: pointer;
+}
+
+.profile-overview__folder:hover {
+  border-color: var(--button-blue);
+  box-shadow: var(--shadow-card);
+}
+
+.profile-overview__folder img {
+  display: block;
+  width: 100%;
+  max-width: 190px;
+  height: auto;
+}
+
+.profile-overview__folder span {
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+.profile-overview__folder small {
+  margin-top: 4px;
+  color: var(--text-muted);
+}
+
+.profile-overview__sessions p,
+.profile-overview__certificates p {
+  color: var(--text-muted);
+}
+
+.profile-overview__sessions ul,
+.profile-overview__certificates ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.profile-overview__sessions li,
+.profile-overview__certificates li {
+  padding: 10px 0;
+  overflow-wrap: anywhere;
+}
+
+.profile-overview__certificates {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.profile-overview button:focus-visible {
+  outline: 3px solid var(--button-blue);
+  outline-offset: 4px;
+}
+
+@media (max-width: 640px) {
+  .profile-overview__header,
+  .profile-overview__activity {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .profile-overview__avatar {
+    left: 20px;
+  }
+
+  .profile-overview__activity-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .profile-overview__folder {
+    max-width: 260px;
+    justify-self: center;
+  }
+}
+.profile-overview {
+  --profile-inset: clamp(30px, 10vw, 220px);
+}
+
+.profile-overview__header,
+.profile-overview__activity {
+  padding-inline: var(--profile-inset);
+}
+
+.profile-overview__avatar {
+  left: var(--profile-inset);
+}
