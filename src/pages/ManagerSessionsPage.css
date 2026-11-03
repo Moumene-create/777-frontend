@@ -1,0 +1,101 @@
+main.manager-sessions {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 24px clamp(16px, 4vw, 64px) 64px;
+}
+
+.manager-sessions__heading {
+  margin-top: 40px;
+}
+
+.manager-sessions__eyebrow {
+  margin: 0 0 8px;
+  color: var(--button-blue);
+  font-weight: 600;
+}
+
+.manager-sessions__heading > p:last-child {
+  margin: 12px 0 0;
+  color: var(--text-muted);
+}
+
+.manager-sessions__notice {
+  margin: 24px 0;
+  padding: 14px 18px;
+  border-radius: var(--radius-inner);
+  background: var(--bg-soft-blue);
+  color: var(--primary-navy);
+}
+
+.manager-sessions__table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+}
+
+.manager-sessions__table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.manager-sessions__table caption {
+  padding: 18px;
+  color: var(--primary-navy);
+  font-weight: 600;
+  text-align: left;
+}
+
+.manager-sessions__table th,
+.manager-sessions__table td {
+  padding: 18px;
+  border-top: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+
+.manager-sessions__table thead {
+  background: var(--bg-soft-blue);
+  color: var(--primary-navy);
+}
+
+.manager-sessions__table tbody th {
+  min-width: 220px;
+  font-weight: 600;
+}
+
+.manager-sessions__session-title,
+.manager-sessions__instructor {
+  display: block;
+}
+
+.manager-sessions__instructor {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.manager-sessions__status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-soft-blue);
+  color: var(--primary-navy);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.manager-sessions__empty {
+  padding: 32px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-card);
+  color: var(--text-muted);
+}
+
+.manager-sessions__table-wrapper:focus-visible {
+  outline: 3px solid var(--primary-blue);
+  outline-offset: 4px;
+}

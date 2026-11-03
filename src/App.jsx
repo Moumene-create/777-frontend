@@ -10,6 +10,49 @@ import { isBeforeRegistrationCutoff } from './utils/sessionStatus';
 import MySessionsPage from './pages/MySessionsPage'
 import ProfilePage from './pages/ProfilePage'
 import { calculateAgeCategory } from './utils/ageCategory'
+import { isWithinJoinWindow } from './utils/sessionStatus'
+import ManagerSessionsPage from './pages/ManagerSessionsPage'
+
+const testSession = {
+  startDateTime: '2026-11-04T14:00:00+01:00',
+  durationMinutes: 60,
+}
+
+console.table([
+  {
+    case: 'Before access opens',
+    result: isWithinJoinWindow(
+      testSession,
+      new Date('2026-11-04T12:59:59+01:00')
+    ),
+    expected: false,
+  },
+  {
+    case: 'Exactly when access opens',
+    result: isWithinJoinWindow(
+      testSession,
+      new Date('2026-11-04T13:00:00+01:00')
+    ),
+    expected: true,
+  },
+  {
+    case: 'During the session',
+    result: isWithinJoinWindow(
+      testSession,
+      new Date('2026-11-04T14:30:00+01:00')
+    ),
+    expected: true,
+  },
+  {
+    case: 'Exactly at session end',
+    result: isWithinJoinWindow(
+      testSession,
+      new Date('2026-11-04T15:00:00+01:00')
+    ),
+    expected: false,
+  },
+])
+
 
 function App() {
   const [registeredSessionIds, setRegisteredSessionIds] = useState(() => {
@@ -179,6 +222,23 @@ function handleUpdateProfile(updatedData) {
           )
         }
       />
+      {import.meta.env.DEV && (
+      <Route
+        path="/manager/sessions"
+        element={
+          isAuthenticated ? (
+            <ManagerSessionsPage
+              sessions={sessionsWithLiveCounts}
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+              onLogout={handleLogout}
+            />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+    )}
     </Routes>
   )
 }

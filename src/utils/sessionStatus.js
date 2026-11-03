@@ -15,3 +15,23 @@ export function isBeforeRegistrationCutoff(session, now = new Date()) {
 
   return now.getTime() < cutoffTime;
 }
+
+export function isWithinJoinWindow(session, now = new Date()) {
+  const startTime = new Date(session.startDateTime).getTime()
+  const durationMinutes = Number(session.durationMinutes)
+  const currentTime = now.getTime()
+
+  if (
+    !Number.isFinite(startTime) ||
+    !Number.isFinite(durationMinutes) ||
+    durationMinutes <= 0 ||
+    !Number.isFinite(currentTime)
+  ) {
+    return false
+  }
+
+  const joinOpenTime = startTime - 60 * 60 * 1000
+  const endTime = startTime + durationMinutes * 60 * 1000
+
+  return currentTime >= joinOpenTime && currentTime < endTime
+}
