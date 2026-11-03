@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import './ProfilePanel.css'
+import FolderIllustration from './FolderIllustration'
+import folderImage from '../assets/certificat.jpg'
 
 function createDraft(user) {
   return {
@@ -12,7 +14,7 @@ function createDraft(user) {
   }
 }
 
-export default function ProfilePanel({ currentUser, onSave }) {
+export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenChange, }) {
   const [isEditing, setIsEditing] = useState(false)
   const [draft, setDraft] = useState(() => createDraft(currentUser))
   const [isSaving, setIsSaving] = useState(false)
@@ -87,7 +89,7 @@ export default function ProfilePanel({ currentUser, onSave }) {
     try {
       await onSave(updatedProfile)
       setIsEditing(false)
-      setMessage('Profile updated.')
+      setMessage('')
     } catch (saveError) {
       setError(saveError.message || 'profile could not be updated.')
     } finally {
@@ -111,9 +113,19 @@ export default function ProfilePanel({ currentUser, onSave }) {
             className="profile-panel__primary"
             onClick={startEditing}
           >
-            Modifier le profil
+            update profile
           </button>
         )}
+        <div
+        className="profile-panel__folder"
+        hidden={isEditing}
+      >
+        <FolderIllustration
+          documentImage={folderImage}
+          label="Mes certificats"
+          onOpenChange={onCertificatesOpenChange}
+        />
+      </div>
       </div>
         <div className="profile-panel__avatar" aria-hidden="true">
           {initials}
@@ -125,11 +137,11 @@ export default function ProfilePanel({ currentUser, onSave }) {
             onSubmit={handleSubmit}
             aria-label="Modifier mes informations"
           >
-            <h1>Modifier mon profil</h1>
+            <h1>update profile</h1>
 
             <fieldset disabled={isSaving}>
               <legend className="profile-panel__legend">
-                Informations personnelles
+                Personnel infromation
               </legend>
 
               <div className="profile-panel__fields">
