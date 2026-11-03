@@ -45,6 +45,71 @@ main.profile-layout {
   margin: 0;
   color: var(--text-muted);
 }
+.certificate-demo-note {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.certificate-list {
+  display: grid;
+  gap: 16px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.certificate-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-inner);
+  background: var(--card-bg);
+}
+
+.certificate-list__information {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.certificate-list__information h4 {
+  margin: 0 0 6px;
+  color: var(--primary-navy);
+  overflow-wrap: anywhere;
+}
+
+.certificate-list__information p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.certificate-list__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.certificate-list__actions a {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid var(--button-blue);
+  border-radius: var(--radius-pill);
+  color: var(--button-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.certificate-list__actions a:hover {
+  background: var(--bg-soft-blue);
+}
+
+.certificate-list__actions a:focus-visible {
+  outline: 3px solid var(--primary-blue);
+  outline-offset: 3px;
+}
 
 @media (max-width: 760px) {
   .profile-activity__layout {
