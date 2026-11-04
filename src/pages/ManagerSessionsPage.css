@@ -1,12 +1,38 @@
-main.manager-sessions {
+/* ===== 1. Page layout ===== */
+
+.manager-sessions {
+  box-sizing: border-box;
   width: 100%;
   max-width: 1440px;
   margin-inline: auto;
   padding: 24px clamp(16px, 4vw, 64px) 64px;
+  
+  --manager-button-bg: #dbeefa;
+  --manager-button-hover: #c7e4f5;
+  --manager-button-border: #b9dcef;
 }
 
+
+/* ===== 2. Heading ===== */
+
 .manager-sessions__heading {
-  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-block: 40px 24px;
+  padding-right: 24px;
+  margin-bottom: -1rem;
+  margin-top:1rem;
+}
+
+.manager-sessions__heading-text {
+  min-width: 0;
+}
+
+.manager-sessions__heading h1 {
+  margin: 0;
+  color: var(--primary-navy);
 }
 
 .manager-sessions__eyebrow {
@@ -15,18 +41,31 @@ main.manager-sessions {
   font-weight: 600;
 }
 
-.manager-sessions__heading > p:last-child {
+.manager-sessions__subtitle {
   margin: 12px 0 0;
   color: var(--text-muted);
 }
 
+
+/* ===== 3. Notices and empty state ===== */
+
 .manager-sessions__notice {
-  margin: 24px 0;
+  margin-block: 24px;
   padding: 14px 18px;
   border-radius: var(--radius-inner);
   background: var(--bg-soft-blue);
   color: var(--primary-navy);
 }
+
+.manager-sessions__empty {
+  padding: 32px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-card);
+  color: var(--text-muted);
+}
+
+
+/* ===== 4. Table ===== */
 
 .manager-sessions__table-wrapper {
   max-width: 100%;
@@ -88,14 +127,229 @@ main.manager-sessions {
   font-weight: 600;
 }
 
-.manager-sessions__empty {
-  padding: 32px;
-  border: 1px dashed var(--border-subtle);
-  border-radius: var(--radius-card);
+
+/* ===== 5. Action buttons ===== */
+
+.manager-sessions__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.manager-sessions__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+
+  min-height: 36px;
+  padding: 8px 16px;
+
+  border: 1px solid var(--manager-button-border);
+  border-radius: var(--radius-pill);
+  background-color: #b9dcef;
+  color:var(--primary-navy);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  margin-top: .35rem;
+}
+
+.manager-sessions__clear {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--primary-navy);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.manager-sessions__action:not(:disabled):hover {
+  background: var(--manager-button-hover);
+  color: var(--primary-navy);
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 8%);
+}
+.manager-sessions__header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  width: 190px;
+}
+.manager-sessions__action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.manager-sessions__create {
+  width: 100%;
+  font-size: 1rem;
+  background-color:rgb(107, 185, 230);
+  border-radius:0.5rem;
+  padding : 0.5rem;
+  color : white;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+
+/* ===== 6. Filter fields ===== */
+
+.manager-sessions__filter {
+  display: grid;
+  gap: 12px;
+}
+
+.manager-sessions__search-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+
+  min-width: 180px;
+  max-width: 280px;
+  min-height: 42px;
+  padding: 9px 12px;
+
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: 0 2px 5px rgb(0 0 0 / 3%);
+
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.manager-sessions__search-field:hover {
+  border-color: var(--button-blue);
+}
+
+.manager-sessions__search-field input,
+.manager-sessions__search-field select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 22px;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-main);
+
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.manager-sessions__search-field input::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+.manager-sessions__search-icon {
+  flex-shrink: 0;
   color: var(--text-muted);
 }
 
+.manager-sessions__date-field {
+  min-width: 170px;
+  max-width: 210px;
+}
+
+.manager-sessions__status-field {
+  min-width: 150px;
+  max-width: 180px;
+}
+
+
+/* ===== 7. Filter toolbar ===== */
+
+.manager-sessions__filter-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.manager-sessions__filter-toolbar p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.manager-sessions__filter-toolbar button {
+  padding: 8px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--primary-navy);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.manager-sessions__filter-toolbar button:not(:disabled):hover {
+  background: var(--bg-soft-blue);
+}
+
+.manager-sessions__filter-toolbar button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* ===== 8. Keyboard focus ===== */
+
+.manager-sessions__action:focus-visible,
+.manager-sessions__filter-toolbar button:focus-visible,
 .manager-sessions__table-wrapper:focus-visible {
   outline: 3px solid var(--primary-blue);
-  outline-offset: 4px;
+  outline-offset: 3px;
+}
+
+.manager-sessions__search-field:focus-within {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+  border-color: var(--button-blue);
+}
+
+.manager-sessions__search-field input:focus,
+.manager-sessions__search-field select:focus {
+  outline: none;
+}
+
+
+/* ===== 9. Mobile layout ===== */
+
+@media (max-width: 650px) {
+  .manager-sessions__heading {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-right: 0;
+  }
+
+  .manager-sessions__header-actions {
+  margin-left: auto;
+}
+
+  .manager-sessions__table th,
+  .manager-sessions__table td {
+    padding: 14px;
+  }
 }

@@ -2,6 +2,8 @@ import PublicHeader from '../components/PublicHeader'
 import { getSessionStatus } from '../utils/sessionStatus'
 import './ManagerSessionsPage.css'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import CancelSessionDialog from '../components/CancelSessionDialog'
 
 export default function ManagerSessionsPage({
   sessions = [],
@@ -9,8 +11,26 @@ export default function ManagerSessionsPage({
   currentUser,
   onLogout,
 }) {
+  const [sessionToCancel, setSessionToCancel] = useState(null)
   const now = new Date()
+  const [sessionSearch, setSessionSearch] = useState('')
+  const [scheduleDate, setScheduleDate] = useState('')
+  const searchTerm = sessionSearch.trim().toLowerCase()
 
+  const filteredSessions = sessions.filter((session) => {
+    const searchableText =
+      `${session.title ?? ''} ${session.instructor ?? ''}`.toLowerCase()
+
+    const matchesSearch = searchableText.includes(searchTerm)
+
+    const matchesDate =
+      !scheduleDate ||
+      new Date(session.startDateTime).toDateString() ===
+        new Date(`${scheduleDate}T00:00:00`).toDateString()
+
+    return matchesSearch && matchesDate
+  })
+  
   return (
     <main className="manager-sessions">
       <PublicHeader
@@ -19,46 +39,117 @@ export default function ManagerSessionsPage({
         onLogout={onLogout}
       />
 
-      <header className="manager-sessions__heading">
-        <p className="manager-sessions__eyebrow">Session manager</p>
+    <header className="manager-sessions__heading">
+      <div className="manager-sessions__heading-text">
         <h1>Session management</h1>
-        <p>Review training sessions and registration counts.</p>
-        <Link to="/manager/sessions/new">
-        Create session
-        </Link>
-      </header>
+      </div>
 
-      <p className="manager-sessions__notice">
-        Development preview : mock data, no management actions enabled.
-      </p>
-
-      {sessions.length === 0 ? (
-        <p className="manager-sessions__empty">
-          No sessions have been created yet.
-        </p>
-      ) : (
-        <div
-          className="manager-sessions__table-wrapper"
-          role="region"
-          aria-label="Training sessions"
-          tabIndex={0}
+      <div className="manager-sessions__header-actions">
+        <Link
+          className="manager-sessions__action manager-sessions__create"
+          to="/manager/sessions/new"
         >
+          Create session
+        </Link>
+
+        <button
+          className="manager-sessions__clear"
+          type="button"
+          onClick={() => {
+            setSessionSearch('')
+            setScheduleDate('')
+          }}
+          disabled={!sessionSearch && !scheduleDate}
+        >
+          Clear filters
+        </button>
+      </div>
+    </header>
+
+{sessions.length === 0 ? (
+  <p className="manager-sessions__empty">
+    No sessions have been created yet.
+  </p>
+) : (
+  <>
+    <div className="manager-sessions__filter-toolbar">
+      <p role="status">
+        {filteredSessions.length} of {sessions.length} sessions
+      </p>
+    </div>
+
+    <div
+      className="manager-sessions__table-wrapper"
+      role="region"
+      aria-label="Training sessions"
+      tabIndex={0}
+    >
+          
           <table className="manager-sessions__table">
             <caption>Training session overview</caption>
 
             <thead>
               <tr>
-                <th scope="col">Session</th>
-                <th scope="col">Schedule</th>
+                <th scope="col">
+                  <label className="manager-sessions__filter">
+                    <span>Session</span>
+
+                    <span className="manager-sessions__search-field">
+                      <svg
+                        className="manager-sessions__search-icon"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                      </svg>
+
+                      <input
+                        type="search"
+                        aria-label="Search sessions by title or instructor"
+                        placeholder="Search sessions..."
+                        value={sessionSearch}
+                        onChange={(event) => setSessionSearch(event.target.value)}
+                      />
+                    </span>
+                  </label>
+                </th>
+                <th scope="col">
+                  <label className="manager-sessions__filter">
+                    <span>Schedule</span>
+
+                    <span className="manager-sessions__search-field manager-sessions__date-field">
+                      <input
+                        type="date"
+                        aria-label="Filter sessions by scheduled date"
+                        value={scheduleDate}
+                        onChange={(event) => setScheduleDate(event.target.value)}
+                      />
+                    </span>
+                  </label>
+                </th>
                 <th scope="col">Status</th>
                 <th scope="col">Registrations</th>
                 <th scope="col">Age categories</th>
                 <th scope="col">Actions</th>
+
               </tr>
             </thead>
 
             <tbody>
-              {sessions.map((session) => {
+              {filteredSessions.length === 0 && (
+                <tr>
+                  <td colSpan={6}>
+                    No sessions match your search.
+                  </td>
+                </tr>
+              )}
+              {filteredSessions.map((session) => {
                 const status = getSessionStatus(session, now)
 
                 return (
@@ -70,6 +161,12 @@ export default function ManagerSessionsPage({
                       <span className="manager-sessions__instructor">
                         {session.instructor}
                       </span>
+                      <Link
+                        className="manager-sessions__action"
+                        to={`/manager/sessions/${session.id}/attendance`}
+                      >
+                        Attendance
+                      </Link>
                     </th>
 
                     <td>
@@ -94,18 +191,44 @@ export default function ManagerSessionsPage({
                       {session.registeredCount} / {session.maxCapacity}
                     </td>
 
-                    <td>{session.targetAgeCategories.join(', ')}</td>
-                    <td>
-                    <Link to={`/manager/sessions/${session.id}/edit`}>
-                      Edit
-                    </Link>
+                  <td>{session.targetAgeCategories.join(', ')}</td>
+
+    
+
+                  <td>
+                    <div className="manager-sessions__actions">
+                      <Link
+                        className="manager-sessions__action"
+                        to={`/manager/sessions/${session.id}/edit`}
+                      >
+                        Edit
+                      </Link>
+
+                      <button
+                        className="manager-sessions__action"
+                        type="button"
+                        onClick={() => setSessionToCancel(session)}
+                        disabled={status === 'CANCELLED'}
+                      >
+                        Cancel
+                      </button>
+                      
+                    </div>
                   </td>
+                  
                   </tr>
                 )
               })}
             </tbody>
           </table>
         </div>
+        </>
+      )}
+      {sessionToCancel && (
+        <CancelSessionDialog
+          session={sessionToCancel}
+          onClose={() => setSessionToCancel(null)}
+        />
       )}
     </main>
   )

@@ -236,9 +236,7 @@ export default function SessionForm({
         </button>
         </div>
 
-        <p id="session-save-hint" className="session-form__hint">
-          Saving will be connected in the next implementation step.
-        </p>
+        
       </form>
   )
 }

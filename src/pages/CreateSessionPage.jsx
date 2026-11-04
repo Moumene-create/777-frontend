@@ -19,12 +19,9 @@ export default function CreateSessionPage({
       <header className="create-session__heading">
         <Link to="/manager/sessions">← Session management</Link>
         <h1>Create session</h1>
-        <p>Schedule a training session for eligible participants.</p>
       </header>
 
-      <p className="create-session__notice">
-        Development preview — this form does not save sessions yet.
-      </p>
+      
 
       <SessionForm />
     </main>

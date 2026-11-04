@@ -14,6 +14,8 @@ import { isWithinJoinWindow } from './utils/sessionStatus'
 import ManagerSessionsPage from './pages/ManagerSessionsPage'
 import CreateSessionPage from './pages/CreateSessionPage'
 import EditSessionPage from './pages/EditSessionPage'
+import AttendanceValidationPage from './pages/AttendanceValidationPage'
+
 
 const testSession = {
   startDateTime: '2026-11-04T14:00:00+01:00',
@@ -291,6 +293,23 @@ function handleUpdateProfile(updatedData) {
         }
       />
     )}
+  {import.meta.env.DEV && (
+    <Route
+      path="/manager/sessions/:sessionId/attendance"
+      element={
+        isAuthenticated ? (
+          <AttendanceValidationPage
+            sessions={sessionsWithLiveCounts}
+            isAuthenticated={isAuthenticated}
+            currentUser={currentUser}
+            onLogout={handleLogout}
+          />
+        ) : (
+          <Navigate to="/login" replace />
+        )
+      }
+    />
+  )}
     </Routes>
   )
 }
