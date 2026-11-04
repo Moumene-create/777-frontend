@@ -53,6 +53,7 @@ export default function ManagerSessionsPage({
                 <th scope="col">Status</th>
                 <th scope="col">Registrations</th>
                 <th scope="col">Age categories</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
 
@@ -94,6 +95,11 @@ export default function ManagerSessionsPage({
                     </td>
 
                     <td>{session.targetAgeCategories.join(', ')}</td>
+                    <td>
+                    <Link to={`/manager/sessions/${session.id}/edit`}>
+                      Edit
+                    </Link>
+                  </td>
                   </tr>
                 )
               })}
