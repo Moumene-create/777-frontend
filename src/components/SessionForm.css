@@ -76,6 +76,7 @@
   grid-column:1;
   
 }
+
 .session-form__field--wide_one {
   grid-column:1/-1;
   
@@ -94,6 +95,7 @@
   color: var(--text-main);
   font: inherit;
 }
+
 .session-form__field textarea {
   resize: vertical;
 }
@@ -161,6 +163,7 @@
 .session-form a {
   color: var(--button-blue);
 }
+
 .session-form__row-three {
   grid-column: 1 / -1;           /* span the full width of the parent grid */
   display: grid;
@@ -168,12 +171,13 @@
   gap: 24px;
 }
 
-@media (max-width: 900px) {
+@media (width <= 900px) {
   .session-form__row-three {
     grid-template-columns: minmax(0, 1fr);   /* stack on smaller screens */
   }
 }
-@media (max-width: 650px) {
+
+@media (width <= 650px) {
   .session-form__grid {
     grid-template-columns: minmax(0, 1fr);
   }

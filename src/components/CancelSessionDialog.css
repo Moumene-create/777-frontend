@@ -50,12 +50,10 @@
   justify-content: center;
   min-height: 42px;
   padding: 10px 18px;
-
-  border: 1px solid rgb(107, 185, 230);
+  border: 1px solid rgb(107 185 230);
   border-radius: var(--radius-pill);
-  background: rgb(107, 185, 230);
-  color: rgb(255, 255, 255);
-
+  background: rgb(107 185 230);
+  color: rgb(255 255 255);
   font: inherit;
   font-weight: 600;
   line-height: 1.2;
@@ -69,10 +67,10 @@
 }
 
 .cancel-session-dialog__actions button:disabled {
-  background: rgb(230, 36, 36);
+  background: rgb(230 36 36);
   opacity: 1;
   cursor: not-allowed;
-  border-color: rgb(230, 36, 36);
+  border-color: rgb(230 36 36);
 }
 
 .cancel-session-dialog__actions button:focus-visible {

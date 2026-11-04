@@ -21,7 +21,7 @@
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
   overflow: hidden;
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #dce5ed;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgb(15 41 66 / 10%);
@@ -34,12 +34,11 @@
   flex-direction: column;
   gap: 1.25rem;
   padding: 1.25rem;
-  background: #ffffff;
-  border-right: 1px solid #ffffff;
+  background: #fff;
+  border-right: 1px solid #fff;
 }
 
 .session-details__image {
-  
   object-fit: cover;
   aspect-ratio: 16 / 9;
   border-radius: 12px;
@@ -49,7 +48,7 @@
   padding: 1rem;
   padding-top: 5px;
   padding-bottom: 5px;
-  background: #ffffff;
+  background: #fff;
   border: 1.5px solid #dce5ed;
   border-radius: 12px;
 }
@@ -86,7 +85,7 @@
   gap: 0.3rem;
   padding: 0.75rem;
   padding-left: 1rem;
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #dce5ed;
   border-radius: 12px;
 }
@@ -104,13 +103,13 @@
   font-weight: 700;
   font-size: x-large ;
 }
+
 .session-details__status {
   margin: 0 0 0.5rem;
   margin-top: -1rem;
   margin-bottom: .5rem;
   color: #000000d2;
   font-weight: 600;
-  font-size: x-large ;
   border:none;
   border-radius: 1rem;
   padding-right:-4rem;
@@ -155,12 +154,9 @@
 
 .session-details__cutoff-message {
   color :  #a61b1b;
-  font-size: 700;
   font : bold;
   font-weight: 700;
   border:none;
-
-  font-size: x-large ;
   display: bottom;
   font-size: large;
   bottom: 0;
@@ -168,7 +164,7 @@
 
 
 
-@media (max-width: 760px) {
+@media (width <= 760px) {
   .session-details {
     grid-template-columns: 1fr;
   }

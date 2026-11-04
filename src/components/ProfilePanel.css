@@ -5,27 +5,15 @@
 
 .profile-panel__surface {
   display: grid;
-
-  grid-template-columns:
-    minmax(140px, 200px)
+  grid-template:
+    "avatar content toolbar" auto "avatar content folder" 1fr / minmax(140px, 200px)
     minmax(0, 1fr)
     220px;
-
-  grid-template-areas:
-    "avatar content toolbar"
-    "avatar content folder";
-
-  grid-template-rows: auto 1fr;
-
   align-items: center;
-  column-gap: clamp(24px, 3vw, 48px);
-  row-gap: 20px;
-
+  gap: 20px clamp(24px, 3vw, 48px);
   padding: clamp(24px, 3vw, 48px);
-
   border: 1px solid var(--border-subtle);
   border-radius: 28px;
-
   background: linear-gradient(
     115deg,
     #cdf0f8,
@@ -33,26 +21,21 @@
     #cdf0f8
   );
 }
-.profile-panel__surface--editing {
-  grid-template-columns:
-    minmax(140px, 200px)
-    minmax(0, 1fr);
 
-  grid-template-areas: "avatar content";
-  grid-template-rows: auto;
+.profile-panel__surface--editing {
+  grid-template:
+    "avatar content" auto / minmax(140px, 200px)
+    minmax(0, 1fr);
 }
 
 .profile-panel__toolbar {
   grid-area: toolbar;
-  justify-self: center;
-  align-self: start;
+  place-self: start center;
 }
 
 .profile-panel__folder {
   grid-area: folder;
-  justify-self: center;
-  align-self: end;
-
+  place-self: end center;
   width: 180px;
   max-width: 100%;
 }
@@ -84,6 +67,7 @@
 .profile-panel [hidden] {
   display: none;
 }
+
 .profile-panel__avatar {
   align-self: center;
 }
@@ -92,6 +76,7 @@
 .profile-panel__form {
   align-self: center;
 }
+
 .profile-panel h1 {
   margin: 0 0 24px;
   color: var(--primary-navy);
@@ -229,16 +214,10 @@
   cursor: wait;
   opacity: 0.65;
 }
-@media (max-width: 1050px) {
+
+@media (width <= 1050px) {
   .profile-panel__surface {
-    grid-template-columns: 140px minmax(0, 1fr);
-
-    grid-template-areas:
-      "toolbar toolbar"
-      "avatar content"
-      ". folder";
-
-    grid-template-rows: auto auto auto;
+    grid-template: "toolbar toolbar" auto "avatar content" auto ". folder" auto / 140px minmax(0, 1fr);
   }
 
   .profile-panel__toolbar,
@@ -252,16 +231,14 @@
   }
 }
 
-@media (max-width: 700px) {
+@media (width <= 700px) {
   .profile-panel__surface {
     grid-template-columns: minmax(0, 1fr);
-
     grid-template-areas:
       "toolbar"
       "avatar"
       "content"
       "folder";
-
     grid-template-rows: auto;
     border-radius: 20px;
   }

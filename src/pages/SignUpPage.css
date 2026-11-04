@@ -17,14 +17,13 @@ main.ran-page {
 .ran-card {
   max-width: none;
   background-color: #faf8f8;
-  
   border-radius: 24px;
-  padding: 0px;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+  padding: 0;
+  box-shadow: 0 20px 50px rgb(15 23 42 / 8%);
 }
 
 .ran-card__header {
-  margin-bottom: 0px;
+  margin-bottom: 0;
   text-align: center;
 }
 
@@ -55,6 +54,7 @@ main.ran-page {
   border-color: #0f172a;
  
 }
+
 .ran-form__submit {
   grid-column: 1 / -1;
 }
@@ -65,10 +65,12 @@ main.ran-page {
   align-items: center;
   gap: 16px;
 }
+
 .ran-form__field input,
 .ran-form__field select {
   width: 100%;
 }
+
 .ran-form__field label {
   width: 140px;
   margin: 0;
@@ -96,7 +98,7 @@ main.ran-page {
 
 .ran-form__field input:focus {
   border-color: #0ea5e9;
-  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.14);
+  box-shadow: 0 0 0 4px rgb(14 165 233 / 14%);
 }
 
 .ran-form__submit {
@@ -106,7 +108,7 @@ main.ran-page {
   border-radius: 14px;
   padding: 14px 18px;
   background: #0f172a;
-  color: #ffffff;
+  color: #fff;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -123,7 +125,7 @@ main.ran-page {
 
 .ran-form__submit:hover {
   background-color: #1e293b;
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 12px 24px rgb(15 23 42 / 16%);
 }
 
 .ran-form__submit:active {
@@ -141,7 +143,7 @@ main.ran-page {
   width: 95%;
   height : 100%;
   max-width: none;
-  background: #ffffff;
+  background: #fff;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: none;
@@ -169,7 +171,7 @@ main.ran-page {
   align-items: center;
   justify-content: center;
   padding: 48px;
-  background: #ffffff;
+  background: #fff;
 }
 
 .ran-card--signup {
@@ -196,6 +198,7 @@ main.ran-page {
   color: #b3261e;
   margin-bottom: -1rem;
 }
+
 /* .ran-form__success {
   margin: 0 0 1rem;
   font-size: 0.85rem;
@@ -209,7 +212,7 @@ main.ran-page {
 }
 
 
-@media (max-width: 1500px) {
+@media (width <= 1500px) {
   .signup-layout {
     grid-template-columns: 1fr;
     min-height: auto;
@@ -250,14 +253,14 @@ main.ran-page {
     margin-left : 2rem;
     margin-right : -12rem;
   }
+
   .ran-form__submit {
     margin-top: 8px;
-    
     border: none;
     border-radius: 14px;
     padding: 14px 18px;
     background: #0f172a;
-    color: #ffffff;
+    color: #fff;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -270,6 +273,7 @@ main.ran-page {
   }
 
 }
+
 .ran-card--signup {
   max-width: 520px;
 }

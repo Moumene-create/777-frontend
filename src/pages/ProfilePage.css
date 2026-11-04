@@ -45,6 +45,7 @@ main.profile-layout {
   margin: 0;
   color: var(--text-muted);
 }
+
 .certificate-demo-note {
   color: var(--text-muted);
   font-size: 0.875rem;
@@ -111,7 +112,7 @@ main.profile-layout {
   outline-offset: 3px;
 }
 
-@media (max-width: 760px) {
+@media (width <= 760px) {
   .profile-activity__layout {
     grid-template-columns: 1fr;
     gap: 24px;

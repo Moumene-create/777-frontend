@@ -186,7 +186,7 @@
   outline-offset: 4px;
 }
 
-@media (max-width: 640px) {
+@media (width <= 640px) {
   .profile-overview__header,
   .profile-overview__activity {
     padding-right: 20px;
@@ -207,6 +207,7 @@
     justify-self: center;
   }
 }
+
 .profile-overview {
   --profile-inset: clamp(30px, 10vw, 220px);
 }

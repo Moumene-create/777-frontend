@@ -16,6 +16,7 @@
   backdrop-filter: blur(12px) saturate(150%);
   box-sizing: border-box;
 }
+
 .public-header__logout,
 .public-header__brand,
 .public-header__login,
@@ -45,10 +46,10 @@
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    rgba(10, 71, 128, 0.945) ,
-    rgb(85, 122, 207) 
+    rgb(10 71 128 / 94.5%) ,
+    rgb(85 122 207) 
   );
-  color: #ffffff;
+  color: #fff;
 }
 
 .public-header__logout {
@@ -59,12 +60,12 @@
   background-color:none ;
   background : none ; 
   font-size: medium;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   cursor: pointer;
 }
 
 .public-header__logobouton {
-  padding: 0.35rem 0rem;
+  padding: 0.35rem 0;
   
 }
 
@@ -75,6 +76,7 @@
   outline-offset: 3px;
   
 }
+
 .public-header__logo {
   display: block;
   width: auto;
@@ -91,7 +93,7 @@
 
 
 
-@media (max-width: 48rem) {
+@media (width <= 48rem) {
   .public-header {
     width: min(59% - 0.9rem, 30rem);
   }
@@ -106,10 +108,10 @@
     border-radius: 999px;
     background: linear-gradient(
     90deg,
-    rgba(10, 71, 128, 0.945) ,
-    rgb(85, 122, 207) 
+    rgb(10 71 128 / 94.5%) ,
+    rgb(85 122 207) 
   );
-    color: #ffffff;
+    color: #fff;
     font: inherit;
     font-weight: 700;
     cursor: pointer;
@@ -126,7 +128,7 @@
     width: min(145% - 0.0rem, 21rem);
     min-height: 50dvh;
     padding: 1rem 0.5rem 1.5rem;
-    background-color: #ffffff;
+    background-color: #fff;
     transform: translateX(180%);
     transition: transform 200ms ease;
     border-radius: 30px;
@@ -141,12 +143,14 @@
     justify-content: center;
     text-align: center;
   }
+
    .public-header__logo {
   display: block;
   height: 2rem;
   width : 4rem;
   gap :2rem;
 }
+
   .public-header__close-button {
     display: inline-flex;
     align-items: center;
