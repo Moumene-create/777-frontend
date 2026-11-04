@@ -33,11 +33,6 @@ export default function ManagerSessionsPage({
   
   return (
     <main className="manager-sessions">
-      <PublicHeader
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        onLogout={onLogout}
-      />
 
     <header className="manager-sessions__heading">
       <div className="manager-sessions__heading-text">
@@ -47,7 +42,7 @@ export default function ManagerSessionsPage({
       <div className="manager-sessions__header-actions">
         <Link
           className="manager-sessions__action manager-sessions__create"
-          to="/manager/sessions/new"
+          to="/manager/new"
         >
           Create session
         </Link>
@@ -163,7 +158,7 @@ export default function ManagerSessionsPage({
                       </span>
                       <Link
                         className="manager-sessions__action"
-                        to={`/manager/sessions/${session.id}/attendance`}
+                        to={`/manager/${session.id}/attendance`}
                       >
                         Attendance
                       </Link>
@@ -199,7 +194,7 @@ export default function ManagerSessionsPage({
                     <div className="manager-sessions__actions">
                       <Link
                         className="manager-sessions__action"
-                        to={`/manager/sessions/${session.id}/edit`}
+                        to={`/manager/${session.id}/edit`}
                       >
                         Edit
                       </Link>

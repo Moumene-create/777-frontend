@@ -1,5 +1,4 @@
 import { Link, useParams } from 'react-router-dom'
-import PublicHeader from '../components/PublicHeader'
 import SessionForm from '../components/SessionForm'
 import './CreateSessionPage.css'
 
@@ -18,15 +17,10 @@ export default function EditSessionPage({
   if (!session) {
     return (
       <main className="create-session">
-        <PublicHeader
-          isAuthenticated={isAuthenticated}
-          currentUser={currentUser}
-          onLogout={onLogout}
-        />
 
         <header className="create-session__heading">
           <h1>Session not found</h1>
-          <Link to="/manager/sessions">
+          <Link to="/manager">
             Back to session management
           </Link>
         </header>
@@ -52,14 +46,10 @@ export default function EditSessionPage({
 
   return (
     <main className="create-session">
-      <PublicHeader
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        onLogout={onLogout}
-      />
+  
 
       <header className="create-session__heading">
-        <Link to="/manager/sessions">
+        <Link to="/manager">
           ← Session management
         </Link>
 

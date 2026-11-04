@@ -21,14 +21,10 @@ export default function AttendanceValidationPage({
 
   return (
     <main className="create-session">
-      <PublicHeader
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        onLogout={onLogout}
-      />
+
 
       <header className="create-session__heading">
-        <Link to="/manager/sessions">
+        <Link to="/manager">
           ← Session management
         </Link>
 

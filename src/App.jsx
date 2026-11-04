@@ -228,7 +228,7 @@ function handleUpdateProfile(updatedData) {
       />
       {import.meta.env.DEV && (
       <Route
-        path="/manager/sessions"
+        path="/manager"
         element={
           isAuthenticated ? (
             <ManagerSessionsPage
@@ -245,7 +245,7 @@ function handleUpdateProfile(updatedData) {
     )}
     {import.meta.env.DEV && (
       <Route
-        path="/manager/sessions/new"
+        path="/manager/new"
         element={
           isAuthenticated ? (
             <CreateSessionPage
@@ -261,7 +261,7 @@ function handleUpdateProfile(updatedData) {
     )}
     {import.meta.env.DEV && (
       <Route
-        path="/manager/sessions/:sessionId/edit"
+        path="/manager/:sessionId/edit"
         element={
           isAuthenticated ? (
             <EditSessionPage
@@ -278,7 +278,7 @@ function handleUpdateProfile(updatedData) {
     )}
     {import.meta.env.DEV && (
       <Route
-        path="/manager/sessions/:sessionId/edit"
+        path="/manager/:sessionId/edit"
         element={
           isAuthenticated ? (
             <EditSessionPage
@@ -295,7 +295,7 @@ function handleUpdateProfile(updatedData) {
     )}
   {import.meta.env.DEV && (
     <Route
-      path="/manager/sessions/:sessionId/attendance"
+      path="/manager/:sessionId/attendance"
       element={
         isAuthenticated ? (
           <AttendanceValidationPage

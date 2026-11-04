@@ -27,6 +27,9 @@ const initialForm = {
   durationMinutes: '60',
   maxCapacity: '100',
   instructor: '',
+  instructor_email: '',
+  instructor_phone: '',
+  Prerequisites: '',
   zoomUrl: '',
   targetAgeCategories: [],
 }
@@ -113,8 +116,21 @@ export default function SessionForm({
               />
             </label>
 
+
+            <label className="session-form__field session-form__field--wide_one">
+              <span>Prerequisites</span>
+              <input
+                name="Prerequisites"
+                value={form.Prerequisites}
+                onChange={handleChange}
+                required
+              />
+            </label>
+
+
+     <div className="session-form__row-three">
             <label className="session-form__field">
-              <span>Instructor name</span>
+              <span>Instructor's name</span>
               <input
                 name="instructor"
                 value={form.instructor}
@@ -122,6 +138,29 @@ export default function SessionForm({
                 required
               />
             </label>
+
+            <label className="session-form__field">
+              <span>Instructor email</span>
+              <input
+                name="instructor_email"
+                type="email"
+                value={form.instructor_email}
+                onChange={handleChange}
+                required
+              />
+            </label>
+
+            <label className="session-form__field">
+              <span>Instructor phone</span>
+              <input
+                name="instructor_phone"
+                type="tel"
+                value={form.instructor_phone}
+                onChange={handleChange}
+                required
+              />
+            </label>
+          </div>
           </div>
         </fieldset>
 
