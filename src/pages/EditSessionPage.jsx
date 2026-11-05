@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import SessionForm from '../components/SessionForm'
 import './CreateSessionPage.css'
+import ManagerHeader from '../components/ManagerHeader'
 
 export default function EditSessionPage({
   sessions = [],
@@ -16,6 +17,7 @@ export default function EditSessionPage({
 
   if (!session) {
     return (
+      
       <main className="create-session">
 
         <header className="create-session__heading">
@@ -45,23 +47,26 @@ export default function EditSessionPage({
   }
 
   return (
-    <main className="create-session">
-  
+    <>
+    <ManagerHeader onLogout={onLogout} />
+      <main className="create-session">
+    
 
-      <header className="create-session__heading">
-        <Link to="/manager">
-          ← Session management
-        </Link>
+        <header className="create-session__heading">
+          <Link to="/manager">
+            ← Session management
+          </Link>
 
-        <h1>Edit session</h1>
-        <p>{session.title}</p>
-      </header>
+          <h1>Edit session</h1>
+          <p>{session.title}</p>
+        </header>
 
-      <SessionForm
-        key={session.id}
-        initialValues={initialValues}
-        submitLabel="Save changes"
-      />
-    </main>
+        <SessionForm
+          key={session.id}
+          initialValues={initialValues}
+          submitLabel="Save changes"
+        />
+      </main>
+    </>
   )
 }

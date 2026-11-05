@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
 import { getSessionStatus } from '../utils/sessionStatus'
 import './CreateSessionPage.css'
+import ManagerHeader from '../components/ManagerHeader'
 
 export default function AttendanceValidationPage({
   sessions = [],
@@ -20,6 +21,9 @@ export default function AttendanceValidationPage({
     getSessionStatus(session, new Date()) === 'COMPLETED'
 
   return (
+     <>
+        <ManagerHeader onLogout={onLogout} />
+    
     <main className="create-session">
 
 
@@ -52,5 +56,6 @@ export default function AttendanceValidationPage({
         </section>
       )}
     </main>
+    </>
   )
 }

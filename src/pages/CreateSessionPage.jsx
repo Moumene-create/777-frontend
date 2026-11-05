@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import SessionForm from '../components/SessionForm'
 import './CreateSessionPage.css'
+import ManagerHeader from '../components/ManagerHeader'
 
 export default function CreateSessionPage({
   isAuthenticated,
@@ -8,6 +9,9 @@ export default function CreateSessionPage({
   onLogout,
 }) {
   return (
+     <>
+    <ManagerHeader onLogout={onLogout} />
+
     <main className="create-session">
 
 
@@ -20,5 +24,6 @@ export default function CreateSessionPage({
 
       <SessionForm />
     </main>
+    </>
   )
 }
