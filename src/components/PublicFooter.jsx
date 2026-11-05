@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom'
 import logo from '../assets/logo_777_blue.png'
 import './PublicFooter.css'
 
+
 function PublicFooter() {
+  
   return (
     <footer className="public-footer">
       <div className="public-footer__content">

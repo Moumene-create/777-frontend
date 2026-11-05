@@ -5,6 +5,9 @@ import './PublicHeader.css'
 function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const isManager =
+  isAuthenticated &&
+  currentUser?.roles?.includes('SESSION_MANAGER') === true
 
   function handleLogoutClick() {
     onLogout()
@@ -40,24 +43,24 @@ function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
         </button>
         
           
-      <NavLink
-        className={({ isActive }) =>
-          `public-header__login ${isActive ? 'public-header__signup' : ''}`
-        }
-        to="/"
-        end
-      >
-        Home
-      </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            `public-header__login ${isActive ? 'public-header__signup' : ''}`
+          }
+          to="/"
+          end
+        >
+          Home
+        </NavLink>
 
-      <NavLink
-        className={({ isActive }) =>
-          `public-header__login ${isActive ? 'public-header__signup' : ''}`
-        }
-        to="/sessions"
-      >
-        Sessions
-      </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            `public-header__login ${isActive ? 'public-header__signup' : ''}`
+          }
+          to="/sessions"
+        >
+          Sessions
+        </NavLink>
 
         {isAuthenticated ? (
           <>
@@ -77,6 +80,15 @@ function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
               >
                 Profile
               </NavLink>
+              {isManager && (
+              <NavLink
+                to="/manager"
+                className="public-header__login"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Manager workspace
+              </NavLink>
+            )}
             <button
               type="button"
               className="public-header__logout"
@@ -105,7 +117,7 @@ function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
             Create account
           </NavLink>
         </>
-      )}
+        )}
         
       </nav>
 

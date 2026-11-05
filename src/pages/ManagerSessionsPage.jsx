@@ -4,6 +4,7 @@ import './ManagerSessionsPage.css'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import CancelSessionDialog from '../components/CancelSessionDialog'
+import ManagerHeader from '../components/ManagerHeader'
 
 export default function ManagerSessionsPage({
   sessions = [],
@@ -32,6 +33,9 @@ export default function ManagerSessionsPage({
   })
   
   return (
+     <>
+    <ManagerHeader onLogout={onLogout} />
+
     <main className="manager-sessions">
 
     <header className="manager-sessions__heading">
@@ -226,5 +230,6 @@ export default function ManagerSessionsPage({
         />
       )}
     </main>
+    </>
   )
 }
