@@ -15,6 +15,7 @@ import ManagerSessionsPage from './pages/ManagerSessionsPage'
 import CreateSessionPage from './pages/CreateSessionPage'
 import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
+import RequireManager from './components/RequireManager'
 
 
 const testSession = {
@@ -230,16 +231,17 @@ function handleUpdateProfile(updatedData) {
       <Route
         path="/manager"
         element={
-          isAuthenticated ? (
+          <RequireManager
+            isAuthenticated={isAuthenticated}
+            currentUser={currentUser}
+          >
             <ManagerSessionsPage
               sessions={sessionsWithLiveCounts}
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
               onLogout={handleLogout}
             />
-          ) : (
-            <Navigate to="/login" replace />
-          )
+          </RequireManager>
         }
       />
     )}
@@ -310,6 +312,7 @@ function handleUpdateProfile(updatedData) {
       }
     />
   )}
+
     </Routes>
   )
 }

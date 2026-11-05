@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
 import './LoginPage.css'
-import FolderIllustration from '../components/FolderIllustration'
 
 function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
@@ -9,13 +8,26 @@ function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
 function handleSubmit(event) {
   event.preventDefault()
 
-  onLogin({
-    name: 'Participant',
-    email: event.target.email.value,
-    ageCategory: '18-23',
-  })
+  const email = event.target.email.value.trim()
 
-  navigate('/sessions')
+  const isMockManager =
+    import.meta.env.DEV &&
+    email.toLowerCase() === 'manager@example.com'
+
+  const user = {
+    name: isMockManager ? 'Session Manager' : 'Participant',
+    email,
+    ageCategory: '18-23',
+    roles: isMockManager
+      ? ['PARTICIPANT', 'SESSION_MANAGER']
+      : ['PARTICIPANT'],
+  }
+
+  onLogin(user)
+
+  navigate(isMockManager ? '/manager' : '/sessions', {
+    replace: true,
+  })
 }
 
   return (
