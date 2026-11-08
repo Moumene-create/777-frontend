@@ -2,19 +2,22 @@ export const mockAttendance = [
   {
     id: 'attendance-001',
     sessionId: '5',
-    participantName: 'Amine'  ,
+    userId: 'mock-user-amine',
+    participantName: 'Amine',
     validatedAt: null,
   },
   {
     id: 'attendance-003',
     sessionId: '5',
-    participantName: 'moumene '  ,
+    userId: 'mock-user-moumene',
+    participantName: 'Moumene',
     validatedAt: null,
   },
   {
     id: 'attendance-002',
     sessionId: '4',
-    participantName: 'Sara ',
+    userId: 'mock-user-sara',
+    participantName: 'Sara',
     validatedAt: null,
   },
 ]

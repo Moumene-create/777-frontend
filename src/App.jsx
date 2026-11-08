@@ -16,6 +16,7 @@ import CreateSessionPage from './pages/CreateSessionPage'
 import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
+import { normalizeBackendUser } from './utils/user'
 
 
 const testSession = {
@@ -23,40 +24,6 @@ const testSession = {
   durationMinutes: 60,
 }
 
-console.table([
-  {
-    case: 'Before access opens',
-    result: isWithinJoinWindow(
-      testSession,
-      new Date('2026-11-04T12:59:59+01:00')
-    ),
-    expected: false,
-  },
-  {
-    case: 'Exactly when access opens',
-    result: isWithinJoinWindow(
-      testSession,
-      new Date('2026-11-04T13:00:00+01:00')
-    ),
-    expected: true,
-  },
-  {
-    case: 'During the session',
-    result: isWithinJoinWindow(
-      testSession,
-      new Date('2026-11-04T14:30:00+01:00')
-    ),
-    expected: true,
-  },
-  {
-    case: 'Exactly at session end',
-    result: isWithinJoinWindow(
-      testSession,
-      new Date('2026-11-04T15:00:00+01:00')
-    ),
-    expected: false,
-  },
-])
 
 
 function App() {
@@ -126,10 +93,14 @@ function handleRegister(sessionId) {
     ])
 
 }
-function handleLogin(userData) {
+
+function handleLogin(backendUser) {
+  const normalizedUser = normalizeBackendUser(backendUser)
+
   setIsAuthenticated(true)
-  setCurrentUser(userData)
+  setCurrentUser(normalizedUser)
 }
+
 function handleLogout() {
   setIsAuthenticated(false)
   setCurrentUser(null)

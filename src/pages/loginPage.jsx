@@ -1,33 +1,38 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
+import { login, getCurrentUser } from '../api/auth'
 import './LoginPage.css'
 
 function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
-function handleSubmit(event) {
-  event.preventDefault()
+  async function handleSubmit(event) {
+    event.preventDefault()
+    const formData = new FormData(event.target)
+    const email = event.target.email.value.trim()
+    const normalizedEmail = email.toLowerCase()
+    const password = formData.get('password') ?? ''
 
-  const email = event.target.email.value.trim()
+    if (!email || !password) {
+      setError('Please enter your email address and password.')
+      return
+    }
+    setIsSubmitting(true)
+    setError('')
 
-  const isMockManager =
-    import.meta.env.DEV &&
-    email.toLowerCase() === 'manager@example.com'
-
-  const user = {
-    name: isMockManager ? 'Session Manager' : 'Participant',
-    email,
-    ageCategory: '18-23',
-    roles: isMockManager
-      ? ['PARTICIPANT', 'SESSION_MANAGER']
-      : ['PARTICIPANT'],
-  }
-
-  onLogin(user)
-
-  navigate(isMockManager ? '/manager' : '/sessions', {
-    replace: true,
-  })
+    try {
+      const tokens = await login({ email, password })
+      const user = await getCurrentUser(tokens.access_token)
+      onLogin(user)
+      navigate(user.role === 'SESSION_MANAGER' ? '/manager' : '/sessions')
+    } catch (requestError) {
+      setError(requestError.message)
+    } finally {
+      setIsSubmitting(false)
+    }
 }
 
   return (
@@ -67,9 +72,17 @@ function handleSubmit(event) {
                 required
               />
             </div>
-
-            <button className="auth-form__submit" type="submit">
-              Log in
+            {error && (
+              <p className="auth-form__error" role="alert">
+                {error}
+              </p>
+            )}
+            <button
+              className="auth-form__submit"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Logging in…' : 'Log in'}
             </button>
           </form>
         </div>

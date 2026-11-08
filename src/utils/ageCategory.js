@@ -2,7 +2,7 @@ export function calculateAgeCategory(dateOfBirth) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateOfBirth || '')) {
     throw new Error('Veuillez saisir une date de naissance valide.')
   }
-
+  
   const [year, month, day] = dateOfBirth.split('-').map(Number)
   const birthDate = new Date(year, month - 1, day)
   const today = new Date()
@@ -39,4 +39,17 @@ export function calculateAgeCategory(dateOfBirth) {
   return categories.find(
     (category) => age >= category.min && age <= category.max
   )?.label || null
+}
+const AGE_CATEGORY_ID_TO_LABEL = {
+  1: '7-10',
+  2: '11-14',
+  3: '15-17',
+  4: '18-23',
+  5: '24-30',
+  6: '31-45',
+  7: '46-60',
+}
+
+export function getAgeCategoryLabel(ageCategoryId) {
+  return AGE_CATEGORY_ID_TO_LABEL[ageCategoryId] ?? null
 }
