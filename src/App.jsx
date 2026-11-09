@@ -17,44 +17,73 @@ import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
 import { normalizeBackendUser } from './utils/user'
-
-
-const testSession = {
-  startDateTime: '2026-11-04T14:00:00+01:00',
-  durationMinutes: 60,
-}
-
-
+import { getSessions } from './api/sessions'
 
 function App() {
+  // these 2 are made so that after refreshing the data remains 
   const [registeredSessionIds, setRegisteredSessionIds] = useState(() => {
   const savedIds = localStorage.getItem('registeredSessionIds')
-
-  return savedIds ? JSON.parse(savedIds) : []
-})
-  const [sessions] = useState(mockSessions)
+  return savedIds ? JSON.parse(savedIds) : []})
   const [currentUser, setCurrentUser] = useState(() => {
     const savedUser = localStorage.getItem('currentUser')
-
     return savedUser ? JSON.parse(savedUser) : null
   })
+ // sessionStorage is browser storage tied to the current browser tab. It is cleared when that tab closes.
+ // it is not a variable that we created 
+  const [accessToken, setAccessToken] = useState(() => sessionStorage.getItem('accessToken'))
 
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () => localStorage.getItem('currentUser') !== null
-  )
+  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('currentUser') !== null)
+
+  const [sessions, setSessions] = useState([])
   useEffect(() => {
   if (currentUser) {
     localStorage.setItem('currentUser', JSON.stringify(currentUser))
   } else {
     localStorage.removeItem('currentUser')
   }
-}, [currentUser])
-useEffect(() => {
-  localStorage.setItem(
-    'registeredSessionIds',
-    JSON.stringify(registeredSessionIds)
-  )
-}, [registeredSessionIds])
+  }, [currentUser])
+
+  useEffect(() => {
+    localStorage.setItem(
+      'registeredSessionIds',
+      JSON.stringify(registeredSessionIds)
+    )
+  }, [registeredSessionIds])
+
+  useEffect(() => {
+  if (accessToken) {
+    sessionStorage.setItem('accessToken', accessToken)
+  } else {
+    sessionStorage.removeItem('accessToken')
+  }
+  }, [accessToken])
+
+  useEffect(() => {
+  if (!accessToken) {
+    return
+  }
+
+  let isActive = true
+
+  async function loadSessions() {
+    try {
+      const sessions = await getSessions(accessToken)
+
+      if (isActive) {
+        setSessions(sessions)
+      }
+    } catch (error) {
+      console.error('Could not load sessions:', error.message)
+    }
+  }
+
+  loadSessions()
+
+  return () => {
+    isActive = false
+  }
+  }, [accessToken])
+
 const sessionsWithLiveCounts = sessions.map((session) => {
   const isCurrentlyRegistered = registeredSessionIds.includes(session.id)
 
@@ -65,6 +94,8 @@ const sessionsWithLiveCounts = sessions.map((session) => {
       : session.registeredCount,
   }
 })
+
+
 function handleUnregister(sessionId) {
   if (!isAuthenticated) return;
   if (!registeredSessionIds.includes(sessionId)) return;
@@ -94,16 +125,15 @@ function handleRegister(sessionId) {
 
 }
 
-function handleLogin(backendUser) {
-  const normalizedUser = normalizeBackendUser(backendUser)
-
+function handleLogin(userData, token) {
   setIsAuthenticated(true)
-  setCurrentUser(normalizedUser)
+  setCurrentUser(userData)
+  setAccessToken(token)
 }
-
 function handleLogout() {
   setIsAuthenticated(false)
   setCurrentUser(null)
+  setAccessToken(null)
 }
 function handleUpdateProfile(updatedData) {
   const ageCategory = calculateAgeCategory(updatedData.dateOfBirth)

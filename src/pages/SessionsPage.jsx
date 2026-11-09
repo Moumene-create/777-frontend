@@ -22,9 +22,15 @@ function SessionsPage({
     return sessionEndTime < now
   }
   const visibleSessions = isAuthenticated
-  ? sessions.filter((session) =>
-      session.targetAgeCategories.includes(currentUser?.ageCategory)
-    )
+  ? sessions.filter((session) => {
+      if (!session.targetAgeCategories) {
+        return true
+      }
+
+      return session.targetAgeCategories.includes(
+        currentUser?.ageCategory
+      )
+    })
   : sessions
   return (
     <main className='page_width'>
