@@ -5,7 +5,6 @@ import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/loginPage'
 import SessionsPage from './pages/SessionsPage'
 import SessionDetailsPage from './pages/SessionDetailsPage'
-import { mockSessions } from './data/mockSessions'
 import { isBeforeRegistrationCutoff } from './utils/sessionStatus';
 import MySessionsPage from './pages/MySessionsPage'
 import ProfilePage from './pages/ProfilePage'
@@ -17,7 +16,7 @@ import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
 import { normalizeBackendUser } from './utils/user'
-import { getSessions } from './api/sessions'
+import { getSessions, registerForSession, unregisterFromSession } from './api/sessions'
 
 function App() {
   // these 2 are made so that after refreshing the data remains 
@@ -84,45 +83,59 @@ function App() {
   }
   }, [accessToken])
 
-const sessionsWithLiveCounts = sessions.map((session) => {
-  const isCurrentlyRegistered = registeredSessionIds.includes(session.id)
+const sessionsWithLiveCounts = sessions
 
-  return {
-    ...session,
-    registeredCount: isCurrentlyRegistered
-      ? session.registeredCount + 1
-      : session.registeredCount,
+
+async function refreshSessions() {
+  if (!accessToken) {
+    return
   }
-})
 
-
-function handleUnregister(sessionId) {
-  if (!isAuthenticated) return;
-  if (!registeredSessionIds.includes(sessionId)) return;
-
-  setRegisteredSessionIds((currentIds) =>
-    currentIds.filter((id) => id !== sessionId)
-  );
+  try {
+    const updatedSessions = await getSessions(accessToken)
+    setSessions(updatedSessions)
+  } catch (error) {
+    console.error('Could not refresh sessions:', error.message)
+  }
 }
 
-function handleRegister(sessionId) {
-  const session = sessions.find((item) => item.id === sessionId);
-
-  if (!isAuthenticated || !session) return;
-
-  if (!session.targetAgeCategories.includes(currentUser?.ageCategory)) {
-    return;
+async function handleRegister(sessionId) {
+  console.log('Register clicked for session:', sessionId)
+  if (!isAuthenticated || !accessToken) {
+    return
   }
 
-  if (registeredSessionIds.includes(sessionId)) return;
-  if (session.registeredCount >= session.maxCapacity) return;
-  if (!isBeforeRegistrationCutoff(session)) return;
+  try {
+    await registerForSession(sessionId, accessToken)
 
     setRegisteredSessionIds((currentIds) => [
       ...currentIds,
       sessionId,
     ])
 
+    await refreshSessions()
+  } catch (error) {
+    console.error('Could not register:', error.message)
+  }
+}
+
+async function handleUnregister(sessionId) {
+  console.log('Cancel clicked for session:', sessionId)
+  if (!isAuthenticated || !accessToken) {
+    return
+  }
+
+  try {
+    await unregisterFromSession(sessionId, accessToken)
+
+    setRegisteredSessionIds((currentIds) =>
+      currentIds.filter((id) => id !== sessionId)
+    )
+
+    await refreshSessions()
+  } catch (error) {
+    console.error('Could not cancel registration:', error.message)
+  }
 }
 
 function handleLogin(userData, token) {

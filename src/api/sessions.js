@@ -87,3 +87,83 @@ export async function getSessionById(sessionId, accessToken) {
 
   return normalizeSession(session)
 }
+
+function getErrorMessage(errorBody, fallbackMessage) {
+  if (typeof errorBody?.detail === 'string') {
+    return errorBody.detail
+  }
+
+  if (Array.isArray(errorBody?.detail) && errorBody.detail.length > 0) {
+    return errorBody.detail[0].msg ?? fallbackMessage
+  }
+
+  return fallbackMessage
+}
+
+export async function registerForSession(sessionId, accessToken) {
+  if (!sessionId) {
+    throw new Error('A session ID is required.')
+  }
+
+  if (!accessToken) {
+    throw new Error('You must be logged in to register.')
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${sessionId}/register`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  )
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => null)
+
+    throw new Error(
+      getErrorMessage(
+        errorBody,
+        `Could not register for this session (HTTP ${response.status}).`
+      )
+    )
+  }
+
+  return response.json()
+}
+
+export async function unregisterFromSession(sessionId, accessToken) {
+  if (!sessionId) {
+    throw new Error('A session ID is required.')
+  }
+
+  if (!accessToken) {
+    throw new Error('You must be logged in to cancel a registration.')
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${sessionId}/register`,
+    {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  )
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => null)
+
+    throw new Error(
+      getErrorMessage(
+        errorBody,
+        `Could not cancel this registration (HTTP ${response.status}).`
+      )
+    )
+  }
+
+  return 
+}
