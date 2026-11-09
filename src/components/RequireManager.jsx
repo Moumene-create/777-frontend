@@ -10,7 +10,7 @@ export default function RequireManager({
   }
 
   const isManager =
-    currentUser?.roles?.includes('SESSION_MANAGER') === true
+    currentUser?.role?.includes('SESSION_MANAGER') === true
 
   if (!isManager) {
     return <Navigate to="/sessions" replace />

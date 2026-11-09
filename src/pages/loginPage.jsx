@@ -27,7 +27,7 @@ function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
       const tokens = await login({ email, password })
       const user = await getCurrentUser(tokens.access_token)
       onLogin(user)
-      navigate(user.role === 'SESSION_MANAGER' ? '/manager' : '/sessions')
+      navigate(user.role === "SESSION_MANAGER" ? '/manager' : '/sessions')
     } catch (requestError) {
       setError(requestError.message)
     } finally {

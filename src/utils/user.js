@@ -18,6 +18,6 @@ export function normalizeBackendUser(backendUser) {
     dateOfBirth: backendUser.date_of_birth ?? '',
     ageCategory: getAgeCategoryLabel(backendUser.age_category_id),
     wilaya: backendUser.wilaya ?? '',
-    role: backendUser.role ?? 'PARTICIPANT',
+    role: backendUser.role ==='SESSION_MANAGER'? ['PARTICIPANT', 'SESSION_MANAGER'] : ['PARTICIPANT'],
   }
 }

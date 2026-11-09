@@ -198,7 +198,7 @@ function handleUpdateProfile(updatedData) {
           )
         }
       />
-      {import.meta.env.DEV && (
+
       <Route
         path="/manager"
         element={
@@ -215,7 +215,6 @@ function handleUpdateProfile(updatedData) {
           </RequireManager>
         }
       />
-    )}
     {import.meta.env.DEV && (
       <Route
         path="/manager/new"

@@ -7,7 +7,7 @@ function PublicHeader({ isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
   const isManager =
   isAuthenticated &&
-  currentUser?.roles?.includes('SESSION_MANAGER') === true
+  currentUser?.role?.includes('SESSION_MANAGER') === true
 
   function handleLogoutClick() {
     onLogout()
