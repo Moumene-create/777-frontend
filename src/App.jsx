@@ -100,7 +100,6 @@ async function refreshSessions() {
 }
 
 async function handleRegister(sessionId) {
-  console.log('Register clicked for session:', sessionId)
   if (!isAuthenticated || !accessToken) {
     return
   }
@@ -120,7 +119,6 @@ async function handleRegister(sessionId) {
 }
 
 async function handleUnregister(sessionId) {
-  console.log('Cancel clicked for session:', sessionId)
   if (!isAuthenticated || !accessToken) {
     return
   }
@@ -264,23 +262,6 @@ function handleUpdateProfile(updatedData) {
         element={
           isAuthenticated ? (
             <CreateSessionPage
-              isAuthenticated={isAuthenticated}
-              currentUser={currentUser}
-              onLogout={handleLogout}
-            />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
-    )}
-    {import.meta.env.DEV && (
-      <Route
-        path="/manager/:sessionId/edit"
-        element={
-          isAuthenticated ? (
-            <EditSessionPage
-              sessions={sessionsWithLiveCounts}
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
               onLogout={handleLogout}
