@@ -28,9 +28,8 @@ function SessionDetailsPage({
     return () => clearInterval(intervalId)
   }, [])
   const session = sessions.find(
-    (mockSession) => mockSession.id === Number(sessionId)
+    (currentSession) => currentSession.id === sessionId
   )
-
   if (!session) {
     return (
       <main className="session-details-page">
@@ -54,7 +53,8 @@ function SessionDetailsPage({
     !isBeforeRegistrationCutoff(session, now)
     
   const isEligible = isAuthenticated
-    ? session.targetAgeCategories.includes(currentUser?.ageCategory)
+    ? !session.targetAgeCategories ||
+      session.targetAgeCategories.includes(currentUser?.ageCategory)
     : true
 
   const eligibilityMessage = isEligible
@@ -95,7 +95,7 @@ function SessionDetailsPage({
           <h1 className="session-details__title">{session.title}</h1>
 
           <p className="session-details__instructor">
-            {session.instructor}
+            {session.instructorName}
           </p>
 
           <p className="session-details__status">
@@ -109,7 +109,7 @@ function SessionDetailsPage({
 
           <section className="session-details__section">
             <h2>Prerequisites</h2>
-            <p>{session.Prerequisites}</p>
+            <p>{session.prerequisites ?? 'No prerequisites specified.'}</p>
           </section>
           <p className="session-details__cutoff-message">
               Note: Registration and cancellation close one hour before the
@@ -119,11 +119,13 @@ function SessionDetailsPage({
         
 
         <aside className="session-details__sidebar">
-          <img
-            className="session-details__image"
-            src={session.instructorImage}
-            alt={`Instructor ${session.instructor}`}
-          />
+          {session.instructorImage && (
+            <img
+              className="session-details__image"
+              src={session.instructorImage}
+              alt={`Instructor ${session.instructorName}`}
+            />
+          )}
 
           <div className="session-details__schedule">
             <div className="session-details__schedule-item">
@@ -134,13 +136,13 @@ function SessionDetailsPage({
 
             <div className="session-details__schedule-item">
               <span>
-                Duration: <strong>{session.duration}</strong>
+                Duration: <strong>{session.durationMinutes}</strong>
               </span>
             </div>
 
             <div className="session-details__schedule-item">
               <span>
-                Time: <strong>{session.time}</strong>
+                Time: <strong>{session.startTime}</strong>
               </span>
             </div>
 

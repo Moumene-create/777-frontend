@@ -190,7 +190,9 @@ export default function ManagerSessionsPage({
                       {session.registeredCount} / {session.maxCapacity}
                     </td>
 
-                  <td>{session.targetAgeCategories.join(', ')}</td>
+                  <td>
+                    {session.targetAgeCategories?.join(', ') ?? 'Not specified'}
+                  </td>
 
     
 
