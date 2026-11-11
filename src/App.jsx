@@ -16,38 +16,59 @@ import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
 import { normalizeBackendUser } from './utils/user'
-import { getSessions, registerForSession, unregisterFromSession } from './api/sessions'
+import { getSessions, registerForSession, unregisterFromSession,getMySessions } from './api/sessions'
+import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo} from './api/auth'
 
 function App() {
   // these 2 are made so that after refreshing the data remains 
-  const [registeredSessionIds, setRegisteredSessionIds] = useState(() => {
-  const savedIds = localStorage.getItem('registeredSessionIds')
-  return savedIds ? JSON.parse(savedIds) : []})
-  const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem('currentUser')
-    return savedUser ? JSON.parse(savedUser) : null
-  })
+  const [registeredSessionIds, setRegisteredSessionIds] = useState([])
+  const [currentUser, setCurrentUser] = useState(null)
+  const [isUserLoading, setIsUserLoading] = useState(
+    () => Boolean(sessionStorage.getItem('accessToken'))
+  )
  // sessionStorage is browser storage tied to the current browser tab. It is cleared when that tab closes.
  // it is not a variable that we created 
   const [accessToken, setAccessToken] = useState(() => sessionStorage.getItem('accessToken'))
 
-  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('currentUser') !== null)
+  const isAuthenticated = Boolean(currentUser)
 
   const [sessions, setSessions] = useState([])
-  useEffect(() => {
-  if (currentUser) {
-    localStorage.setItem('currentUser', JSON.stringify(currentUser))
-  } else {
-    localStorage.removeItem('currentUser')
-  }
-  }, [currentUser])
 
   useEffect(() => {
-    localStorage.setItem(
-      'registeredSessionIds',
-      JSON.stringify(registeredSessionIds)
-    )
-  }, [registeredSessionIds])
+  if (!accessToken) {
+    setRegisteredSessionIds([])
+    return
+  }
+
+  let isActive = true
+
+  async function loadRegisteredSessionIds() {
+    try {
+      const mySessions = await getMySessions(accessToken)
+
+      if (!isActive) {
+        return
+      }
+
+      const activeRegistrationIds = mySessions
+        .filter((session) => session.registration_state === 'registered')
+        .map((session) => session.id)
+
+      setRegisteredSessionIds(activeRegistrationIds)
+    } catch (error) {
+      console.error(
+        'Could not load your registered sessions:',
+        error.message
+      )
+    }
+  }
+
+  loadRegisteredSessionIds()
+
+  return () => {
+    isActive = false
+  }
+}, [accessToken])
 
   useEffect(() => {
   if (accessToken) {
@@ -83,8 +104,39 @@ function App() {
   }
   }, [accessToken])
 
-const sessionsWithLiveCounts = sessions
+  useEffect(() => {
+    if (!accessToken) {
+      setIsUserLoading(false)
+      return
+    }
 
+    let isActive = true
+
+    async function loadCurrentUser() {
+      try {
+        const backendUser = await getCurrentUser(accessToken)
+
+        if (isActive) {
+          setCurrentUser(normalizeUserInfo(backendUser))
+        }
+      } catch (error) {
+        console.error('Could not load the current user:', error.message)
+      } finally {
+        if (isActive) {
+          setIsUserLoading(false)
+        }
+      }
+    }
+
+    loadCurrentUser()
+
+    return () => {
+      isActive = false
+    }
+  }, [accessToken])
+
+
+const sessionsWithLiveCounts = sessions
 
 async function refreshSessions() {
   if (!accessToken) {
@@ -137,26 +189,33 @@ async function handleUnregister(sessionId) {
 }
 
 function handleLogin(userData, token) {
-  setIsAuthenticated(true)
-  setCurrentUser(userData)
+  setCurrentUser(normalizeUserInfo(userData))
   setAccessToken(token)
 }
+
 function handleLogout() {
-  setIsAuthenticated(false)
   setCurrentUser(null)
   setAccessToken(null)
 }
-function handleUpdateProfile(updatedData) {
-  const ageCategory = calculateAgeCategory(updatedData.dateOfBirth)
 
-  setCurrentUser((currentUser) => ({
-    ...currentUser,
-    ...updatedData,
-    fullName: `${updatedData.firstName} ${updatedData.lastName}`.trim(),
-    ageCategory,
-  }))
+
+async function handleUpdateProfile(updatedData) {
+  const payload = toProfileUpdatePayload(updatedData)
+  const savedUser = await updateCurrentUser(payload, accessToken)
+  const normalizedUser = normalizeUserInfo(savedUser)
+
+ setCurrentUser({
+  ...normalizedUser,
+  fullName: `${normalizedUser.firstName} ${normalizedUser.lastName}`.trim(),
+})}
+
+if (isUserLoading) {
+  return (
+    <main className="app-loading">
+      <p>Loading your account…</p>
+    </main>
+  )
 }
-
   return (
     <Routes>
       <Route 

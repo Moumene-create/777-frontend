@@ -1,5 +1,6 @@
 import { API_BASE_URL } from './config'
 
+
 export async function getSessions(accessToken) {
   // to acceot json response
   const headers = {
@@ -49,6 +50,7 @@ function normalizeSession(session) {
     instructorName: session.instructor_name,
     isCancelled: session.is_cancelled,
     status: session.status,
+    isRegistered: session.is_registered ?? false,
   }
 }
 
@@ -166,4 +168,36 @@ export async function unregisterFromSession(sessionId, accessToken) {
   }
 
   return 
+}
+
+export async function getMySessions(accessToken) {
+  if (!accessToken) {
+    throw new Error('You must be logged in to retrieve your sessions.')
+  }
+
+  const response = await fetch(`${API_BASE_URL}/sessions/my`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('The access token was rejected or has expired.')
+    }
+
+    throw new Error(
+      `Could not retrieve your sessions (HTTP ${response.status}).`
+    )
+  }
+
+  const mySessions = await response.json()
+
+  if (!Array.isArray(mySessions)) {
+    throw new Error('The my-sessions response was not a list.')
+  }
+
+  return mySessions
 }

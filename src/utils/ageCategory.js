@@ -53,3 +53,17 @@ const AGE_CATEGORY_ID_TO_LABEL = {
 export function getAgeCategoryLabel(ageCategoryId) {
   return AGE_CATEGORY_ID_TO_LABEL[ageCategoryId] ?? null
 }
+
+const LABEL_TO_AGE_CATEGORY_ID = {
+  '7-10' : 1,
+  '11-14':2,
+  '15-17':3,
+  '18-23':4,
+  '24-30':5,
+  '31-45':6,
+  '46-60':7,
+}
+
+export function getAgeCategoryId(ageCategoryId) {
+  return LABEL_TO_AGE_CATEGORY_ID[ageCategoryId] ?? null
+}
