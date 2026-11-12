@@ -201,3 +201,144 @@ export async function getMySessions(accessToken) {
 
   return mySessions
 }
+
+export async function createSession(payload, accessToken) {
+  if (!accessToken) {
+    throw new Error('You must be logged in to create a session.')
+  }
+
+  const response = await fetch(`${API_BASE_URL}/sessions`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  })
+
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    let message = `Could not create the session (HTTP ${response.status}).`
+
+    if (typeof data?.detail === 'string') {
+      message = data.detail
+    } else if (Array.isArray(data?.detail)) {
+      message = data.detail
+        .map((error) => {
+          const field = (error.loc || [])
+            .filter((part) => part !== 'body')
+            .join('.')
+
+          return field ? `${field}: ${error.msg}` : error.msg
+        })
+        .filter(Boolean)
+        .join('\n') || message
+    }
+
+    throw new Error(message)
+  }
+
+  if (!data?.id) {
+    throw new Error('The server did not return the created session ID.')
+  }
+
+  return data
+}
+
+export async function getManagementSession(sessionId, accessToken) {
+  if (!sessionId || !accessToken) {
+    throw new Error('A session ID and login are required.')
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}/management`,
+    {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  )
+
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    let message =
+      `Could not load management details (HTTP ${response.status}).`
+
+    if (typeof data?.detail === 'string') {
+      message = data.detail
+    } else if (Array.isArray(data?.detail)) {
+      message = data.detail
+        .map((error) => error.msg)
+        .filter(Boolean)
+        .join(' ') || message
+    }
+
+    throw new Error(message)
+  }
+
+  if (!data?.id) {
+    throw new Error('The server did not return valid session details.')
+  }
+
+  return {
+    ...normalizeSession(data),
+    trainingId: data.training_id,
+    attendedCount: data.attended_count,
+    absentCount: data.absent_count,
+    zoomUrl: data.zoom_url,
+    targetAgeCategoryIds: data.target_age_category_ids,
+  }
+}
+
+export async function updateSession(sessionId, payload, accessToken) {
+  if (!sessionId || !accessToken) {
+    throw new Error('A session ID and login are required.')
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}`,
+    {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(payload),
+    }
+  )
+
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    let message = `Could not update the session (HTTP ${response.status}).`
+
+    if (typeof data?.detail === 'string') {
+      message = data.detail
+    } else if (Array.isArray(data?.detail)) {
+      message = data.detail
+        .map((error) => {
+          const field = (error.loc || [])
+            .filter((part) => part !== 'body')
+            .join('.')
+
+          return field ? `${field}: ${error.msg}` : error.msg
+        })
+        .filter(Boolean)
+        .join('\n') || message
+    }
+
+    throw new Error(message)
+  }
+
+  if (!data?.id) {
+    throw new Error('The server did not return the updated session ID.')
+  }
+
+  return data
+}

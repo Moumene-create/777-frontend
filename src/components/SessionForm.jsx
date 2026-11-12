@@ -1,12 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getTrainingTypes } from '../api/trainingTypes'
 import { Link } from 'react-router-dom'
 import './SessionForm.css'
 
-const trainingTypes = [
-  { id: 'ai-intro', name: 'Introduction to Artificial Intelligence' },
-  { id: 'cybersecurity', name: 'Cybersecurity Basics' },
-  { id: 'web-development', name: 'Introduction to Web Development' },
-]
+
 
 const ageCategories = [
   '7-10',
@@ -27,16 +24,20 @@ const initialForm = {
   durationMinutes: '60',
   maxCapacity: '100',
   instructor: '',
-  instructor_email: '',
-  instructor_phone: '',
-  Prerequisites: '',
+  // instructor_email: '',
+  // instructor_phone: '',
+  // Prerequisites: '',
   zoomUrl: '',
   targetAgeCategories: [],
 }
 
+
 export default function SessionForm({
   initialValues = {},
   submitLabel = 'Create session',
+  accessToken,
+  onSubmit,
+  isEditing = false,
 }) {
   const [form, setForm] = useState(() => ({
     ...initialForm,
@@ -67,11 +68,81 @@ export default function SessionForm({
           ),
     }))
   }
+  const [trainingTypes, setTrainingTypes] = useState([])
+  const [isTrainingTypesLoading, setIsTrainingTypesLoading] = useState(false)
+  const [trainingTypesError, setTrainingTypesError] = useState('')
 
+  useEffect(() => {
+    if (!accessToken) return
+
+    let isActive = true
+
+    async function loadTrainingTypes() {
+      setIsTrainingTypesLoading(true)
+      setTrainingTypesError('')
+
+      try {
+        const data = await getTrainingTypes(accessToken)
+
+        if (isActive) {
+          setTrainingTypes(data)
+        }
+      } catch (error) {
+        if (isActive) {
+          setTrainingTypesError(error.message)
+        }
+      } finally {
+        if (isActive) {
+          setIsTrainingTypesLoading(false)
+        }
+      }
+    }
+
+    loadTrainingTypes()
+
+    return () => {
+      isActive = false
+    }
+  }, [accessToken])
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [submitSuccess, setSubmitSuccess] = useState('')
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+
+    if (isSubmitting) returnfform
+
+    setSubmitError('')
+    setSubmitSuccess('')
+
+    if (!onSubmit) {
+      setSubmitError('Submission is not connected yet.')
+      return
+    }
+
+    if (form.targetAgeCategories.length === 0) {
+      setSubmitError('Select at least one age category.')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      await onSubmit(form)
+      setSubmitSuccess('Session updated successfully.')
+    } catch (error) {
+      setSubmitError(error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
   return (
+    
     <form
         className="session-form"
-        onSubmit={(event) => event.preventDefault()}
+        onSubmit={handleSubmit}
       >
         <fieldset className="session-form__section">
           <legend>Training information</legend>
@@ -84,6 +155,7 @@ export default function SessionForm({
                 value={form.trainingId}
                 onChange={handleChange}
                 required
+                disabled={isEditing || isSubmitting}
               >
                 <option value="">Select a training type</option>
 
@@ -94,7 +166,18 @@ export default function SessionForm({
                 ))}
               </select>
             </label>
+                {isTrainingTypesLoading && <p>Loading training types...</p>}
 
+              {trainingTypesError && (
+                <p role="alert">{trainingTypesError}</p>
+              )}
+
+              {accessToken &&
+                !isTrainingTypesLoading &&
+                !trainingTypesError &&
+                trainingTypes.length === 0 && (
+                  <p>No training types available yet.</p>
+                )}
             <label className="session-form__field">
               <span>Session title</span>
               <input
@@ -113,11 +196,12 @@ export default function SessionForm({
                 onChange={handleChange}
                 rows={5}
                 required
+                readOnly={isEditing}
               />
             </label>
 
 
-            <label className="session-form__field session-form__field--wide_one">
+            {/* <label className="session-form__field session-form__field--wide_one">
               <span>Prerequisites</span>
               <input
                 name="Prerequisites"
@@ -125,7 +209,7 @@ export default function SessionForm({
                 onChange={handleChange}
                 required
               />
-            </label>
+            </label> */}
 
 
      <div className="session-form__row-three">
@@ -139,7 +223,7 @@ export default function SessionForm({
               />
             </label>
 
-            <label className="session-form__field">
+            {/* <label className="session-form__field">
               <span>Instructor email</span>
               <input
                 name="instructor_email"
@@ -148,9 +232,9 @@ export default function SessionForm({
                 onChange={handleChange}
                 required
               />
-            </label>
+            </label> */}
 
-            <label className="session-form__field">
+            {/* <label className="session-form__field">
               <span>Instructor phone</span>
               <input
                 name="instructor_phone"
@@ -159,7 +243,7 @@ export default function SessionForm({
                 onChange={handleChange}
                 required
               />
-            </label>
+            </label> */}
           </div>
           </div>
         </fieldset>
@@ -220,8 +304,6 @@ export default function SessionForm({
 
         <fieldset className="session-form__section">
           <legend>Target age categories</legend>
-          <p>Select one or more categories.</p>
-
           <div className="session-form__categories">
             {ageCategories.map((category) => (
               <label
@@ -257,21 +339,25 @@ export default function SessionForm({
             />
           </label>
 
-          <p id="session-zoom-hint">
-            Restricted meeting information. Do not display this URL in
-            participant session lists or details.
-          </p>
+          
         </fieldset>
 
         <div className="session-form__actions">
-          <Link to="/manager/sessions">Cancel</Link>
+          <Link to="/manager">Cancel</Link>
+            {submitError && (
+              <p role="alert" style={{ whiteSpace: 'pre-line' }}>
+                {submitError}
+              </p>
+            )}
 
-        <button
-        type="submit"
-        disabled
-        aria-describedby="session-save-hint"
-        >
-        {submitLabel}
+            {submitSuccess && (
+              <p role="status" style={{ color: '#166534' }}>
+                {submitSuccess}
+              </p>
+            )}
+        
+        <button type="submit" disabled={isSubmitting || !onSubmit}>
+          {isSubmitting ? 'Saving...' : submitLabel}
         </button>
         </div>
 

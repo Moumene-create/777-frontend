@@ -7,6 +7,7 @@ export default function CreateSessionPage({
   isAuthenticated,
   currentUser,
   onLogout,
+  accessToken,
 }) {
   return (
      <>
@@ -22,7 +23,9 @@ export default function CreateSessionPage({
 
       
 
-      <SessionForm />
+      <SessionForm
+        accessToken={accessToken} 
+      />
     </main>
     </>
   )

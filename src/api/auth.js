@@ -121,3 +121,73 @@ export function toProfileUpdatePayload(profile){
     wilaya : profile.wilaya,
    }
 }
+
+export async function registerUser(payload) {
+  const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    let message = `Could not create your account (HTTP ${response.status}).`
+
+    if (typeof data?.detail === 'string') {
+      message = data.detail
+    } else if (Array.isArray(data?.detail)) {
+      message = data.detail
+        .map((error) => error.msg)
+        .filter(Boolean)
+        .join(' ') || message
+    }
+
+    throw new Error(message)
+  }
+
+  return data
+}
+
+async function sendVerificationRequest(path, payload) {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    let message = `Verification request failed (HTTP ${response.status}).`
+
+    if (typeof data?.detail === 'string') {
+      message = data.detail
+    } else if (Array.isArray(data?.detail)) {
+      message = data.detail
+        .map((error) => error.msg)
+        .filter(Boolean)
+        .join(' ') || message
+    }
+
+    throw new Error(message)
+  }
+
+  return data
+}
+
+export async function verifyEmail(token) {
+  return sendVerificationRequest('/auth/verify-email', { token })
+}
+
+export async function resendVerificationEmail(email) {
+  return sendVerificationRequest('/auth/resend-verification-email', {
+    email,
+  })
+}

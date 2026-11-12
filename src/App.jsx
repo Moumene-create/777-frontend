@@ -5,78 +5,67 @@ import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/loginPage'
 import SessionsPage from './pages/SessionsPage'
 import SessionDetailsPage from './pages/SessionDetailsPage'
-import { isBeforeRegistrationCutoff } from './utils/sessionStatus';
 import MySessionsPage from './pages/MySessionsPage'
 import ProfilePage from './pages/ProfilePage'
-import { calculateAgeCategory } from './utils/ageCategory'
-import { isWithinJoinWindow } from './utils/sessionStatus'
 import ManagerSessionsPage from './pages/ManagerSessionsPage'
 import CreateSessionPage from './pages/CreateSessionPage'
 import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
-import { normalizeBackendUser } from './utils/user'
 import { getSessions, registerForSession, unregisterFromSession,getMySessions } from './api/sessions'
 import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo} from './api/auth'
 
 function App() {
-  // these 2 are made so that after refreshing the data remains 
+  // IDs of sessions the logged-in user is registered for. to be modified in useEffect.
   const [registeredSessionIds, setRegisteredSessionIds] = useState([])
+  // The logged-in user
   const [currentUser, setCurrentUser] = useState(null)
-  const [isUserLoading, setIsUserLoading] = useState(
-    () => Boolean(sessionStorage.getItem('accessToken'))
-  )
- // sessionStorage is browser storage tied to the current browser tab. It is cleared when that tab closes.
- // it is not a variable that we created 
+  // Pauses the app while it checks whether that key still works.
+  const [isUserLoading, setIsUserLoading] = useState(() => Boolean(sessionStorage.getItem('accessToken')))
+  // acces token Remembers that you were logged in. It’s the saved key that survives the refresh.
   const [accessToken, setAccessToken] = useState(() => sessionStorage.getItem('accessToken'))
-
+  // Authorization check
   const isAuthenticated = Boolean(currentUser)
-
+  // the list of all sessions from the backend ( for now only the sessions from the same )
   const [sessions, setSessions] = useState([])
-
+  // gets the sessions registered by the user 
   useEffect(() => {
-  if (!accessToken) {
-    setRegisteredSessionIds([])
-    return
-  }
-
-  let isActive = true
-
-  async function loadRegisteredSessionIds() {
-    try {
-      const mySessions = await getMySessions(accessToken)
-
-      if (!isActive) {
-        return
-      }
-
-      const activeRegistrationIds = mySessions
-        .filter((session) => session.registration_state === 'registered')
-        .map((session) => session.id)
-
-      setRegisteredSessionIds(activeRegistrationIds)
-    } catch (error) {
-      console.error(
-        'Could not load your registered sessions:',
-        error.message
-      )
+    if (!accessToken) {
+      setRegisteredSessionIds([])
+      return
     }
-  }
+    let isActive = true
+    async function loadRegisteredSessionIds() {
+      try {
+        const mySessions = await getMySessions(accessToken)
+        if (!isActive) {
+          return
+        }
+        const activeRegistrationIds = mySessions
+          .filter((session) => session.registration_state === 'registered')
+          .map((session) => session.id)
 
-  loadRegisteredSessionIds()
-
-  return () => {
-    isActive = false
-  }
-}, [accessToken])
-
-  useEffect(() => {
-  if (accessToken) {
-    sessionStorage.setItem('accessToken', accessToken)
-  } else {
-    sessionStorage.removeItem('accessToken')
-  }
+        setRegisteredSessionIds(activeRegistrationIds)
+      } catch (error) {
+        console.error(
+          'Could not load your registered sessions:',
+          error.message
+        )
+      }
+    }
+    loadRegisteredSessionIds()
+    return () => {
+      isActive = false
+    }
   }, [accessToken])
+  // save the token to sessionStorage
+  useEffect(() => {
+    if (accessToken) {
+      sessionStorage.setItem('accessToken', accessToken)
+    } else {
+      sessionStorage.removeItem('accessToken')
+    }
+    }, [accessToken])
 
   useEffect(() => {
   if (!accessToken) {
@@ -135,7 +124,7 @@ function App() {
     }
   }, [accessToken])
 
-
+//////////////
 const sessionsWithLiveCounts = sessions
 
 async function refreshSessions() {
@@ -198,7 +187,6 @@ function handleLogout() {
   setAccessToken(null)
 }
 
-
 async function handleUpdateProfile(updatedData) {
   const payload = toProfileUpdatePayload(updatedData)
   const savedUser = await updateCurrentUser(payload, accessToken)
@@ -216,6 +204,7 @@ if (isUserLoading) {
     </main>
   )
 }
+
   return (
     <Routes>
       <Route 
@@ -292,6 +281,7 @@ if (isUserLoading) {
               currentUser={currentUser}
               onLogout={handleLogout}
               onUpdateProfile={handleUpdateProfile}
+              accessToken={accessToken}
             />
           ) : (
             <Navigate to="/login" replace />
@@ -324,6 +314,7 @@ if (isUserLoading) {
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
               onLogout={handleLogout}
+              accessToken={accessToken}
             />
           ) : (
             <Navigate to="/login" replace />
@@ -341,6 +332,7 @@ if (isUserLoading) {
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
               onLogout={handleLogout}
+              accessToken={accessToken}
             />
           ) : (
             <Navigate to="/login" replace />

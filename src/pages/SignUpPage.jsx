@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
 import './SignUpPage.css'
 import logo from '../assets/logo_7.svg'
-import { registerUser } from '../services/auth';
+import { registerUser } from '../api/auth'
 
 function getAgeFromdateOfBirth(date_of_birth) {
   if (!date_of_birth) return null
@@ -68,40 +68,36 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
   const isFormInvalid = isPasswordTooShort || isPhonenumberInvalid ;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
-
-
-
+  const [submitSuccess, setSubmitSuccess] = useState('')
 
   async function handleSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
 
-    setSubmitError('');
-    setIsSubmitting(true);
+    if (isSubmitting || isFormInvalid) return
 
-    const userData = {
-      firstName: formData.first_name,
-      lastName: formData.last_name,
-      email: formData.email,
-      phone: formData.phone,
-      dateOfBirth: formData.date_of_birth,
-      wilaya: formData.wilaya,
-      ageCategory,
-      password: formData.password,
-    };
+    setSubmitError('')
+    setSubmitSuccess('')
+    setIsSubmitting(true)
 
     try {
-      // TODO: reconnect when backend is available
-      // await registerUser(userData);
+      await registerUser({
+        first_name: formData.first_name.trim(),
+        last_name: formData.last_name.trim(),
+        email: formData.email.trim(),
+        phone_number: formData.phone_number.trim(),
+        date_of_birth: formData.date_of_birth,
+        wilaya: formData.wilaya.trim(),
+        password: formData.password,
+      })
 
-      onLogin(userData);
-      navigate('/sessions');
+      setSubmitSuccess('Account created successfully.')
     } catch (error) {
-      setSubmitError(error.message);
+      setSubmitError(error.message)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
   }
-  
+    
 
 return (
   <main className="ran-page">
@@ -241,16 +237,18 @@ return (
                 Password must be at least 8 characters.
               </p>
             )}
-
-            {/* {submitStatus === 'success' && (
-              <p className="ran-form__success">
-                Account created successfully.
-              </p>
-            )} */}
             {submitError && (
               <p className="ran-form__error">
                 {submitError}
               </p>
+            )}
+            {submitSuccess && (
+              <div role="status">
+                <p>{submitSuccess}</p>
+                <button type="button" onClick={() => navigate('/login')}>
+                  Go to login
+                </button>
+              </div>
             )}
           <button
             className="ran-form__submit"

@@ -1,7 +1,11 @@
 import PublicHeader from '../components/PublicHeader'
 import ProfilePanel from '../components/ProfilePanel'
 import './ProfilePage.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import {
+  getCertificates,
+  getCertificatePdf,
+} from '../api/certificates'
 
 const demoCertificates = [
   {
@@ -15,8 +19,78 @@ export default function ProfilePage({
   currentUser,
   onLogout,
   onUpdateProfile,
+  accessToken,
 }) {
   const [showCertificates, setShowCertificates] = useState(false)
+  const [certificates, setCertificates] = useState([])
+  const [isCertificatesLoading, setIsCertificatesLoading] = useState(false)
+  const [certificatesError, setCertificatesError] = useState('')
+  const [downloadingId, setDownloadingId] = useState(null)
+  const [downloadError, setDownloadError] = useState('')
+
+  useEffect(() => {
+    if (!showCertificates || !accessToken) return
+
+    let isActive = true
+
+    async function loadCertificates() {
+      setIsCertificatesLoading(true)
+      setCertificatesError('')
+      setCertificates([])
+
+      try {
+        const data = await getCertificates(accessToken)
+
+        if (isActive) {
+          setCertificates(data)
+        }
+      } catch (error) {
+        if (isActive) {
+          setCertificatesError(error.message)
+        }
+      } finally {
+        if (isActive) {
+          setIsCertificatesLoading(false)
+        }
+      }
+    }
+
+    loadCertificates()
+
+    return () => {
+      isActive = false
+    }
+  }, [showCertificates, accessToken])
+
+  async function handleDownloadCertificate(certificate) {
+    if (downloadingId) return
+
+    setDownloadingId(certificate.registrationId)
+    setDownloadError('')
+
+    try {
+      const pdf = await getCertificatePdf(
+        certificate.registrationId,
+        accessToken
+      )
+
+      const url = URL.createObjectURL(pdf)
+      const link = document.createElement('a')
+
+      link.href = url
+      link.download = `certificate-${certificate.registrationId}.pdf`
+
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
+    } catch (error) {
+      setDownloadError(error.message)
+    } finally {
+      setDownloadingId(null)
+    }
+}
   return (
     <main className="profile-layout">
       <PublicHeader
@@ -32,53 +106,42 @@ export default function ProfilePage({
           onCertificatesOpenChange={setShowCertificates}
         />
         {showCertificates && (
-        <section
-  className="profile-activity"
-  aria-labelledby="profile-activity-title"
->
-  <div className="profile-activity__certificates">
-  <h3 id="profile-activity-title">My certificates</h3>
-  <p className="certificate-demo-note">
-    Demo data : for interface testing only.
-  </p>
-
-  {demoCertificates.length === 0 ? (
-    <p>No certificates available yet.</p>
-  ) : (
-
-  <ul className="certificate-list">
-      {demoCertificates.map((certificate) => (
-        <li
-          className="certificate-list__item"
-          key={certificate.id}
-        >
-          <div className="certificate-list__information">
-            <h4>{certificate.sessionTitle}</h4>
-            <p>Certificate · PDF</p>
-          </div>
-
-          <div className="certificate-list__actions">
-            <a
-              href={certificate.pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Open PDF
-            </a>
-
-            <a
-              href={certificate.pdfUrl}
-              download
-            >
-              Download
-            </a>
-          </div>
-        </li>
-      ))}
-  </ul>
-  )}
-</div>
-</section>)}
+          <section>
+            <h2>My certificates</h2>
+            {downloadError && <p role="alert">{downloadError}</p>}
+            {!accessToken ? (
+              <p>Please log in to view certificates.</p>
+            ) : isCertificatesLoading ? (
+              <p>Loading certificates...</p>
+            ) : certificatesError ? (
+              <p role="alert">{certificatesError}</p>
+            ) : certificates.length === 0 ? (
+              <p>No certificates available yet.</p>
+            ) : (
+              <ul>
+                {certificates.map((certificate) => (
+                  <li key={certificate.certificateId}>
+                    <h3>{certificate.sessionTitle}</h3>
+                    <p>
+                      {certificate.participantFirstName}{' '}
+                      {certificate.participantLastName}
+                    </p>
+                    <p>Session date: {certificate.sessionDate}</p>
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadCertificate(certificate)}
+                      disabled={downloadingId !== null}
+                    >
+                      {downloadingId === certificate.registrationId
+                        ? 'Downloading...'
+                        : 'Download PDF'}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
       </div>
       
     </main>
