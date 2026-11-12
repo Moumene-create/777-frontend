@@ -191,3 +191,22 @@ export async function resendVerificationEmail(email) {
     email,
   })
 }
+
+export async function logout(accessToken) {
+  if (!accessToken) {
+    throw new Error('You are not logged in.')
+  }
+
+  const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error(
+      `Could not log out (HTTP ${response.status}).`
+    )
+  }
+}

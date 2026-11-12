@@ -13,7 +13,7 @@ import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
 import { getSessions, registerForSession, unregisterFromSession,getMySessions,cancelSession, } from './api/sessions'
-import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo} from './api/auth'
+import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo,logout,} from './api/auth'
 
 function App() {
   // IDs of sessions the logged-in user is registered for. to be modified in useEffect.
@@ -182,9 +182,17 @@ function handleLogin(userData, token) {
   setAccessToken(token)
 }
 
-function handleLogout() {
-  setCurrentUser(null)
-  setAccessToken(null)
+async function handleLogout() {
+  try {
+    if (accessToken) {
+      await logout(accessToken)
+    }
+  } catch (error) {
+    console.error('Could not log out on the server:', error.message)
+  } finally {
+    setCurrentUser(null)
+    setAccessToken(null)
+  }
 }
 
 async function handleUpdateProfile(updatedData) {
