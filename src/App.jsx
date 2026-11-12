@@ -12,7 +12,7 @@ import CreateSessionPage from './pages/CreateSessionPage'
 import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
-import { getSessions, registerForSession, unregisterFromSession,getMySessions } from './api/sessions'
+import { getSessions, registerForSession, unregisterFromSession,getMySessions,cancelSession, } from './api/sessions'
 import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo} from './api/auth'
 
 function App() {
@@ -204,6 +204,25 @@ if (isUserLoading) {
     </main>
   )
 }
+async function handleCancelSession(sessionId) {
+  if (!accessToken) {
+    throw new Error('Please log in again to cancel this session.')
+  }
+
+  await cancelSession(sessionId, accessToken)
+
+  setSessions((currentSessions) =>
+    currentSessions.map((session) =>
+      session.id === sessionId
+        ? {
+            ...session,
+            isCancelled: true,
+            status: 'CANCELLED',
+          }
+        : session
+    )
+  )
+}
 
   return (
     <Routes>
@@ -301,6 +320,7 @@ if (isUserLoading) {
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
               onLogout={handleLogout}
+              onCancelSession={handleCancelSession}
             />
           </RequireManager>
         }

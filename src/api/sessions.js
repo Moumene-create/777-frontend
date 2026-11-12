@@ -342,3 +342,37 @@ export async function updateSession(sessionId, payload, accessToken) {
 
   return data
 }
+
+export async function cancelSession(sessionId, accessToken) {
+  if (!sessionId || !accessToken) {
+    throw new Error('A session ID and login are required.')
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}/cancel`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  )
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null)
+
+    let message = `Could not cancel the session (HTTP ${response.status}).`
+
+    if (typeof data?.detail === 'string') {
+      message = data.detail
+    } else if (Array.isArray(data?.detail)) {
+      message = data.detail
+        .map((error) => error.msg)
+        .filter(Boolean)
+        .join(' ') || message
+    }
+
+    throw new Error(message)
+  }
+}

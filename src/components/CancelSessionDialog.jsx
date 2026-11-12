@@ -1,11 +1,29 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './CancelSessionDialog.css'
 
 export default function CancelSessionDialog({
   session,
   onClose,
+  onConfirm,
 }) {
   const dialogRef = useRef(null)
+  const [isCancelling, setIsCancelling] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleConfirm() {
+    if (isCancelling || !onConfirm) return
+
+    setIsCancelling(true)
+    setError('')
+
+    try {
+      await onConfirm(session.id)
+      onClose()
+    } catch (error) {
+      setError(error.message)
+      setIsCancelling(false)
+    }
+  }
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -24,8 +42,11 @@ export default function CancelSessionDialog({
     aria-labelledby="cancel-session-title"
     aria-describedby="cancel-session-description"
     onCancel={(event) => {
-        event.preventDefault()
+      event.preventDefault()
+
+      if (!isCancelling) {
         onClose()
+      }
     }}
     >
       <h2 id="cancel-session-title">Cancel session?</h2>
@@ -43,13 +64,24 @@ export default function CancelSessionDialog({
 
       
 
+      {error && <p role="alert">{error}</p>}
+
       <div className="cancel-session-dialog__actions">
-        <button type="button" onClick={onClose} autoFocus>
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={isCancelling}
+          autoFocus
+        >
           Keep session
         </button>
 
-        <button type="button" disabled>
-          Confirm cancellation
+        <button
+          type="button"
+          onClick={handleConfirm}
+          disabled={isCancelling || !onConfirm}
+        >
+          {isCancelling ? 'Cancelling...' : 'Confirm cancellation'}
         </button>
       </div>
     </dialog>

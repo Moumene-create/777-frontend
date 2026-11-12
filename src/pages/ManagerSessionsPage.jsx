@@ -11,6 +11,7 @@ export default function ManagerSessionsPage({
   isAuthenticated,
   currentUser,
   onLogout,
+  onCancelSession,
 }) {
   const [sessionToCancel, setSessionToCancel] = useState(null)
   const now = new Date()
@@ -149,7 +150,9 @@ export default function ManagerSessionsPage({
                 </tr>
               )}
               {filteredSessions.map((session) => {
-                const status = getSessionStatus(session, now)
+                const status = session.isCancelled
+                ? 'CANCELLED'
+                : getSessionStatus(session, now)
 
                 return (
                   <tr key={session.id}>
@@ -229,6 +232,7 @@ export default function ManagerSessionsPage({
         <CancelSessionDialog
           session={sessionToCancel}
           onClose={() => setSessionToCancel(null)}
+          onConfirm={onCancelSession}
         />
       )}
     </main>
