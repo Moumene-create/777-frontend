@@ -77,8 +77,12 @@ export async function getSessionById(sessionId, accessToken) {
 
   if (!response.ok) {
     if (response.status === 404) {
-      throw new Error('This session could not be found.')
-    }
+  throw new Error('This session could not be found.')
+  }
+
+  if (response.status === 422) {
+    throw new Error('This session link is invalid.')
+  }
 
     throw new Error(
       `Could not retrieve the session (HTTP ${response.status}).`
@@ -375,4 +379,57 @@ export async function cancelSession(sessionId, accessToken) {
 
     throw new Error(message)
   }
+}
+
+export async function validateSessionAttendance(
+  sessionId,
+  registrationIds,
+  accessToken
+) {
+  if (!sessionId || !accessToken) {
+    throw new Error('A session ID and login are required.')
+  }
+
+  if (!Array.isArray(registrationIds) || registrationIds.length === 0) {
+    throw new Error('Select at least one registration to validate.')
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}/attendance/validate`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        registration_ids: registrationIds,
+      }),
+    }
+  )
+
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    let message =
+      `Could not validate attendance (HTTP ${response.status}).`
+
+    if (typeof data?.detail === 'string') {
+      message = data.detail
+    } else if (Array.isArray(data?.detail)) {
+      message = data.detail
+        .map((error) => error.msg)
+        .filter(Boolean)
+        .join(' ') || message
+    }
+
+    throw new Error(message)
+  }
+
+  if (!Number.isInteger(data?.validated_count) || data.validated_count < 0) {
+    throw new Error('The server returned an invalid validation count.')
+  }
+
+  return data.validated_count
 }

@@ -224,6 +224,7 @@ async function handleCancelSession(sessionId) {
   )
 }
 
+
   return (
     <Routes>
       <Route 
@@ -268,15 +269,15 @@ async function handleCancelSession(sessionId) {
       <Route
         path="/sessions/:sessionId"
         element={
-          <SessionDetailsPage
-            sessions={sessionsWithLiveCounts}
-            registeredSessionIds={registeredSessionIds}
-            onRegister={handleRegister}
-            onUnregister={handleUnregister}
-            isAuthenticated={isAuthenticated}
-            currentUser={currentUser}
-            onLogout={handleLogout}
-          />
+        <SessionDetailsPage
+          registeredSessionIds={registeredSessionIds}
+          onRegister={handleRegister}
+          onUnregister={handleUnregister}
+          isAuthenticated={isAuthenticated}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+          accessToken={accessToken}
+        />
         }
       />
       <Route

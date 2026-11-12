@@ -6,16 +6,20 @@ import {
   getSessionStatus,
   isBeforeRegistrationCutoff,
 } from '../utils/sessionStatus'
+import { getSessionById } from '../api/sessions'
 
 function SessionDetailsPage({
-  sessions,
   registeredSessionIds,
   onRegister,
   onUnregister,
   isAuthenticated,
   currentUser,
   onLogout,
+  accessToken,
 }) {
+  const [session, setSession] = useState(null)
+  const [isLoadingSession, setIsLoadingSession] = useState(true)
+  const [sessionError, setSessionError] = useState(null)
   const { sessionId } = useParams()
   const navigate = useNavigate()
   const [now, setNow] = useState(() => new Date())
@@ -27,10 +31,39 @@ function SessionDetailsPage({
 
     return () => clearInterval(intervalId)
   }, [])
-  const session = sessions.find(
-    (currentSession) => currentSession.id === sessionId
-  )
-  if (!session) {
+
+    useEffect(() => {
+  let isActive = true
+
+  async function loadSession() {
+    setIsLoadingSession(true)
+    setSessionError(null)
+
+    try {
+      const loadedSession = await getSessionById(sessionId, accessToken)
+
+      if (isActive) {
+        setSession(loadedSession)
+      }
+    } catch (error) {
+      if (isActive) {
+        setSessionError(error.message)
+      }
+    } finally {
+      if (isActive) {
+        setIsLoadingSession(false)
+      }
+    }
+  }
+
+  loadSession()
+
+  return () => {
+    isActive = false
+  }
+  }, [sessionId, accessToken])
+
+  if (isLoadingSession) {
     return (
       <main className="session-details-page">
         <PublicHeader
@@ -38,12 +71,29 @@ function SessionDetailsPage({
           currentUser={currentUser}
           onLogout={onLogout}
         />
+        <p>Loading session…</p>
+      </main>
+    )
+  }
 
-        <h1>Session not found</h1>
+  if (sessionError) {
+    return (
+      <main className="session-details-page">
+        <PublicHeader
+          isAuthenticated={isAuthenticated}
+          currentUser={currentUser}
+          onLogout={onLogout}
+        />
+        <h1>Session unavailable</h1>
+        <p>{sessionError}</p>
         <Link to="/sessions">Back to sessions</Link>
       </main>
     )
   }
+
+if (!session) {
+  return null
+}
   
   const isRegistered = registeredSessionIds.includes(session.id)
   const isFull = session.registeredCount >= session.maxCapacity
@@ -80,7 +130,16 @@ function SessionDetailsPage({
       onRegister(session.id)
     }
   }
-
+// console.log('Session details debug:', {
+//   isAuthenticated,
+//   isRegistered,
+//   isFull,
+//   isRegistrationClosed,
+//   isEligible,
+//   isActionDisabled,
+//   hasOnRegister: typeof onRegister === 'function',
+//   registeredSessionIds,
+// })
 
   return (
     <main className="session-details-page">
