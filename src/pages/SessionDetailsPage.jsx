@@ -23,6 +23,8 @@ function SessionDetailsPage({
   const { sessionId } = useParams()
   const navigate = useNavigate()
   const [now, setNow] = useState(() => new Date())
+  const [isUpdatingRegistration, setIsUpdatingRegistration] = useState(false)
+  const [registrationError, setRegistrationError] = useState('')
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -98,6 +100,9 @@ if (!session) {
   const isRegistered = registeredSessionIds.includes(session.id)
   const isFull = session.registeredCount >= session.maxCapacity
   const sessionStatus = getSessionStatus(session, now)
+  const isCancelled =
+  session.isCancelled === true ||
+  session.status === 'CANCELLED'
   
   const isRegistrationClosed =
     !isBeforeRegistrationCutoff(session, now)
@@ -112,11 +117,13 @@ if (!session) {
     : 'This session is not available for your age category.'
 
   const isActionDisabled =
+    isCancelled ||
+    isUpdatingRegistration ||
     isRegistrationClosed ||
     (isFull && !isRegistered) ||
     !isEligible
 
-  function handleRegistrationClick() {
+  async function handleRegistrationClick() {
     if (isActionDisabled) return
 
     if (!isAuthenticated) {
@@ -124,22 +131,36 @@ if (!session) {
       return
     }
 
-    if (isRegistered) {
-      onUnregister(session.id)
-    } else {
-      onRegister(session.id)
+    setIsUpdatingRegistration(true)
+    setRegistrationError('')
+
+    try {
+      if (isRegistered) {
+        await onUnregister(session.id)
+      } else {
+        await onRegister(session.id)
+      }
+
+      try {
+        const updatedSession = await getSessionById(
+          session.id,
+          accessToken
+        )
+
+        setSession(updatedSession)
+      } catch {
+        setRegistrationError(
+          'Your registration was updated, but the latest session information could not be loaded. Please reload the page.'
+        )
+      }
+    } catch (error) {
+      setRegistrationError(
+        error.message || 'Could not update your registration.'
+      )
+    } finally {
+      setIsUpdatingRegistration(false)
     }
   }
-// console.log('Session details debug:', {
-//   isAuthenticated,
-//   isRegistered,
-//   isFull,
-//   isRegistrationClosed,
-//   isEligible,
-//   isActionDisabled,
-//   hasOnRegister: typeof onRegister === 'function',
-//   registeredSessionIds,
-// })
 
   return (
     <main className="session-details-page">
@@ -220,11 +241,16 @@ if (!session) {
               </span>
             </div>
           </div>
-          {eligibilityMessage && (
-            <p className="session-details__eligibility-message">
-              {eligibilityMessage}
+          {isCancelled && (
+            <p>
+              This session has been cancelled. Registration is unavailable.
             </p>
           )}
+
+          {registrationError && (
+            <p role="alert">{registrationError}</p>
+          )}
+
           <button
             type="button"
             className={`training-card__button ${
@@ -237,26 +263,21 @@ if (!session) {
             onClick={handleRegistrationClick}
             disabled={isActionDisabled}
           >
-            {isRegistrationClosed ? (
-              isRegistered ? (
-                'Cancellation closed'
-              ) : (
-                'Registration closed'
-              )
-            ) : isFull && !isRegistered ? (
-              'Registration full'
-            ) : isRegistered ? (
-              <>
-                <span className="training-card__btn-text-enrolled">
-                  Enrolled
-                </span>
-                <span className="training-card__btn-text-cancel">
-                  Cancel registration
-                </span>
-              </>
-            ) : (
-              'Register'
-            )}
+            {isCancelled
+              ? 'Session cancelled'
+              : isUpdatingRegistration
+                ? 'Updating…'
+                : isRegistrationClosed
+                  ? isRegistered
+                    ? 'Cancellation closed'
+                    : 'Registration closed'
+                  : !isEligible
+                    ? 'Not eligible'
+                    : isRegistered
+                      ? 'Cancel registration'
+                      : isFull
+                        ? 'Registration full'
+                        : 'Register'}
           </button>
 
         </aside>

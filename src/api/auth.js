@@ -38,12 +38,12 @@ export async function login({ email, password }) {
   return response.json()
 }
 
-export async function getCurrentUser(accessToken) {
+export async function getCurrentUser(accessToken, request = fetch) {
   if (!accessToken) {
     throw new Error('An access token is required.')
   }
 
-  const response = await fetch(`${API_BASE_URL}/auth/me`, {
+  const response = await request(`${API_BASE_URL}/auth/me`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',

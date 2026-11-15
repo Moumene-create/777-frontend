@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './config'
+import { apiFetch } from './apiClient'
 
 
 export async function getSessions(accessToken) {
@@ -11,7 +12,7 @@ export async function getSessions(accessToken) {
     headers.Authorization = `Bearer ${accessToken}`
   }
 
-  const response = await fetch(`${API_BASE_URL}/sessions`, {
+  const response = await apiFetch(`${API_BASE_URL}/sessions`, {
     method: 'GET',
     headers,
   })
@@ -67,7 +68,7 @@ export async function getSessionById(sessionId, accessToken) {
     headers.Authorization = `Bearer ${accessToken}`
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_BASE_URL}/sessions/${sessionId}`,
     {
       method: 'GET',
@@ -115,7 +116,7 @@ export async function registerForSession(sessionId, accessToken) {
     throw new Error('You must be logged in to register.')
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_BASE_URL}/sessions/${sessionId}/register`,
     {
       method: 'POST',
@@ -149,7 +150,7 @@ export async function unregisterFromSession(sessionId, accessToken) {
     throw new Error('You must be logged in to cancel a registration.')
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_BASE_URL}/sessions/${sessionId}/register`,
     {
       method: 'DELETE',
@@ -179,7 +180,7 @@ export async function getMySessions(accessToken) {
     throw new Error('You must be logged in to retrieve your sessions.')
   }
 
-  const response = await fetch(`${API_BASE_URL}/sessions/my`, {
+  const response = await apiFetch(`${API_BASE_URL}/sessions/my`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',
@@ -211,7 +212,7 @@ export async function createSession(payload, accessToken) {
     throw new Error('You must be logged in to create a session.')
   }
 
-  const response = await fetch(`${API_BASE_URL}/sessions`, {
+  const response = await apiFetch(`${API_BASE_URL}/sessions`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -256,7 +257,7 @@ export async function getManagementSession(sessionId, accessToken) {
     throw new Error('A session ID and login are required.')
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}/management`,
     {
       method: 'GET',
@@ -304,7 +305,7 @@ export async function updateSession(sessionId, payload, accessToken) {
     throw new Error('A session ID and login are required.')
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}`,
     {
       method: 'PUT',
@@ -352,7 +353,7 @@ export async function cancelSession(sessionId, accessToken) {
     throw new Error('A session ID and login are required.')
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}/cancel`,
     {
       method: 'POST',
@@ -394,7 +395,7 @@ export async function validateSessionAttendance(
     throw new Error('Select at least one registration to validate.')
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}/attendance/validate`,
     {
       method: 'POST',

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import SignUpPage from './pages/SignUpPage'
@@ -12,8 +12,10 @@ import CreateSessionPage from './pages/CreateSessionPage'
 import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
-import { getSessions, registerForSession, unregisterFromSession,getMySessions,cancelSession, } from './api/sessions'
+import { getSessions, registerForSession, unregisterFromSession,getMySessions,cancelSession } from './api/sessions'
 import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo,logout,refreshAuthTokens,} from './api/auth'
+import { createAuthenticatedFetch } from './api/authenticatedFetch'
+import { configureApiClient } from './api/apiClient'
 
 function App() {
   // IDs of sessions the logged-in user is registered for. to be modified in useEffect.
@@ -29,6 +31,83 @@ function App() {
   // the list of all sessions from the backend ( for now only the sessions from the same )
   const [sessions, setSessions] = useState([])
   const [refreshToken, setRefreshToken] = useState(null)
+  const authRef = useRef({
+    accessToken,
+    refreshToken,
+    sessionId: 0,
+  })
+
+  function clearLocalSession() {
+    authRef.current = {
+      accessToken: null,
+      refreshToken: null,
+      sessionId: authRef.current.sessionId + 1,
+    }
+
+    sessionStorage.removeItem('accessToken')
+    setCurrentUser(null)
+    setAccessToken(null)
+    setRefreshToken(null)
+    setRegisteredSessionIds([])
+    setSessions([])
+  }
+
+  const [authenticatedRequest] = useState(() =>
+    createAuthenticatedFetch({
+      getAccessToken: () => authRef.current.accessToken,
+      getSessionId: () => authRef.current.sessionId,
+
+      refreshSession: async () => {
+        const session = authRef.current
+
+        if (!session.refreshToken) {
+          clearLocalSession()
+
+          const error = new Error('Please log in again.')
+          error.status = 401
+          throw error
+        }
+
+        try {
+          const tokens = await refreshAuthTokens(session.refreshToken)
+
+          if (authRef.current.sessionId !== session.sessionId) {
+            throw new Error('The login session changed.')
+          }
+
+          authRef.current = {
+            ...session,
+            accessToken: tokens.access_token,
+            refreshToken: tokens.refresh_token,
+          }
+
+          setAccessToken(tokens.access_token)
+          setRefreshToken(tokens.refresh_token)
+        } catch (error) {
+          if (
+            error.status === 401 &&
+            authRef.current.sessionId === session.sessionId
+          ) {
+            clearLocalSession()
+          }
+
+          throw error
+        }
+      },
+    })
+  )
+
+  useLayoutEffect(() => {
+    authRef.current = {
+      ...authRef.current,
+      accessToken,
+      refreshToken,
+    }
+  }, [accessToken, refreshToken])
+
+  useLayoutEffect(() => {
+    return configureApiClient(authenticatedRequest)
+  }, [authenticatedRequest])
 
   // gets the sessions registered by the user 
   useEffect(() => {
@@ -95,66 +174,45 @@ function App() {
   }
   }, [accessToken])
 
-  useEffect(() => {
-    if (!accessToken) {
-      setIsUserLoading(false)
-      return
-    }
+ useEffect(() => {
+  if (!accessToken) {
+    setIsUserLoading(false)
+    return
+  }
 
-    let isActive = true
+  let isActive = true
 
-    async function loadCurrentUser() {
-      try {
-        let backendUser
+  async function loadCurrentUser() {
+    try {
+      const backendUser = await getCurrentUser(
+        accessToken,
+        authenticatedRequest
+      )
 
-        try {
-          backendUser = await getCurrentUser(accessToken)
-        } catch (error) {
-          if (!isActive) return
+      if (isActive) {
+        setCurrentUser(normalizeUserInfo(backendUser))
+      }
+    } catch (error) {
+      if (!isActive) return
 
-          if (error.status !== 401 || !refreshToken) {
-            throw error
-          }
+      console.error('Could not restore your session:', error.message)
 
-          const tokens = await refreshAuthTokens(refreshToken)
-
-          if (!isActive) return
-
-          // Verify the new access token before applying the token pair.
-          backendUser = await getCurrentUser(tokens.access_token)
-
-          if (!isActive) return
-
-          setAccessToken(tokens.access_token)
-          setRefreshToken(tokens.refresh_token)
-        }
-
-        if (isActive) {
-          setCurrentUser(normalizeUserInfo(backendUser))
-        }
-      } catch (error) {
-        if (!isActive) return
-
-        console.error('Could not restore your session:', error.message)
-
-        if (error.status === 401) {
-          setCurrentUser(null)
-          setAccessToken(null)
-          setRefreshToken(null)
-        }
-      } finally {
-        if (isActive) {
-          setIsUserLoading(false)
-        }
+      if (error.status === 401) {
+        clearLocalSession()
+      }
+    } finally {
+      if (isActive) {
+        setIsUserLoading(false)
       }
     }
+  }
 
-    loadCurrentUser()
+  loadCurrentUser()
 
-    return () => {
-      isActive = false
-    }
-  }, [accessToken, refreshToken])
+  return () => {
+    isActive = false
+  }
+}, [accessToken, authenticatedRequest])
 
 //////////////
 const sessionsWithLiveCounts = sessions
@@ -174,58 +232,57 @@ async function refreshSessions() {
 
 async function handleRegister(sessionId) {
   if (!isAuthenticated || !accessToken) {
-    return
+    throw new Error('Please log in before registering.')
   }
 
-  try {
-    await registerForSession(sessionId, accessToken)
+  await registerForSession(sessionId, accessToken)
 
-    setRegisteredSessionIds((currentIds) => [
-      ...currentIds,
-      sessionId,
-    ])
+  setRegisteredSessionIds((currentIds) =>
+    currentIds.includes(sessionId)
+      ? currentIds
+      : [...currentIds, sessionId]
+  )
 
-    await refreshSessions()
-  } catch (error) {
-    console.error('Could not register:', error.message)
-  }
+  await refreshSessions()
 }
 
 async function handleUnregister(sessionId) {
   if (!isAuthenticated || !accessToken) {
-    return
+    throw new Error('Please log in before cancelling your registration.')
   }
 
-  try {
-    await unregisterFromSession(sessionId, accessToken)
+  await unregisterFromSession(sessionId, accessToken)
 
-    setRegisteredSessionIds((currentIds) =>
-      currentIds.filter((id) => id !== sessionId)
-    )
+  setRegisteredSessionIds((currentIds) =>
+    currentIds.filter((id) => id !== sessionId)
+  )
 
-    await refreshSessions()
-  } catch (error) {
-    console.error('Could not cancel registration:', error.message)
-  }
+  await refreshSessions()
 }
 
 function handleLogin(userData, token, newRefreshToken) {
+  authRef.current = {
+    accessToken: token,
+    refreshToken: newRefreshToken ?? null,
+    sessionId: authRef.current.sessionId + 1,
+  }
+
   setCurrentUser(normalizeUserInfo(userData))
   setAccessToken(token)
   setRefreshToken(newRefreshToken ?? null)
 }
 
 async function handleLogout() {
+  const tokenToRevoke = authRef.current.accessToken
+
+  clearLocalSession()
+
   try {
-    if (accessToken) {
-      await logout(accessToken)
+    if (tokenToRevoke) {
+      await logout(tokenToRevoke)
     }
   } catch (error) {
     console.error('Could not log out on the server:', error.message)
-  } finally {
-    setCurrentUser(null)
-    setAccessToken(null)
-    setRefreshToken(null)
   }
 }
 
@@ -238,6 +295,7 @@ async function handleUpdateProfile(updatedData) {
   ...normalizedUser,
   fullName: `${normalizedUser.firstName} ${normalizedUser.lastName}`.trim(),
 })}
+
 
 if (isUserLoading) {
   return (
