@@ -2,6 +2,7 @@ export function createAuthenticatedFetch({
   getAccessToken,
   getSessionId,
   refreshSession,
+  fetchImpl = fetch,
 }) {
   let pendingRefresh = null
 
@@ -24,7 +25,7 @@ export function createAuthenticatedFetch({
         headers.delete('Authorization')
       }
 
-      return fetch(url, {
+      return fetchImpl(url, {
         ...options,
         headers,
       })

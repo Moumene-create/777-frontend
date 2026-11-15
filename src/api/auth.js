@@ -1,4 +1,6 @@
 import { API_BASE_URL } from './config'
+import { apiFetch } from './apiClient'
+
 const AGE_CATEGORY_ID_TO_LABEL = {
   1: '7-10',
   2: '11-14',
@@ -71,7 +73,7 @@ export async function updateCurrentUser(profileData, accessToken){
     throw new Error('An access token is required.')
   }
 
-  const response = await fetch (`${API_BASE_URL}/auth/me`, {
+  const response = await apiFetch (`${API_BASE_URL}/auth/me`, {
     method:'PATCH',
     headers:{
       Accept: 'application/json',
