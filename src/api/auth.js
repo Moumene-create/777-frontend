@@ -52,14 +52,16 @@ export async function getCurrentUser(accessToken) {
   })
 
   if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('The access token was rejected or has expired.')
-    }
+  const message =
+    response.status === 401
+      ? 'The access token was rejected or has expired.'
+      : `Could not retrieve the current user (HTTP ${response.status}).`
 
-    throw new Error(
-      `Could not retrieve the current user (HTTP ${response.status}).`
-    )
-  }
+  const error = new Error(message)
+  error.status = response.status
+
+  throw error
+}
 
   return response.json()
 }
@@ -209,4 +211,53 @@ export async function logout(accessToken) {
       `Could not log out (HTTP ${response.status}).`
     )
   }
+}
+
+export async function refreshAuthTokens(refreshToken) {
+  if (!refreshToken) {
+    throw new Error('A refresh token is required.')
+  }
+
+  const response = await fetch(`${API_BASE_URL}/auth/token/refresh`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      refresh_token: refreshToken,
+    }),
+  })
+
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    let message = `Could not refresh your session (HTTP ${response.status}).`
+
+    if (typeof data?.detail === 'string') {
+      message = data.detail
+    } else if (Array.isArray(data?.detail)) {
+      message =
+        data.detail
+          .map((error) => error.msg)
+          .filter(Boolean)
+          .join(' ') || message
+    }
+
+    const error = new Error(message)
+    error.status = response.status
+    throw error
+  }
+
+  if (
+    typeof data?.access_token !== 'string' ||
+    !data.access_token.trim() ||
+    typeof data?.refresh_token !== 'string' ||
+    !data.refresh_token.trim() ||
+    data?.token_type?.toLowerCase() !== 'bearer'
+  ) {
+    throw new Error('The server returned an invalid token response.')
+  }
+
+  return data
 }

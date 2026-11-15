@@ -13,7 +13,7 @@ import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
 import { getSessions, registerForSession, unregisterFromSession,getMySessions,cancelSession, } from './api/sessions'
-import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo,logout,} from './api/auth'
+import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo,logout,refreshAuthTokens,} from './api/auth'
 
 function App() {
   // IDs of sessions the logged-in user is registered for. to be modified in useEffect.
@@ -28,6 +28,8 @@ function App() {
   const isAuthenticated = Boolean(currentUser)
   // the list of all sessions from the backend ( for now only the sessions from the same )
   const [sessions, setSessions] = useState([])
+  const [refreshToken, setRefreshToken] = useState(null)
+
   // gets the sessions registered by the user 
   useEffect(() => {
     if (!accessToken) {
@@ -103,13 +105,43 @@ function App() {
 
     async function loadCurrentUser() {
       try {
-        const backendUser = await getCurrentUser(accessToken)
+        let backendUser
+
+        try {
+          backendUser = await getCurrentUser(accessToken)
+        } catch (error) {
+          if (!isActive) return
+
+          if (error.status !== 401 || !refreshToken) {
+            throw error
+          }
+
+          const tokens = await refreshAuthTokens(refreshToken)
+
+          if (!isActive) return
+
+          // Verify the new access token before applying the token pair.
+          backendUser = await getCurrentUser(tokens.access_token)
+
+          if (!isActive) return
+
+          setAccessToken(tokens.access_token)
+          setRefreshToken(tokens.refresh_token)
+        }
 
         if (isActive) {
           setCurrentUser(normalizeUserInfo(backendUser))
         }
       } catch (error) {
-        console.error('Could not load the current user:', error.message)
+        if (!isActive) return
+
+        console.error('Could not restore your session:', error.message)
+
+        if (error.status === 401) {
+          setCurrentUser(null)
+          setAccessToken(null)
+          setRefreshToken(null)
+        }
       } finally {
         if (isActive) {
           setIsUserLoading(false)
@@ -122,7 +154,7 @@ function App() {
     return () => {
       isActive = false
     }
-  }, [accessToken])
+  }, [accessToken, refreshToken])
 
 //////////////
 const sessionsWithLiveCounts = sessions
@@ -177,9 +209,10 @@ async function handleUnregister(sessionId) {
   }
 }
 
-function handleLogin(userData, token) {
+function handleLogin(userData, token, newRefreshToken) {
   setCurrentUser(normalizeUserInfo(userData))
   setAccessToken(token)
+  setRefreshToken(newRefreshToken ?? null)
 }
 
 async function handleLogout() {
@@ -192,6 +225,7 @@ async function handleLogout() {
   } finally {
     setCurrentUser(null)
     setAccessToken(null)
+    setRefreshToken(null)
   }
 }
 
@@ -234,6 +268,7 @@ async function handleCancelSession(sessionId) {
 
 
   return (
+     <>
     <Routes>
       <Route 
       path="/" 
@@ -388,6 +423,7 @@ async function handleCancelSession(sessionId) {
   )}
 
     </Routes>
+   </>
   )
 }
 
