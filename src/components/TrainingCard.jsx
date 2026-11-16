@@ -27,21 +27,23 @@ function TrainingCard({
   onJoin,
   isJoining = false,
 }) {
-  const now = new Date()
+  const now = Date.now()
 
-  const sessionStartTime = new Date(session.startDateTime)
-  const sessionEndTime = new Date(session.startDateTime)
-  sessionEndTime.setMinutes(
-    sessionEndTime.getMinutes() + session.durationMinutes
-  )
+  const sessionStartTime = session
+    ? new Date(session.startDateTime).getTime()
+    : NaN
 
-  const isSessionActive =
-    now >= sessionStartTime && now <= sessionEndTime
+  const sessionEndTime =
+    sessionStartTime + Number(session?.durationMinutes) * 60_000
 
   const canJoin =
     isRegistered &&
-    !session.isCancelled &&
-    isSessionActive
+    Boolean(session) &&
+    !session?.isCancelled &&
+    !isCompleted &&
+    typeof onJoin === 'function' &&
+    now >= sessionStartTime &&
+    now < sessionEndTime
 
   const isFull = registeredCount >= maxCapacity
   const spotsRemaining = Math.max(0, maxCapacity - registeredCount)
@@ -144,20 +146,19 @@ function TrainingCard({
         {canJoin ? (
           <button
             type="button"
-            className="join-session-button"
+            className="training-card__button training-card__button_view--details"
             onClick={onJoin}
             disabled={isJoining}
           >
             {isJoining ? 'Joining…' : 'Join session'}
           </button>
         ) : (
-          <button
-            type="button"
-            className="view-details-button"
-            onClick={onViewDetails}
+          <Link
+            className="training-card__button training-card__button_view--details"
+            to={`/sessions/${id}`}
           >
             View details
-          </button>
+          </Link>
         )}
        
       </div>

@@ -15,7 +15,12 @@ function MySessionsPage({
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
   }
+  const [joiningSessionId, setJoiningSessionId] = useState(null)
+  const [joinError, setJoinError] = useState(null)
 
+    if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
   const now = new Date()
 
   const isSessionCompleted = (session) => {
@@ -27,8 +32,7 @@ function MySessionsPage({
     return sessionEndTime < now
   }
 
-  const [joiningSessionId, setJoiningSessionId] = useState(null)
-  const [joinError, setJoinError] = useState(null)
+  
 
   const mySessions = sessions.filter((session) =>
     registeredSessionIds.includes(session.id)
@@ -67,6 +71,7 @@ function MySessionsPage({
           {mySessions.map((session) => (
             <TrainingCard
               key={session.id}
+              session={session}
               id={session.id}
               title={session.title}
               description={session.description}
