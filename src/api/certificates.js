@@ -1,11 +1,12 @@
 import { API_BASE_URL } from './config'
+import { apiFetch } from './apiClient'
 
 export async function getCertificates(accessToken) {
   if (!accessToken) {
     throw new Error('You must be logged in to view certificates.')
   }
 
-  const response = await fetch(`${API_BASE_URL}/certificates/`, {
+  const response = await apiFetch(`${API_BASE_URL}/certificates/`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',
@@ -43,7 +44,7 @@ export async function getCertificatePdf(registrationId, accessToken) {
     throw new Error('A registration ID and login are required.')
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${API_BASE_URL}/certificates/${encodeURIComponent(registrationId)}/pdf`,
     {
       method: 'GET',

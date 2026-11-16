@@ -73,7 +73,7 @@ export async function updateCurrentUser(profileData, accessToken){
     throw new Error('An access token is required.')
   }
 
-  const response = await apiFetch (`${API_BASE_URL}/auth/me`, {
+  const response = await apiFetch(`${API_BASE_URL}/auth/me`, {
     method:'PATCH',
     headers:{
       Accept: 'application/json',

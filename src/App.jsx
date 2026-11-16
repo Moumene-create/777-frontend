@@ -17,6 +17,7 @@ import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUse
 import { createAuthenticatedFetch } from './api/authenticatedFetch'
 import { configureApiClient } from './api/apiClient'
 
+
 function App() {
   // IDs of sessions the logged-in user is registered for. to be modified in useEffect.
   const [registeredSessionIds, setRegisteredSessionIds] = useState([])
@@ -296,7 +297,6 @@ async function handleUpdateProfile(updatedData) {
   fullName: `${normalizedUser.firstName} ${normalizedUser.lastName}`.trim(),
 })}
 
-
 if (isUserLoading) {
   return (
     <main className="app-loading">
@@ -323,8 +323,6 @@ async function handleCancelSession(sessionId) {
     )
   )
 }
-
-
   return (
      <>
     <Routes>

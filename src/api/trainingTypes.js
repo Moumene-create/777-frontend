@@ -1,11 +1,12 @@
 import { API_BASE_URL } from './config'
+import { apiFetch } from './apiClient'
 
 export async function getTrainingTypes(accessToken) {
   if (!accessToken) {
     throw new Error('You must be logged in to load training types.')
   }
 
-  const response = await fetch(`${API_BASE_URL}/training-types`, {
+  const response = await apiFetch(`${API_BASE_URL}/training-types`, {
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${accessToken}`,
