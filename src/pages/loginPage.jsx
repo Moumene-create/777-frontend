@@ -1,16 +1,25 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
-import { login, getCurrentUser } from '../api/auth'
+import { login, getCurrentUser, resendVerificationEmail, } from '../api/auth'
+import { Link } from 'react-router-dom'
 import './LoginPage.css'
 
 function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [unverifiedEmail, setUnverifiedEmail] = useState('')
+  const [isResending, setIsResending] = useState(false)
+  const [verificationMessage, setVerificationMessage] = useState('')
+  const [verificationError, setVerificationError] = useState('')
 
   async function handleSubmit(event) {
     event.preventDefault()
+    if (isSubmitting || isResending) return
+    setUnverifiedEmail('')
+    setVerificationMessage('')
+    setVerificationError('')
     const formData = new FormData(event.target)
     const email = event.target.email.value.trim()
     const normalizedEmail = email.toLowerCase()
@@ -30,11 +39,38 @@ function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
       navigate(user.role === "SESSION_MANAGER" ? '/manager' : '/sessions')
     } catch (requestError) {
       setError(requestError.message)
+
+      if (requestError.code === 'EMAIL_NOT_VERIFIED') {
+        setUnverifiedEmail(email)
+      }
     } finally {
       setIsSubmitting(false)
     }
 }
 
+  async function handleResendVerification() {
+    if (!unverifiedEmail || isResending || isSubmitting) return
+
+    setIsResending(true)
+    setVerificationMessage('')
+    setVerificationError('')
+
+    try {
+      await resendVerificationEmail(unverifiedEmail)
+
+      setVerificationMessage(
+        'Verification email requested. Check your inbox and spam folder, ' +
+        'open the verification link, then return here to log in.'
+      )
+    } catch (requestError) {
+      setVerificationError(
+        requestError.message ||
+          'Could not resend the verification email. Please try again.'
+      )
+    } finally {
+      setIsResending(false)
+    }
+  }
   return (
     <main className="auth-page">
       <PublicHeader
@@ -85,6 +121,34 @@ function LoginPage({ onLogin, isAuthenticated, currentUser, onLogout }) {
               {isSubmitting ? 'Logging in…' : 'Log in'}
             </button>
           </form>
+          {unverifiedEmail && (
+            <section aria-label="Email verification">
+              <p>
+                Verification is required for {unverifiedEmail}.
+              </p>
+
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={isResending || isSubmitting}
+              >
+                {isResending
+                  ? 'Sending…'
+                  : 'Resend verification email'}
+              </button>
+
+              {verificationMessage && (
+                <p role="status">{verificationMessage}</p>
+              )}
+
+              {verificationError && (
+                <p role="alert">{verificationError}</p>
+              )}
+            </section>
+          )}
+          <p className="auth-card__forgot">
+            <Link to="/forgot-password">Forgot password?</Link>
+          </p>
         </div>
       </section>
     </main>

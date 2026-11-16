@@ -14,3 +14,9 @@
   border: 1px solid #e5e7eb;
   border-radius: 12px;
 }
+
+.join-error {
+  color: #b91c1c;
+  margin-bottom: 16px;
+  font-weight: 600;
+}

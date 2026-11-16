@@ -434,3 +434,30 @@ export async function validateSessionAttendance(
 
   return data.validated_count
 }
+
+export async function joinSession(sessionId) {
+  const response = await apiClient(`/sessions/${sessionId}/join`, {
+    method: 'POST',
+  })
+
+  if (!response.ok) {
+    const error = new Error(
+      'Could not join the session. Please try again later.'
+    )
+    error.status = response.status
+    throw error
+  }
+
+  const data = await response.json()
+
+  if (!data?.zoom_url) {
+    const error = new Error(
+      'The meeting link is not available yet. Please contact the trainer.'
+    )
+    error.status = response.status
+    throw error
+  }
+
+  return data.zoom_url
+}
+

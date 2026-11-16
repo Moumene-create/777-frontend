@@ -15,7 +15,6 @@ function getAgeCategoryLabel(ageCategoryId) {
   return AGE_CATEGORY_ID_TO_LABEL[ageCategoryId] ?? null
 }
 
-
 export async function login({ email, password }) {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
@@ -30,11 +29,28 @@ export async function login({ email, password }) {
   })
 
   if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('Login was rejected. Check your credentials.')
+    const data = await response.json().catch(() => null)
+
+    const isEmailUnverified =
+      response.status === 403 &&
+      data?.detail === 'Email address is not verified.'
+
+    let message = `Login failed (HTTP ${response.status}).`
+
+    if (isEmailUnverified) {
+      message = 'Please verify your email address before logging in.'
+    } else if (response.status === 401) {
+      message = 'Login was rejected. Check your credentials.'
     }
 
-    throw new Error(`Login failed (HTTP ${response.status}).`)
+    const error = new Error(message)
+    error.status = response.status
+
+    if (isEmailUnverified) {
+      error.code = 'EMAIL_NOT_VERIFIED'
+    }
+
+    throw error
   }
 
   return response.json()
@@ -262,4 +278,72 @@ export async function refreshAuthTokens(refreshToken) {
   }
 
   return data
+}
+
+export async function requestPasswordReset(email) {
+  const response = await fetch(
+    `${API_BASE_URL}/auth/password/reset-request`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email.trim(),
+      }),
+    }
+  )
+
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    let message =
+      `Could not request a password reset (HTTP ${response.status}).`
+
+    if (response.status === 429) {
+      message = 'Too many requests. Please wait before trying again.'
+    } else if (response.status === 422) {
+      message = 'Please enter a valid email address.'
+    }
+
+    const error = new Error(message)
+    error.status = response.status
+    throw error
+  }
+
+  return data
+}
+
+export async function resetPassword({ token, newPassword }) {
+  const response = await fetch(
+    `${API_BASE_URL}/auth/password/reset`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token,
+        new_password: newPassword,
+      }),
+    }
+  )
+
+  if (!response.ok) {
+    let message =
+      'Could not reset your password. Please request a new link and try again.'
+
+    if (response.status === 422) {
+      message =
+        'The reset details or password were rejected. Please check your password or request a new link.'
+    } else if (response.status === 429) {
+      message = 'Too many requests. Please wait before trying again.'
+    }
+
+    const error = new Error(message)
+    error.status = response.status
+    throw error
+  }
 }

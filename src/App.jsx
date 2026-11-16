@@ -12,6 +12,9 @@ import CreateSessionPage from './pages/CreateSessionPage'
 import EditSessionPage from './pages/EditSessionPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
 import RequireManager from './components/RequireManager'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
+import VerifyEmailPage from './pages/VerifyEmailPage'
 import { getSessions, registerForSession, unregisterFromSession,getMySessions,cancelSession } from './api/sessions'
 import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo,logout,refreshAuthTokens,} from './api/auth'
 import { createAuthenticatedFetch } from './api/authenticatedFetch'
@@ -31,7 +34,9 @@ function App() {
   const isAuthenticated = Boolean(currentUser)
   // the list of all sessions from the backend ( for now only the sessions from the same )
   const [sessions, setSessions] = useState([])
-  const [refreshToken, setRefreshToken] = useState(null)
+  const [refreshToken, setRefreshToken] = useState(
+    () => sessionStorage.getItem('refreshToken')
+  )
   const authRef = useRef({
     accessToken,
     refreshToken,
@@ -46,6 +51,7 @@ function App() {
     }
 
     sessionStorage.removeItem('accessToken')
+    sessionStorage.removeItem('refreshToken')
     setCurrentUser(null)
     setAccessToken(null)
     setRefreshToken(null)
@@ -147,7 +153,13 @@ function App() {
     } else {
       sessionStorage.removeItem('accessToken')
     }
-    }, [accessToken])
+
+    if (refreshToken) {
+      sessionStorage.setItem('refreshToken', refreshToken)
+    } else {
+      sessionStorage.removeItem('refreshToken')
+    }
+  }, [accessToken, refreshToken])
 
   useEffect(() => {
   if (!accessToken) {
@@ -304,6 +316,7 @@ if (isUserLoading) {
     </main>
   )
 }
+
 async function handleCancelSession(sessionId) {
   if (!accessToken) {
     throw new Error('Please log in again to cancel this session.')
@@ -342,6 +355,18 @@ async function handleCancelSession(sessionId) {
         currentUser={currentUser}
         onLogout={handleLogout}
       />}
+      />
+      <Route
+        path="/forgot-password"
+        element={<ForgotPasswordPage />}
+      />
+      <Route
+        path="/reset-password"
+        element={<ResetPasswordPage />}
+      />
+      <Route
+        path="/verify-email"
+        element={<VerifyEmailPage />}
       />
       <Route 
         path="/signup" 

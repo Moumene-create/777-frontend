@@ -23,8 +23,26 @@ function TrainingCard({
   isCompleted = false,
   onRegister,
   onUnregister,
-  
+  session,
+  onJoin,
+  isJoining = false,
 }) {
+  const now = new Date()
+
+  const sessionStartTime = new Date(session.startDateTime)
+  const sessionEndTime = new Date(session.startDateTime)
+  sessionEndTime.setMinutes(
+    sessionEndTime.getMinutes() + session.durationMinutes
+  )
+
+  const isSessionActive =
+    now >= sessionStartTime && now <= sessionEndTime
+
+  const canJoin =
+    isRegistered &&
+    !session.isCancelled &&
+    isSessionActive
+
   const isFull = registeredCount >= maxCapacity
   const spotsRemaining = Math.max(0, maxCapacity - registeredCount)
   const fillPercentage = Math.min(100, Math.max(0, Math.round((registeredCount / maxCapacity) * 100)))
@@ -123,12 +141,24 @@ function TrainingCard({
         </div>
 
         
-          <Link
-            className="training-card__button training-card__button_view--details" 
-            to={`/sessions/${id}`}
+        {canJoin ? (
+          <button
+            type="button"
+            className="join-session-button"
+            onClick={onJoin}
+            disabled={isJoining}
+          >
+            {isJoining ? 'Joining…' : 'Join session'}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="view-details-button"
+            onClick={onViewDetails}
           >
             View details
-          </Link>
+          </button>
+        )}
        
       </div>
     </article>
