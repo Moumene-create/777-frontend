@@ -48,7 +48,7 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
     wilaya: '',
     password: '',
   });
-  // const [submitStatus, setSubmitStatus] = useState('');
+
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -68,7 +68,7 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
   const isFormInvalid = isPasswordTooShort || isPhonenumberInvalid ;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  const [submitSuccess, setSubmitSuccess] = useState('')
+
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -76,7 +76,6 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
     if (isSubmitting || isFormInvalid) return
 
     setSubmitError('')
-    setSubmitSuccess('')
     setIsSubmitting(true)
 
     try {
@@ -90,7 +89,7 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
         password: formData.password,
       })
 
-      setSubmitSuccess('Account created successfully.')
+      navigate('/check-email', { replace: true })
     } catch (error) {
       setSubmitError(error.message)
     } finally {
@@ -242,14 +241,7 @@ return (
                 {submitError}
               </p>
             )}
-            {submitSuccess && (
-              <div role="status">
-                <p>{submitSuccess}</p>
-                <button type="button" onClick={() => navigate('/login')}>
-                  Go to login
-                </button>
-              </div>
-            )}
+           
           <button
             className="ran-form__submit"
             type="submit"

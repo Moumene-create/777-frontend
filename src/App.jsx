@@ -15,6 +15,7 @@ import RequireManager from './components/RequireManager'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import VerifyEmailPage from './pages/VerifyEmailPage'
+import CheckEmailPage from './pages/CheckEmailPage'
 import { getSessions, registerForSession, unregisterFromSession,getMySessions,cancelSession } from './api/sessions'
 import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo,logout,refreshAuthTokens,} from './api/auth'
 import { createAuthenticatedFetch } from './api/authenticatedFetch'
@@ -367,6 +368,10 @@ async function handleCancelSession(sessionId) {
       <Route
         path="/verify-email"
         element={<VerifyEmailPage />}
+      />
+      <Route
+        path="/check-email"
+        element={<CheckEmailPage />}
       />
       <Route 
         path="/signup" 
