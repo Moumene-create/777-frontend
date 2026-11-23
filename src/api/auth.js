@@ -347,3 +347,51 @@ export async function resetPassword({ token, newPassword }) {
     throw error
   }
 }
+
+export async function changePassword(
+  { currentPassword, newPassword },
+  accessToken
+) {
+  if (!accessToken) {
+    throw new Error('You must be logged in to change your password.')
+  }
+
+  const response = await apiFetch(
+    `${API_BASE_URL}/auth/me/password`,
+    {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        current_password: currentPassword,
+        new_password: newPassword,
+      }),
+    }
+  )
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => null)
+
+    let message = `Could not change your password (HTTP ${response.status}).`
+
+    if (typeof errorBody?.detail === 'string') {
+      message = errorBody.detail
+    } else if (Array.isArray(errorBody?.detail)) {
+      message = errorBody.detail
+        .map((error) => error.msg)
+        .filter(Boolean)
+        .join(' ') || message
+    } else if (response.status === 401) {
+      message = 'Your session has expired. Please log in again.'
+    } else if (response.status === 403) {
+      message = 'The current password is incorrect.'
+    }
+
+    const error = new Error(message)
+    error.status = response.status
+    throw error
+  }
+}
