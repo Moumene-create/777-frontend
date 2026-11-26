@@ -1,0 +1,83 @@
+.theme-toggle {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 160;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: 50%;
+  background: var(--card-bg);
+  color: var(--text-main);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+}
+
+.theme-toggle:focus-visible {
+  outline: var(--border-width-thick) solid var(--primary-blue);
+  outline-offset: 3px;
+}
+
+.theme-toggle__icon {
+  display: block;
+}
+
+.theme-toggle.theme-toggle--inline {
+  position: static;
+  right: auto;
+  bottom: auto;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.theme-toggle.theme-toggle--inline:hover {
+  transform: none;
+  background: var(--marketing-surface-muted);
+}
+
+.theme-toggle.theme-toggle--inline:focus-visible {
+  outline: var(--border-width-heavy) solid currentColor;
+  outline-offset: 2px;
+}
+
+@media (max-width: 48rem) {
+  .theme-toggle {
+    right: 0.85rem;
+    bottom: 0.85rem;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .theme-toggle.theme-toggle--inline {
+    right: auto;
+    bottom: auto;
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+
+
+
+

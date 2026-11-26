@@ -1,29 +1,24 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import SessionForm from '../components/SessionForm'
 import ManagerHeader from '../components/ManagerHeader'
-import {getManagementSession,updateSession} from '../api/sessions'
-import { getAgeCategoryLabel } from '../utils/ageCategory'
+import { getManagementSession } from '../api/sessions'
+import { getAgeCategoryLabelsFromIds } from '../utils/ageCategory'
+import { buildSessionPayload } from '../utils/sessionPayload'
 import './CreateSessionPage.css'
 
 export default function EditSessionPage({
-  isAuthenticated,
-  currentUser,
-  onLogout,
   accessToken,
+  onLogout,
+  onUpdateSession,
 }) {
   const { sessionId } = useParams()
+  const navigate = useNavigate()
+
   const [session, setSession] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
-  const AGE_CATEGORY_LABEL_TO_ID = {
-  '7-10': 1,
-  '11-14': 2,
-  '15-17': 3,
-  '18-23': 4,
-  '24-30': 5,
-  '31-45': 6,
-  '46-60': 7,}
+
   useEffect(() => {
     let isActive = true
 
@@ -38,9 +33,9 @@ export default function EditSessionPage({
         if (isActive) {
           setSession(data)
         }
-      } catch (error) {
+      } catch (requestError) {
         if (isActive) {
-          setError(error.message)
+          setError(requestError.message)
         }
       } finally {
         if (isActive) {
@@ -56,73 +51,57 @@ export default function EditSessionPage({
     }
   }, [sessionId, accessToken])
 
+  async function handleUpdate(values) {
+    const payload = buildSessionPayload(values, { isEditing: true })
+
+    await onUpdateSession(sessionId, payload)
+    navigate('/manager')
+  }
+
   const initialValues = session
     ? {
-        trainingId: session.trainingId || '',
-        title: session.title || '',
-        description: session.description || '',
-        date: session.date || '',
-        time: session.startTime?.slice(0, 5) || '',
-        durationMinutes: String(session.durationMinutes ?? 60),
-        maxCapacity: String(session.maxCapacity ?? 100),
-        instructor: session.instructorName || '',
-        zoomUrl: session.zoomUrl || '',
-        targetAgeCategories: (session.targetAgeCategoryIds || [])
-          .map(getAgeCategoryLabel)
-          .filter(Boolean),
+        trainingId: session.trainingId ?? '',
+        title: session.title ?? '',
+        description: session.description ?? '',
+        date: session.date ?? '',
+        time: String(session.startTime ?? '').slice(0, 5),
+        durationMinutes: String(session.durationMinutes || 60),
+        maxCapacity: String(session.maxCapacity || 100),
+        zoomUrl: session.zoomUrl ?? '',
+        prerequisites: session.prerequisites ?? '',
+        targetAgeCategories: getAgeCategoryLabelsFromIds(
+          session.targetAgeCategoryIds
+        ),
+        instructorId: session.instructorId ?? '',
       }
     : null
 
-  async function handleUpdateSession(form) {
-  const categoryIds = form.targetAgeCategories.map(
-    (label) => AGE_CATEGORY_LABEL_TO_ID[label]
-  )
-
-  if (categoryIds.some((id) => id === undefined)) {
-    throw new Error('An age category could not be recognized.')
-  }
-
-  await updateSession(
-    sessionId,
-    {
-      title: form.title.trim(),
-      description: session.description,
-      date: form.date,
-      start_time: form.time,
-      duration_minutes: Number(form.durationMinutes),
-      max_capacity: Number(form.maxCapacity),
-      zoom_url: form.zoomUrl.trim(),
-      instructor_name: form.instructor.trim(),
-      target_age_category_ids: categoryIds,
-    },
-    accessToken
-  )
-}
-
   return (
     <>
-      <ManagerHeader
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        onLogout={onLogout}
-      />
+      <ManagerHeader onLogout={onLogout} />
 
-      <main>
-        <h1>Edit session</h1>
-        <Link to="/manager">Back to sessions</Link>
+      <main className="create-session">
+        <header className="create-session__heading">
+          <Link to="/manager">← Session management</Link>
+          <h1>Edit session</h1>
+          {session && <p>{session.title}</p>}
+        </header>
 
         {isLoading ? (
-          <p>Loading session...</p>
+          <p>Loading session…</p>
         ) : error ? (
-          <p role="alert">{error}</p>
-        ) : session ? (
+          <div>
+            <p role="alert">{error}</p>
+            <Link to="/manager">Back to session management</Link>
+          </div>
+        ) : initialValues ? (
           <SessionForm
             key={session.id}
+            mode="edit"
             initialValues={initialValues}
-            submitLabel="Save changes"
             accessToken={accessToken}
-            isEditing
-            onSubmit={handleUpdateSession}
+            submitLabel="Save changes"
+            onSubmit={handleUpdate}
           />
         ) : null}
       </main>

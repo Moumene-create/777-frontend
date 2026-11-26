@@ -1,4 +1,4 @@
-.sessions-page__title {
+﻿.sessions-page__title {
     display : flex;
     margin-top: 15px;
     margin-bottom: 19px;
@@ -16,4 +16,13 @@ main.page_width {
   max-width: 1600px;
   margin: 0 auto;
   padding: 2rem clamp(2rem, 6vw, 7rem) 4rem;
+}.sessions-page__subtitle {
+  margin: -6px 0 24px;
+  color: var(--text-muted);
+  text-align: center;
 }
+
+
+
+
+

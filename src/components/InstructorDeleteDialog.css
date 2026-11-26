@@ -1,0 +1,16 @@
+﻿
+.instructor-delete-dialog .cancel-session-dialog__actions button:last-child {
+  border-color: var(--status-rose);
+  background: var(--status-rose);
+  color: var(--color-white);
+}
+
+.instructor-delete-dialog .cancel-session-dialog__actions button:last-child:not(:disabled):hover {
+  border-color: var(--status-rose-strong);
+  background: var(--status-rose-strong);
+}
+
+
+
+
+

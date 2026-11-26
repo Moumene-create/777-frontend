@@ -1,21 +1,72 @@
-export function calculateAgeCategory(dateOfBirth) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateOfBirth || '')) {
-    throw new Error('Veuillez saisir une date de naissance valide.')
+// Single source of truth for the seven age categories exposed by the backend
+// (`age_category_id` 1..7). Keep the ids in sync with the API.
+export const AGE_CATEGORIES = [
+  { id: 1, label: '7-10', minAge: 7, maxAge: 10 },
+  { id: 2, label: '11-14', minAge: 11, maxAge: 14 },
+  { id: 3, label: '15-17', minAge: 15, maxAge: 17 },
+  { id: 4, label: '18-23', minAge: 18, maxAge: 23 },
+  { id: 5, label: '24-30', minAge: 24, maxAge: 30 },
+  { id: 6, label: '31-45', minAge: 31, maxAge: 45 },
+  { id: 7, label: '46-60', minAge: 46, maxAge: 60 },
+]
+
+const AGE_CATEGORY_BY_ID = new Map(
+  AGE_CATEGORIES.map((category) => [category.id, category])
+)
+
+const AGE_CATEGORY_BY_LABEL = new Map(
+  AGE_CATEGORIES.map((category) => [category.label, category])
+)
+
+export function getAgeCategories() {
+  return AGE_CATEGORIES
+}
+
+export function getAgeCategoryLabels() {
+  return AGE_CATEGORIES.map((category) => category.label)
+}
+
+export function getAgeCategoryLabel(ageCategoryId) {
+  const id = Number(ageCategoryId)
+  return AGE_CATEGORY_BY_ID.get(id)?.label ?? null
+}
+
+export function getAgeCategoryId(label) {
+  return AGE_CATEGORY_BY_LABEL.get(label)?.id ?? null
+}
+
+export function getAgeCategoryLabelsFromIds(ids) {
+  if (!Array.isArray(ids)) {
+    return []
   }
-  
+
+  return ids
+    .map((id) => getAgeCategoryLabel(id))
+    .filter((label) => label !== null)
+}
+
+/**
+ * Derive the age category label from an ISO date of birth.
+ * Returns null when the date is invalid or the person is outside 7-60.
+ */
+export function getAgeCategoryFromDateOfBirth(dateOfBirth) {
+  if (typeof dateOfBirth !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(dateOfBirth)) {
+    return null
+  }
+
   const [year, month, day] = dateOfBirth.split('-').map(Number)
   const birthDate = new Date(year, month - 1, day)
-  const today = new Date()
 
   const isInvalidDate =
     birthDate.getFullYear() !== year ||
     birthDate.getMonth() !== month - 1 ||
     birthDate.getDate() !== day
 
-  if (isInvalidDate || birthDate > today) {
-    throw new Error('Veuillez saisir une date de naissance valide.')
+  if (isInvalidDate || birthDate > new Date()) {
+    return null
   }
 
+  const today = new Date()
   let age = today.getFullYear() - year
 
   const birthdayHasNotPassed =
@@ -26,44 +77,9 @@ export function calculateAgeCategory(dateOfBirth) {
     age -= 1
   }
 
-  const categories = [
-    { min: 7, max: 10, label: '7-10' },
-    { min: 11, max: 14, label: '11-14' },
-    { min: 15, max: 17, label: '15-17' },
-    { min: 18, max: 23, label: '18-23' },
-    { min: 24, max: 30, label: '24-30' },
-    { min: 31, max: 45, label: '31-45' },
-    { min: 46, max: 60, label: '46-60' },
-  ]
+  const category = AGE_CATEGORIES.find(
+    (item) => age >= item.minAge && age <= item.maxAge
+  )
 
-  return categories.find(
-    (category) => age >= category.min && age <= category.max
-  )?.label || null
-}
-const AGE_CATEGORY_ID_TO_LABEL = {
-  1: '7-10',
-  2: '11-14',
-  3: '15-17',
-  4: '18-23',
-  5: '24-30',
-  6: '31-45',
-  7: '46-60',
-}
-
-export function getAgeCategoryLabel(ageCategoryId) {
-  return AGE_CATEGORY_ID_TO_LABEL[ageCategoryId] ?? null
-}
-
-const LABEL_TO_AGE_CATEGORY_ID = {
-  '7-10' : 1,
-  '11-14':2,
-  '15-17':3,
-  '18-23':4,
-  '24-30':5,
-  '31-45':6,
-  '46-60':7,
-}
-
-export function getAgeCategoryId(ageCategoryId) {
-  return LABEL_TO_AGE_CATEGORY_ID[ageCategoryId] ?? null
+  return category?.label ?? null
 }

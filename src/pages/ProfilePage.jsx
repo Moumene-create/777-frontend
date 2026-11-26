@@ -2,18 +2,9 @@ import PublicHeader from '../components/PublicHeader'
 import ProfilePanel from '../components/ProfilePanel'
 import './ProfilePage.css'
 import { useEffect, useState } from 'react'
-import {
-  getCertificates,
-  getCertificatePdf,
-} from '../api/certificates'
+import { getCertificates, getCertificatePdf } from '../api/certificates'
+import { formatSessionDate } from '../utils/format'
 
-const demoCertificates = [
-  {
-    id: 'demo-certificate',
-    sessionTitle: 'Introduction to Artificial Intelligence',
-    pdfUrl: `${import.meta.env.BASE_URL}certificates/demo-certificate.pdf`,
-  },
-]
 export default function ProfilePage({
   isAuthenticated,
   currentUser,
@@ -29,7 +20,9 @@ export default function ProfilePage({
   const [downloadError, setDownloadError] = useState('')
 
   useEffect(() => {
-    if (!showCertificates || !accessToken) return
+    if (!showCertificates || !accessToken) {
+      return undefined
+    }
 
     let isActive = true
 
@@ -63,7 +56,9 @@ export default function ProfilePage({
   }, [showCertificates, accessToken])
 
   async function handleDownloadCertificate(certificate) {
-    if (downloadingId) return
+    if (downloadingId) {
+      return
+    }
 
     setDownloadingId(certificate.registrationId)
     setDownloadError('')
@@ -90,7 +85,8 @@ export default function ProfilePage({
     } finally {
       setDownloadingId(null)
     }
-}
+  }
+
   return (
     <main className="profile-layout">
       <PublicHeader
@@ -105,20 +101,27 @@ export default function ProfilePage({
           onSave={onUpdateProfile}
           onCertificatesOpenChange={setShowCertificates}
         />
+
         {showCertificates && (
-          <section>
+          <section className="profile-certificates" aria-label="My certificates">
             <h2>My certificates</h2>
+
             {downloadError && <p role="alert">{downloadError}</p>}
+
             {!accessToken ? (
               <p>Please log in to view certificates.</p>
             ) : isCertificatesLoading ? (
-              <p>Loading certificates...</p>
+              <p>Loading certificates…</p>
             ) : certificatesError ? (
               <p role="alert">{certificatesError}</p>
             ) : certificates.length === 0 ? (
-              <p>No certificates available yet.</p>
+              <p>
+                No certificates available yet. A certificate is issued once a
+                session manager validates your attendance for a completed
+                session.
+              </p>
             ) : (
-              <ul>
+              <ul className="profile-certificates__list">
                 {certificates.map((certificate) => (
                   <li key={certificate.certificateId}>
                     <h3>{certificate.sessionTitle}</h3>
@@ -126,14 +129,18 @@ export default function ProfilePage({
                       {certificate.participantFirstName}{' '}
                       {certificate.participantLastName}
                     </p>
-                    <p>Session date: {certificate.sessionDate}</p>
+                    <p>
+                      Session date:{' '}
+                      {formatSessionDate(certificate.sessionDate) ||
+                        certificate.sessionDate}
+                    </p>
                     <button
                       type="button"
                       onClick={() => handleDownloadCertificate(certificate)}
                       disabled={downloadingId !== null}
                     >
                       {downloadingId === certificate.registrationId
-                        ? 'Downloading...'
+                        ? 'Downloading…'
                         : 'Download PDF'}
                     </button>
                   </li>
@@ -143,8 +150,6 @@ export default function ProfilePage({
           </section>
         )}
       </div>
-      
     </main>
-    
   )
 }

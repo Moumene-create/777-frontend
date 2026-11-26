@@ -1,0 +1,64 @@
+﻿.not-found {
+  min-height: 100vh;
+  padding-block: 48px 80px;
+}
+
+.not-found__card {
+  width: min(100% - 2rem, 40rem);
+  margin: 64px auto 0;
+  padding: 48px 32px;
+  text-align: center;
+  background: var(--card-bg);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.not-found__code {
+  margin: 0;
+  color: var(--button-blue);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: -0.04em;
+}
+
+.not-found__card h1 {
+  margin: 8px 0 12px;
+  color: var(--primary-navy);
+}
+
+.not-found__card p {
+  color: var(--text-muted);
+}
+
+.not-found__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.not-found__actions a {
+  padding: 12px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--button-blue);
+  color: var(--color-white);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+}
+
+.not-found__actions a + a {
+  background: var(--bg-soft-blue);
+  color: var(--primary-navy);
+}
+
+.not-found__actions a:focus-visible {
+  outline: var(--border-width-thick) solid var(--primary-blue);
+  outline-offset: 3px;
+}
+
+
+
+
+

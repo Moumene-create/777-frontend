@@ -4,7 +4,36 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend_777</title>
+    <meta
+      name="description"
+      content="7.77 Training Platform — discover, register for and join online training sessions for every age category."
+    />
+    <meta name="theme-color" content="#12355b" />
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme')
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          document.documentElement.dataset.theme = theme
+          document.documentElement.style.colorScheme = theme
+          var themeColor = document.querySelector('meta[name="theme-color"]')
+          if (themeColor) {
+            themeColor.setAttribute(
+              'content',
+              theme === 'dark' ? '#0a1220' : '#12355b'
+            )
+          }
+        } catch (error) {
+          // Preferences are optional; the app still renders in light mode.
+        }
+      })()
+    </script>
+    <title>7.77 Training Platform — Algérie Télécom</title>
   </head>
   <body>
     <div id="root"></div>

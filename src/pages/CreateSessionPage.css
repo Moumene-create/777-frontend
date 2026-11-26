@@ -1,4 +1,4 @@
-main.create-session {
+﻿main.create-session {
   width: 100%;
   max-width: 1200px;
   margin-inline: auto;
@@ -30,6 +30,10 @@ main.create-session {
 }
 
 .create-session__heading a:focus-visible {
-  outline: 3px solid var(--primary-blue);
+  outline: var(--border-width-thick) solid var(--primary-blue);
   outline-offset: 3px;
 }
+
+
+
+

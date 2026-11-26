@@ -1,8 +1,8 @@
-.home-cta {
+﻿.home-cta {
   display: flex;
   align-items: center;
   padding: clamp(4rem, 9vw, 8rem) 1rem;
-  background-color: #e9f7fb;
+  background-color: var(--surface-page-soft);
 }
 
 .home-cta__content {
@@ -13,25 +13,25 @@
 
 .home-cta__eyebrow {
   margin: 0 0 0.75rem;
-  color: #1379b8;
-  font-size: 0.875rem;
-  font-weight: 800;
+  color: var(--button-blue);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .home-cta h2 {
   margin: 0;
-  color: #0b2540;
-  font-size: clamp(2rem, 4vw, 3.25rem);
+  color: var(--primary-navy-dark);
+  font-size: var(--font-size-section);
   line-height: 1.1;
 }
 
 .home-cta__content > p:not(.home-cta__eyebrow) {
   max-width: 40rem;
   margin: 1.25rem auto 0;
-  color: #52677c;
-  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  color: var(--text-muted);
+  font-size: var(--font-size-section-copy);
   line-height: 1.7;
 }
 
@@ -50,35 +50,35 @@
   justify-content: center;
   min-height: 2.875rem;
   padding: 0.75rem 1.25rem;
-  border-radius: 999px;
-  font-weight: 700;
+  border-radius: var(--radius-pill);
+  font-weight: var(--font-weight-bold);
   text-decoration: none;
   transition: transform 180ms ease, background-color 180ms ease;
 }
 
 .home-cta__primary-link {
-  background-color: #1379b8;
-  color: #fff;
+  background-color: var(--button-blue);
+  color: var(--color-white);
 }
 
 .home-cta__primary-link:hover {
-  background-color: #0d6399;
+  background-color: var(--button-blue-hover);
   transform: translateY(-2px);
 }
 
 .home-cta__secondary-link {
-  border: 1px solid #1379b8;
-  color: #0d6399;
+  border: var(--border-width) solid var(--button-blue);
+  color: var(--button-blue-hover);
 }
 
 .home-cta__secondary-link:hover {
-  background-color: #d5eff7;
+  background-color: var(--surface-info);
   transform: translateY(-2px);
 }
 
 .home-cta__primary-link:focus-visible,
 .home-cta__secondary-link:focus-visible {
-  outline: 3px solid #0b2540;
+  outline: var(--border-width-thick) solid var(--primary-navy-dark);
   outline-offset: 3px;
 }
 
@@ -88,3 +88,8 @@
     transition: none;
   }
 }
+
+
+
+
+

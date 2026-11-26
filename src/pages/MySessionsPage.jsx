@@ -1,52 +1,42 @@
-import { Navigate } from 'react-router-dom'
 import PublicHeader from '../components/PublicHeader'
 import TrainingCard from '../components/TrainingCard'
 import './MySessionsPage.css'
-import { joinSession } from '../api/sessions'
 import { useState } from 'react'
+import { useNow } from '../hooks/useNow'
+import { sortSessionsForDisplay } from '../utils/sessionStatus'
 
 function MySessionsPage({
-  sessions,
-  registeredSessionIds,
+  mySessions,
   isAuthenticated,
   currentUser,
   onLogout,
+  onJoin,
 }) {
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
+  const now = useNow(15_000)
   const [joiningSessionId, setJoiningSessionId] = useState(null)
-  const [joinError, setJoinError] = useState(null)
+  const [joinError, setJoinError] = useState('')
+  const [blockedZoomUrl, setBlockedZoomUrl] = useState('')
 
-    if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-  const now = new Date()
-
-  const isSessionCompleted = (session) => {
-    const sessionEndTime = new Date(session.startDateTime)
-    sessionEndTime.setMinutes(
-      sessionEndTime.getMinutes() + session.durationMinutes
-    )
-
-    return sessionEndTime < now
-  }
-
-  
-
-  const mySessions = sessions.filter((session) =>
-    registeredSessionIds.includes(session.id)
-  )
+  const sessions = sortSessionsForDisplay(mySessions, now)
 
   async function handleJoinSession(sessionId) {
+    if (joiningSessionId) {
+      return
+    }
+
     setJoiningSessionId(sessionId)
-    setJoinError(null)
+    setJoinError('')
+    setBlockedZoomUrl('')
 
     try {
-      const zoomUrl = await joinSession(sessionId)
-      window.open(zoomUrl, '_blank', 'noopener,noreferrer')
+      const zoomUrl = await onJoin(sessionId)
+      const opened = window.open(zoomUrl, '_blank', 'noopener,noreferrer')
+
+      if (!opened) {
+        setBlockedZoomUrl(zoomUrl)
+      }
     } catch (error) {
-      setJoinError(error.message)
+      setJoinError(error.message || 'Could not join the session.')
     } finally {
       setJoiningSessionId(null)
     }
@@ -61,31 +51,37 @@ function MySessionsPage({
       />
 
       <h1 className="my-sessions__title">My sessions</h1>
+
       {joinError && (
-        <p className="join-error">{joinError}</p>
+        <p className="join-error" role="alert">
+          {joinError}
+        </p>
       )}
-      {mySessions.length === 0 ? (
-        <p>You are not registered for any sessions yet.</p>
+
+      {blockedZoomUrl && (
+        <p className="join-fallback" role="status">
+          Your browser blocked the new tab.{' '}
+          <a href={blockedZoomUrl} target="_blank" rel="noopener noreferrer">
+            Open the session link
+          </a>
+          .
+        </p>
+      )}
+
+      {sessions.length === 0 ? (
+        <p>
+          You are not registered for any sessions yet. Browse the available
+          sessions to register.
+        </p>
       ) : (
-        <section className="sessions-grid">
-          {mySessions.map((session) => (
+        <section className="sessions-grid" aria-label="My registered sessions">
+          {sessions.map((session) => (
             <TrainingCard
               key={session.id}
               session={session}
-              id={session.id}
-              title={session.title}
-              description={session.description}
-              date={session.date}
-              time={session.time}
-              duration={session.duration}
-              instructor={session.instructor}
-              instructorImage={session.instructorImage}
-              registeredCount={session.registeredCount}
-              maxCapacity={session.maxCapacity}
-              isRegistered={registeredSessionIds.includes(session.id)}
-              targetAgeCategories={session.targetAgeCategories}
-              isCompleted={isSessionCompleted(session)}
-              onJoin={() => handleJoinSession(session.id)}
+              isRegistered
+              showJoin
+              onJoin={handleJoinSession}
               isJoining={joiningSessionId === session.id}
             />
           ))}

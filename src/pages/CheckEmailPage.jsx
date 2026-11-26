@@ -19,7 +19,7 @@ function CheckEmailPage() {
         </p>
 
         <p>
-          If you cannot find it, check your spamF.
+          If you cannot find it, check your spam folder.
           You can also return to login, attempt to log in,
           and request a new verification email.
         </p>

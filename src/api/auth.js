@@ -1,19 +1,7 @@
 import { API_BASE_URL } from './config'
 import { apiFetch } from './apiClient'
-
-const AGE_CATEGORY_ID_TO_LABEL = {
-  1: '7-10',
-  2: '11-14',
-  3: '15-17',
-  4: '18-23',
-  5: '24-30',
-  6: '31-45',
-  7: '46-60',
-}
-
-function getAgeCategoryLabel(ageCategoryId) {
-  return AGE_CATEGORY_ID_TO_LABEL[ageCategoryId] ?? null
-}
+import { readErrorResponse } from './errors'
+import { getAgeCategoryLabel } from '../utils/ageCategory'
 
 export async function login({ email, password }) {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -122,6 +110,7 @@ export function normalizeUserInfo(profile){
     id : profile.id,
     firstName : profile.first_name,
     lastName : profile.last_name,
+    fullName : `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim(),
     email : profile.email,
     phone : profile.phone_number,
     dateOfBirth : profile.date_of_birth,
@@ -152,24 +141,14 @@ export async function registerUser(payload) {
     body: JSON.stringify(payload),
   })
 
-  const data = await response.json().catch(() => null)
-
   if (!response.ok) {
-    let message = `Could not create your account (HTTP ${response.status}).`
-
-    if (typeof data?.detail === 'string') {
-      message = data.detail
-    } else if (Array.isArray(data?.detail)) {
-      message = data.detail
-        .map((error) => error.msg)
-        .filter(Boolean)
-        .join(' ') || message
-    }
-
-    throw new Error(message)
+    throw await readErrorResponse(
+      response,
+      `Could not create your account (HTTP ${response.status}).`
+    )
   }
 
-  return data
+  return response.json().catch(() => null)
 }
 
 async function sendVerificationRequest(path, payload) {

@@ -8,8 +8,8 @@
 .session-details-page__back-link {
   display: inline-block;
   margin-bottom: 1.5rem;
-  color: #1a3a5c;
-  font-weight: 700;
+  color: var(--primary-navy);
+  font-weight: var(--font-weight-bold);
   text-decoration: none;
 }
 
@@ -21,9 +21,9 @@
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
   overflow: hidden;
-  background: #fff;
-  border: 1px solid #dce5ed;
-  border-radius: 16px;
+  background: var(--color-white);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   box-shadow: 0 8px 24px rgb(15 41 66 / 10%);
   margin-top: 2rem;
   margin-bottom: -1rem;
@@ -34,23 +34,23 @@
   flex-direction: column;
   gap: 1.25rem;
   padding: 1.25rem;
-  background: #fff;
-  border-right: 1px solid #fff;
+  background: var(--color-white);
+  border-right: var(--border-width) solid var(--color-white);
 }
 
 .session-details__image {
   object-fit: cover;
   aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 .session-details__schedule {
   padding: 1rem;
   padding-top: 5px;
   padding-bottom: 5px;
-  background: #fff;
-  border: 1.5px solid #dce5ed;
-  border-radius: 12px;
+  background: var(--color-white);
+  border: var(--border-width-strong) solid var(--border-subtle);
+  border-radius: var(--radius-md);
 }
 
 .session-details__schedule-item {
@@ -58,7 +58,7 @@
   flex-direction: column;
   gap: 0.2rem;
   padding: 0.7rem 0;
-  border-bottom: 1px solid #e8edf2;
+  border-bottom: var(--border-width) solid var(--border-subtle);
   
 }
 
@@ -68,15 +68,15 @@
 
 .session-details__schedule-item span,
 .session-details__capacity span {
-  color: #5c6b78;
-  font-size: 0.95rem;
-  font-weight: 700;
+  color: var(--text-muted);
+  font-size: var(--font-size-md-minus);
+  font-weight: var(--font-weight-bold);
 }
 
 .session-details__schedule-item strong,
 .session-details__capacity strong {
-  color: #1a3a5c;
-  font-size: 0.95rem;
+  color: var(--primary-navy);
+  font-size: var(--font-size-md-minus);
 }
 
 .session-details__capacity {
@@ -85,9 +85,9 @@
   gap: 0.3rem;
   padding: 0.75rem;
   padding-left: 1rem;
-  background: #fff;
-  border: 1px solid #dce5ed;
-  border-radius: 12px;
+  background: var(--color-white);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
 }
 
 .session-details__main {
@@ -96,33 +96,31 @@
 }
 
 .session-details__instructor {
-  margin: 0 0 0.5rem;
-  margin-top: -1.5rem;
-  margin-bottom: 1.5rem;
-  color: #55738d;
-  font-weight: 700;
-  font-size: x-large ;
+  margin-top: -10rem;
+  color: var(--text-muted);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl) ;
 }
 
 .session-details__status {
   margin: 0 0 0.5rem;
   margin-top: -1rem;
   margin-bottom: .5rem;
-  color: #000000d2;
-  font-weight: 600;
+  color: var(--text-main);
+  font-weight: var(--font-weight-semibold);
   border:none;
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
   padding-right:-4rem;
   width: fit-content;
-   background-color: #dbeafe; 
+   background-color: var(--border-soft-blue); 
    padding: 8px 12px;
-  font-size: medium;
+  font-size: var(--font-size-md);
 }
 
 .session-details__title {
   margin: 0 0 2rem;
-  color: #1a3a5c;
-  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--primary-navy);
+  font-size: var(--font-size-ticket-title);
   line-height: 1.1;
 }
 
@@ -132,34 +130,47 @@
 
 .session-details__section h2 {
   margin: 0 0 0.75rem;
-  color: #1a3a5c;
-  font-size: 1.2rem;
+  color: var(--primary-navy);
+  font-size: var(--font-size-lg-plus);
 }
 
 .session-details__section p {
   margin: 0;
-  color: #425466;
+  color: var(--text-muted);
   line-height: 1.7;
 }
 
 .session-details__availability {
   margin: 2rem 0 1rem;
-  color: #216e39;
-  font-weight: 800;
+  color: var(--status-green-strong);
+  font-weight: var(--font-weight-extrabold);
 }
 
 .session-details__availability--full {
-  color: #a61b1b;
+  color: var(--status-red);
 }
 
 .session-details__cutoff-message {
-  color :  #a61b1b;
-  font : bold;
-  font-weight: 700;
-  border:none;
-  display: bottom;
-  font-size: large;
-  bottom: 0;
+  margin: 0;
+  padding: 12px 14px;
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-inner);
+  background: var(--bg-soft-blue);
+  color: var(--text-muted);
+  font-size: var(--font-size-sm-lg);
+  line-height: 1.55;
+}
+
+.session-details__status-text {
+  margin: 0 0 1.5rem;
+  color: var(--text-muted);
+  font-size: var(--font-size-md-minus);
+  font-weight: var(--font-weight-semibold);
+}
+
+.session-details__status-text strong {
+  color: var(--primary-navy);
+  font-weight: var(--font-weight-extrabold);
 }
 
 
@@ -167,26 +178,325 @@
 @media (width <= 760px) {
   .session-details {
     grid-template-columns: 1fr;
+    margin-top: 1rem;
   }
 
   .session-details__sidebar {
     border-right: 0;
-    border-bottom: 1px solid #dce5ed;
-  }
-
-  .session-details__image {
-    max-height: 280px;
-    aspect-ratio: 16 / 9;
+    border-bottom: var(--border-width) solid var(--border-subtle);
   }
 
   .session-details__main {
-    padding: 2rem;
+    padding: 1.5rem;
   }
 
   .session-details-page {
-    width: 110%;
-    max-width: 1600px;
-    margin: 0 ;
-    padding: 2rem clamp(2rem, 6vw, 7rem) 4rem;
-    }
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .session-details__heading {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .session-details__title {
+    font-size: var(--font-size-section-compact);
+  }
+
+  .session-details__instructor {
+    font-size: var(--font-size-lg-minus);
+  }
+
+  .session-details__cutoff-message {
+    font-size: var(--font-size-md);
+  }
+}/* Backend-linked detail layout */
+.session-details__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
 }
+
+.session-details__heading .session-details__title {
+  margin: 0;
+}
+
+.session-details__training {
+  margin: 0 0 8px;
+  color: var(--button-blue);
+  font-weight: var(--font-weight-bold);
+}
+
+.session-details__instructor {
+  margin: 0 0 1rem;
+}
+
+.session-details__registered {
+  display: inline-block;
+  margin: 0 0 1.25rem;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--status-emerald-light);
+  border: var(--border-width) solid var(--status-emerald-border);
+  color: var(--status-emerald-strong);
+  font-weight: var(--font-weight-bold);
+}
+
+.session-details__notice {
+  margin: 0;
+  padding: 12px 14px;
+  border: var(--border-width) solid var(--status-rose-border);
+  border-radius: var(--radius-inner);
+  background: var(--status-rose-light);
+  color: var(--status-rose-strong);
+  font-weight: var(--font-weight-semibold);
+}
+
+.session-details__back {
+  align-self: center;
+  color: var(--button-blue);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+}
+
+.session-details__sidebar .training-card__button {
+  width: 100%;
+}
+
+/* Split detail layout: content card + concert-ticket panel */
+.session-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.85fr);
+  align-items: start;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  margin-top: 2rem;
+  margin-bottom: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.session-details__main {
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--card-bg);
+  box-shadow: 0 18px 40px -30px rgb(15 41 66 / 25%);
+}
+
+.session-ticket {
+  position: relative;
+  align-self: start;
+  color: var(--text-main);
+}
+
+.session-ticket__top {
+  padding: 1.5rem 1.5rem 1.75rem;
+  border: var(--border-width) solid var(--border-subtle);
+  border-bottom: var(--border-width-heavy) dashed var(--ticket-dash);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background:
+    radial-gradient(
+      circle at 88% 8%,
+      rgb(21 208 224 / 18%),
+      transparent 40%
+    ),
+    linear-gradient(160deg, var(--surface-ticket) 0%, var(--color-white) 66%);
+}
+
+.session-ticket__eyebrow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--accent-teal);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.session-ticket__date {
+  margin: 1.35rem 0 0.15rem;
+  color: var(--primary-navy-dark);
+  font-size: var(--font-size-ticket-date);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.1;
+}
+
+.session-ticket__time {
+  margin: 0;
+  color: var(--primary-navy-dark);
+  font-size: var(--font-size-ticket-time);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.session-ticket__meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin: 1.5rem 0 0;
+  padding-top: 1rem;
+  border-top: var(--border-width) solid rgb(18 53 91 / 12%);
+}
+
+.session-ticket__meta dt {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-3xs);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.session-ticket__meta dd {
+  margin: 0.25rem 0 0;
+  color: var(--primary-navy);
+  font-size: var(--font-size-md-minus);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.3;
+}
+
+.session-ticket__bottom {
+  position: relative;
+  padding: 1.4rem 1.5rem 1.5rem;
+  border: var(--border-width) solid var(--border-subtle);
+  border-top: 0;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  background: var(--card-bg);
+  box-shadow: 0 22px 38px -32px rgb(15 41 66 / 30%);
+}
+
+.session-ticket__notch {
+  position: absolute;
+  top: -16px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: 50%;
+  background: var(--bg-page);
+}
+
+.session-ticket__notch--left {
+  left: -17px;
+}
+
+.session-ticket__notch--right {
+  right: -17px;
+}
+
+.session-ticket__bottom .training-card__button {
+  width: 100%;
+  margin-top: 0;
+}
+
+.session-ticket__bottom .session-details__notice,
+.session-ticket__bottom .form-error {
+  margin-bottom: 1rem;
+}
+
+.session-ticket__bottom .session-details__cutoff-message {
+  margin-top: 1rem;
+  font-size: var(--font-size-xs-lg);
+  line-height: 1.5;
+}
+
+.session-ticket__bottom .session-details__back {
+  display: block;
+  margin-top: 0.9rem;
+}
+
+@media (max-width: 53.75rem) {
+  .session-details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .session-ticket {
+    max-width: 34rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 53.75rem) {
+  .session-ticket__notch {
+    top: -14px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .session-ticket__notch--left {
+    left: -16px;
+  }
+
+  .session-ticket__notch--right {
+    right: -16px;
+  }
+}
+
+/* Sharper card borders and half-circle ticket notches */
+.session-details__main {
+  border: var(--border-width-strong) solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 26px -24px rgb(15 41 66 / 32%);
+}
+
+.session-ticket__top {
+  border: var(--border-width-strong) solid var(--border-strong);
+  border-bottom: var(--border-width-heavy) dashed var(--border-ticket);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.session-ticket__bottom {
+  border: var(--border-width-strong) solid var(--border-strong);
+  border-top: 0;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.session-ticket__notch {
+  top: -16px;
+  width: 32px;
+  height: 32px;
+  border: var(--border-width-strong) solid var(--border-strong);
+}
+
+.session-ticket__notch--left {
+  left: -18px;
+  clip-path: inset(0 0 0 50%);
+}
+
+.session-ticket__notch--right {
+  right: -18px;
+  clip-path: inset(0 50% 0 0);
+}
+
+@media (max-width: 53.75rem) {
+  .session-ticket__notch {
+    top: -14px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .session-ticket__notch--left {
+    left: -16px;
+  }
+
+  .session-ticket__notch--right {
+    right: -16px;
+  }
+}
+
+
+
+
+
+

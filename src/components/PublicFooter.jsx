@@ -26,7 +26,6 @@ function PublicFooter() {
         <nav className="public-footer__navigation" aria-label="Footer navigation">
           <Link to="/">Home</Link>
           <Link to="/sessions">Sessions</Link>
-          <Link to="/about">About us</Link>
           <Link to="/login">Log in</Link>
         </nav>
       </div>

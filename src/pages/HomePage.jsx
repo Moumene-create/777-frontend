@@ -1,27 +1,33 @@
 import PublicHeader from '../components/PublicHeader'
-import HeroBanner from '../components/HeroBanner'
-import PlatformIntro from '../components/PlatformIntro'
-import HowItWorks from '../components/HowItWorks'
+import BaguiHero1 from '../components/BaguiHero1'
+import PlatformShowcase from '../components/PlatformShowcase'
 import HomeCta from '../components/HomeCta'
 import PublicFooter from '../components/PublicFooter'
 import './HomePage.css'
-function HomePage({ onLogin, isAuthenticated, currentUser, onLogout }) {
+
+function HomePage({ isAuthenticated, currentUser, onLogout }) {
   return (
     <>
       <PublicHeader
         isAuthenticated={isAuthenticated}
         currentUser={currentUser}
         onLogout={onLogout}
+        overlay
       />
 
       <main className="home-page">
-        <HeroBanner />
-        <PlatformIntro />
-        <HowItWorks />
-        <HomeCta />
-        <PublicFooter />
+        <BaguiHero1 isAuthenticated={isAuthenticated} />
+
+        <PlatformShowcase />
+
+        <div className="home-section home-closing">
+          <HomeCta
+            isAuthenticated={isAuthenticated}
+            currentUser={currentUser}
+          />
+          <PublicFooter />
+        </div>
       </main>
-     
     </>
   )
 }

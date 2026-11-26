@@ -1,4 +1,4 @@
-.my-sessions__title {
+﻿.my-sessions__title {
   margin-bottom: 24px;
 }
 
@@ -11,12 +11,29 @@
 
 .my-sessions__item {
   padding: 20px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border: var(--border-width) solid var(--border-neutral);
+  border-radius: var(--radius-md);
 }
 
 .join-error {
-  color: #b91c1c;
+  color: var(--status-rose-strong);
   margin-bottom: 16px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
+}.join-fallback {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: var(--border-width) solid var(--status-amber-border);
+  border-radius: var(--radius-inner);
+  background: var(--status-amber-light);
+  color: var(--status-amber-strong);
+  font-weight: var(--font-weight-semibold);
 }
+
+.join-fallback a {
+  color: var(--button-blue);
+}
+
+
+
+
+

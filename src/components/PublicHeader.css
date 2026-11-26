@@ -1,179 +1,277 @@
 .public-header {
-  position: sticky;
-  top: 2rem;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
   z-index: 100;
+  background: transparent;
+}
+
+.public-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--marketing-bg);
+  border-bottom: var(--border-width) solid var(--marketing-border);
+}
+
+.public-header--overlay::before {
+  background: transparent;
+  border-bottom: 0;
+}
+
+.public-header__inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: clamp(0.75rem, 2vw, 1.5rem);
-  width: fit-content;
-  max-width: calc(100% - 1.5rem);
-  margin-inline: auto;
-  padding: 0.3rem 0.4rem 0.3rem 1.3rem;
-  border-radius: 999px;
-  border: 1px solid #00000017;
-  background-color: #ffffffc2;
-  backdrop-filter: blur(12px) saturate(150%);
-  box-sizing: border-box;
-}
-
-.public-header__logout,
-.public-header__brand,
-.public-header__login,
-.public-header__signup {
-  font-weight: 700;
-  text-decoration: none;
-  opacity : 1;
-}
-
-.public-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  opacity : 1;
-  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-.public-header__login {
-  padding: 0.75rem 1rem;
-  color: #0b2540;
-  opacity : 1;
-}
-
-.public-header__signup {
-  padding: 0.75rem 1.15rem;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    rgb(10 71 128 / 94.5%) ,
-    rgb(85 122 207) 
-  );
-  color: #fff;
-}
-
-.public-header__logout {
-  padding-right: 1.6rem;
-  color: #0b2540;
-  opacity : 1;
-  border : none;
-  background-color:none ;
-  background : none ; 
-  font-size: medium;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  cursor: pointer;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: min(100%, 72rem);
+  height: 4.75rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 .public-header__logobouton {
-  padding: 0.35rem 0;
-  
-}
-
-.public-header__brand:focus-visible,
-.public-header__login:focus-visible,
-.public-header__signup:focus-visible {
-  outline: 3px solid #3b82f6;
-  outline-offset: 3px;
-  
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 0.2rem 0;
 }
 
 .public-header__logo {
   display: block;
   width: auto;
-  height: 2rem;
+  height: 1.75rem;
 }
 
-.public-header__menu-button {
+.public-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.public-header__link,
+.public-header__cta,
+.public-header__logout {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.public-header__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--marketing-muted);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.public-header__link:hover,
+.public-header__link--active {
+  color: var(--marketing-fg);
+}
+
+.public-header__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  background: var(--marketing-inverse);
+  color: var(--marketing-inverse-fg);
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+.public-header__cta:hover {
+  opacity: 0.86;
+  transform: translateY(-1px);
+}
+
+.public-header__logout {
+  margin: 0;
+}
+
+.public-header__link:focus-visible,
+.public-header__cta:focus-visible,
+.public-header__logout:focus-visible,
+.public-header__logobouton:focus-visible {
+  outline: var(--border-width-heavy) solid var(--marketing-fg);
+  outline-offset: 3px;
+}
+
+.public-header__menu-button,
+.public-header__close-button,
+.public-header__backdrop {
   display: none;
 }
 
-.public-header__close-button {
-  display: none;
+.public-header__menu-icon {
+  display: grid;
+  gap: 4px;
+  width: 1.15rem;
 }
 
+.public-header__menu-icon > span {
+  display: block;
+  height: 2px;
+  border-radius: var(--radius-hairline);
+  background: currentColor;
+}
 
+/* Reserves flow space for the fixed header on pages without an overlay hero. */
+.public-header__spacer {
+  height: 4.75rem;
+}
 
-@media (width <= 48rem) {
-  .public-header {
-    width: min(59% - 0.9rem, 30rem);
+@media (max-width: 48rem) {
+  .public-header__inner {
+    height: 4rem;
+    padding: 0 1rem;
+  }
+
+  .public-header__logo {
+    height: 1.6rem;
   }
 
   .public-header__menu-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.75rem;
-    padding-inline: 1rem;
-    border: 0;
-    border-radius: 999px;
-    background: linear-gradient(
-    90deg,
-    rgb(10 71 128 / 94.5%) ,
-    rgb(85 122 207) 
-  );
-    color: #fff;
-    font: inherit;
-    font-weight: 700;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: var(--border-width) solid var(--marketing-border);
+    border-radius: 50%;
+    background: var(--marketing-surface);
+    color: var(--marketing-fg);
     cursor: pointer;
   }
 
   .public-header__actions {
     position: fixed;
-    top:4rem;
-    left : center;
-    z-index: 200;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    z-index: 220;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    width: min(145% - 0.0rem, 21rem);
-    min-height: 50dvh;
-    padding: 1rem 0.5rem 1.5rem;
-    background-color: #fff;
-    transform: translateX(180%);
-    transition: transform 200ms ease;
-    border-radius: 30px;
+    align-items: stretch;
+    gap: 0.25rem;
+    width: min(84vw, 20rem);
+    height: 100dvh;
+    margin: 0;
+    padding: 1rem 1rem 1.5rem;
+    overflow-y: auto;
+    background-color: var(--marketing-surface);
+    border-left: var(--border-width) solid var(--marketing-border);
+    box-shadow: -20px 0 50px rgb(15 23 42 / 22%);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(105%);
+    transition:
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 180ms ease,
+      visibility 0s linear 260ms;
   }
 
   .public-header__actions--open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
     transform: translateX(0);
+    transition:
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 180ms ease;
   }
 
-  .public-header__login,
-  .public-header__signup {
-    justify-content: center;
-    text-align: center;
+  .public-header__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 210;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background-color: rgb(7 27 45 / 45%);
+    backdrop-filter: blur(2px);
+    cursor: pointer;
   }
-
-   .public-header__logo {
-  display: block;
-  height: 2rem;
-  width : 4rem;
-  gap :2rem;
-}
 
   .public-header__close-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     align-self: flex-end;
-    width: 2.75rem;
-    aspect-ratio: 1;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0;
     border: 0;
     border-radius: 50%;
-    background-color: #eef4fa;
-    color: #0b2540;
-    font-size: 1.75rem;
+    background-color: var(--marketing-surface-muted);
+    color: var(--marketing-fg);
+    font-size: var(--font-size-h2-minus);
     line-height: 1;
     cursor: pointer;
   }
 
-  .hero-banner__button {
-    transition: none;
+  .public-header__link,
+  .public-header__cta,
+  .public-header__logout {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    text-align: left;
+    white-space: normal;
   }
 
-  .hero-banner__button:hover {
-    transform: none;
+  .public-header__link:hover {
+    background-color: var(--marketing-surface-muted);
+  }
+
+  .public-header__cta {
+    justify-content: center;
+    margin-top: 0.35rem;
+  }
+
+  .public-header__logout {
+    margin-top: auto;
+    border-top: var(--border-width) solid var(--marketing-border);
+    border-radius: 0;
+  }
+
+  .public-header__actions .theme-toggle--inline {
+    align-self: flex-start;
+    margin: 0.25rem 0;
+  }
+
+  .public-header__menu-button:focus-visible,
+  .public-header__close-button:focus-visible,
+  .public-header__backdrop:focus-visible {
+    outline: var(--border-width-heavy) solid var(--marketing-fg);
+    outline-offset: 3px;
+  }
+
+  .public-header__spacer {
+    height: 4rem;
   }
 }
 
-
+@media (prefers-reduced-motion: reduce) {
+  .public-header__actions {
+    transition: none;
+  }
+}

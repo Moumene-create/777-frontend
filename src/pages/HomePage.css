@@ -1,6 +1,31 @@
-main.home-page {
+﻿main.home-page {
   width: 100%;
   max-width: none;
   margin: 0;
   padding: 0;
 }
+
+/* Each home part fills one viewport, but scrolling stays free/natural. */
+.home-page > .home-section {
+  min-height: 100svh;
+}
+
+.home-closing {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-closing .home-cta {
+  flex: 1;
+}
+
+.home-closing .public-footer {
+  margin-top: auto;
+}
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-.folder-illustration {
+﻿.folder-illustration {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,9 +15,9 @@
 }
 
 .folder-illustration:focus-visible {
-  outline: 3px solid var(--primary-blue);
+  outline: var(--border-width-thick) solid var(--primary-blue);
   outline-offset: 6px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 .folder-illustration__scene {
@@ -36,7 +36,7 @@
   display: block;
   width: 80%;
   height: 52%;
-  border-radius: 14px;
+  border-radius: var(--radius-md-lg);
 }
 
 .folder-illustration__back {
@@ -64,8 +64,8 @@
   width: 70px;
   height: 100px;
   padding: 10px 6px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-xs);
   background: var(--card-bg);
   box-shadow: 0 6px 14px rgb(15 23 42 / 12%);
   transform-origin: bottom center;
@@ -75,16 +75,16 @@
   display: block;
   width: 100%;
   height: 8px;
-  border-radius: 999px;
-  background: #94a3b8;
+  border-radius: var(--radius-pill);
+  background: var(--text-dim);
 }
 
 .folder-illustration__document-line {
   display: block;
   width: 100%;
   height: 5px;
-  border-radius: 999px;
-  background: #cbd5e1;
+  border-radius: var(--radius-pill);
+  background: var(--border-hover);
 }
 
 .folder-illustration__document-line:nth-child(3) {
@@ -96,7 +96,7 @@
 }
 
 .folder-illustration__flap {
-  border: 1px solid #60a5fa;
+  border: var(--border-width) solid var(--accent-blue-light);
   background: linear-gradient(135deg, rgb(59 130 246 / 72%), rgb(37 99 235 / 92%));
   box-shadow: inset 0 0 9px rgb(255 255 255 / 20%);
   transform-origin: bottom center;
@@ -111,15 +111,15 @@
   left: -1px;
   width: 44%;
   height: 24px;
-  border: 1px solid #60a5fa;
+  border: var(--border-width) solid var(--accent-blue-light);
   border-bottom: 0;
-  border-radius: 12px 12px 0 0;
-  background: #3b82f6;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: var(--color-blue-500);
 }
 
 .folder-illustration__label {
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
   text-align: center;
 }
 
@@ -129,3 +129,7 @@
   height: 100%;
   object-fit: contain;
 }
+
+
+
+

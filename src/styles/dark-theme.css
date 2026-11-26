@@ -1,0 +1,691 @@
+/* ------------------------------------------------------------------ */
+/* Dark theme surface overrides                                        */
+/*                                                                     */
+/* Tokens live in index.css; this file remaps the components that still */
+/* use fixed light colours.                                            */
+/* ------------------------------------------------------------------ */
+
+[data-theme="dark"] body {
+  background-color: var(--bg-page);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .app-banner {
+  background-color: var(--status-rose-light);
+  border-bottom-color: var(--status-rose-border);
+  color: var(--status-rose-strong);
+}
+
+[data-theme="dark"] .form-error {
+  color: var(--status-rose-strong);
+}
+
+[data-theme="dark"] .form-success {
+  color: var(--status-emerald-strong);
+}
+
+/* Status badges */
+[data-theme="dark"] .status-badge--open {
+  background-color: var(--status-open-light);
+  border-color: var(--status-open-border);
+  color: var(--status-open-text);
+}
+
+[data-theme="dark"] .status-badge--running {
+  background-color: var(--status-emerald-light);
+  border-color: var(--status-emerald-border);
+  color: var(--status-emerald-strong);
+}
+
+[data-theme="dark"] .status-badge--full {
+  background-color: var(--status-amber-light);
+  border-color: var(--status-amber-border);
+  color: var(--status-amber-strong);
+}
+
+[data-theme="dark"] .status-badge--completed {
+  background-color: var(--surface-muted);
+  border-color: var(--border-subtle);
+  color: var(--text-dim);
+}
+
+[data-theme="dark"] .status-badge--cancelled {
+  background-color: var(--status-rose-light);
+  border-color: var(--status-rose-border);
+  color: var(--status-rose-strong);
+}
+
+/* Public header */
+[data-theme="dark"] .public-header__logo {
+  filter: brightness(0) invert(1);
+}
+
+@media (max-width: 48rem) {
+  [data-theme="dark"] .public-header__backdrop {
+    background-color: rgb(0 0 0 / 62%);
+  }
+}
+
+/* Training cards */
+[data-theme="dark"] .training-card {
+  background-color: var(--card-bg);
+  border-color: var(--border-subtle);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 6%),
+    var(--shadow-card);
+}
+
+[data-theme="dark"] .training-card__details {
+  background-color: var(--card-bg);
+  border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .training-card__capacity-bar {
+  background-color: #e2e8f0;
+}
+
+[data-theme="dark"] .training-card__button--full {
+  background-color: #f1f5f9;
+  border-color: var(--border-subtle);
+  color: var(--text-dim);
+}
+
+[data-theme="dark"] .training-card__completed-label {
+  color: var(--text-dim);
+}
+
+[data-theme="dark"] .training-card__instructor-fade {
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0%) 0%,
+    rgb(255 255 255 / 25%) 68%,
+    rgb(255 255 255 / 75%) 75%,
+    var(--card-bg) 80%
+  );
+}
+
+[data-theme="dark"] .training-card__button--registered {
+  background-color: var(--status-emerald-light);
+  border-color: var(--status-emerald-border);
+  color: var(--status-emerald-strong);
+}
+
+[data-theme="dark"] .training-card__button--registered:hover {
+  background-color: var(--status-rose-light);
+  border-color: var(--status-rose-border);
+  color: var(--status-rose-strong);
+}
+
+/* Session detail */
+[data-theme="dark"] .session-details {
+  background: var(--card-bg);
+  border-color: var(--border-subtle);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 5%),
+    0 30px 70px -34px rgb(0 0 0 / 90%);
+}
+
+[data-theme="dark"] .session-details__sidebar {
+  background: var(--card-bg);
+  border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .session-details__schedule {
+  background: var(--card-bg);
+  border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .session-details__schedule-item {
+  border-bottom-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .session-details__schedule-item span {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .session-details__schedule-item strong {
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .session-details__title,
+[data-theme="dark"] .session-details__section h2 {
+  color: var(--primary-navy);
+}
+
+[data-theme="dark"] .session-details__instructor {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .session-details__section p {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .session-details__cutoff-message {
+  color: var(--status-rose-strong);
+}
+
+[data-theme="dark"] .session-details__status {
+  background-color: var(--bg-soft-blue);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .session-details__notice {
+  background-color: var(--status-rose-light);
+  border-color: var(--status-rose-border);
+  color: var(--status-rose-strong);
+}
+
+[data-theme="dark"] .session-details__registered {
+  background-color: var(--status-emerald-light);
+  border-color: var(--status-emerald-border);
+  color: var(--status-emerald-strong);
+}
+
+[data-theme="dark"] .session-details__back {
+  color: var(--primary-blue);
+}
+
+/* Login and signup */
+[data-theme="dark"] .auth-card {
+  background-color: var(--card-bg);
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] .auth-card__header h1 {
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .auth-card__header p {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .auth-form__field label {
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .auth-form__field input {
+  background-color: var(--card-bg);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .auth-form__field input::placeholder {
+  color: var(--text-dim);
+}
+
+[data-theme="dark"] .auth-form__submit {
+  background: var(--button-blue);
+  color: #fff;
+}
+
+[data-theme="dark"] .auth-form__submit:hover {
+  background-color: var(--button-blue-hover);
+}
+
+[data-theme="dark"] .auth-card a {
+  color: var(--primary-blue);
+}
+
+[data-theme="dark"] .auth-form__error {
+  color: #ef4444;
+}
+
+[data-theme="dark"] .signup-layout {
+  background: var(--card-bg);
+  border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .signup-layout__content {
+  background: var(--card-bg);
+}
+
+[data-theme="dark"] .signup-layout__image {
+  background: var(--card-bg);
+}
+
+[data-theme="dark"] .ran-card {
+  background: transparent;
+}
+
+[data-theme="dark"] .ran-card__header h1 {
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .ran-card__header p {
+  color: var(--primary-blue);
+}
+
+[data-theme="dark"] .ran-form__field input {
+  background-color: var(--card-bg);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .ran-form__field input::placeholder {
+  color: var(--text-dim);
+}
+
+[data-theme="dark"] .ran-form__submit {
+  background: var(--button-blue);
+}
+
+[data-theme="dark"] .ran-form__submit:hover {
+  background-color: var(--button-blue-hover);
+}
+
+[data-theme="dark"] .ran-form__error {
+  color: #ef4444;
+}
+
+/* Password reset / verification cards */
+[data-theme="dark"] .forgot-password-page {
+  background: var(--bg-page);
+}
+
+[data-theme="dark"] .forgot-password-card {
+  background: var(--card-bg);
+  border-color: var(--border-subtle);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .forgot-password-card input {
+  background-color: var(--card-bg);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .forgot-password-card button {
+  background: var(--button-blue);
+  color: #fff;
+}
+
+[data-theme="dark"] .forgot-password-card a {
+  color: var(--primary-blue);
+}
+
+[data-theme="dark"] .forgot-password-card .forgot-password-error {
+  color: #ef4444;
+}
+
+/* Home sections */
+[data-theme="dark"] .platform-showcase {
+  background: linear-gradient(180deg, #08131f 0%, #101f31 100%);
+}
+
+[data-theme="dark"] .platform-intro__eyebrow {
+  color: var(--primary-blue);
+}
+
+[data-theme="dark"] .platform-intro h2 {
+  color: var(--primary-navy);
+}
+
+[data-theme="dark"] .platform-intro p:not(.platform-intro__eyebrow) {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .instructor-carousel__eyebrow {
+  color: var(--primary-blue);
+}
+
+[data-theme="dark"] .instructor-card {
+  box-shadow: 0 24px 44px -26px rgb(0 0 0 / 90%);
+}
+
+[data-theme="dark"] .instructor-card__avatar {
+  border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .home-cta {
+  background-color: #0d1e31;
+}
+
+[data-theme="dark"] .home-cta__eyebrow {
+  color: var(--primary-blue);
+}
+
+[data-theme="dark"] .home-cta h2 {
+  color: var(--primary-navy);
+}
+
+[data-theme="dark"] .home-cta__content > p:not(.home-cta__eyebrow) {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .home-cta__secondary-link {
+  border-color: var(--primary-blue);
+  color: #cfe6ff;
+}
+
+[data-theme="dark"] .home-cta__secondary-link:hover {
+  background-color: rgb(124 181 255 / 14%);
+}
+
+/* Profile */
+[data-theme="dark"] .profile-panel__surface {
+  background: linear-gradient(
+    115deg,
+    #d9eff7,
+    var(--bg-soft-blue),
+    #d9eff7
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 5%),
+    var(--shadow-card);
+}
+
+[data-theme="dark"] .profile-panel__form input {
+  background-color: var(--card-bg);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .profile-panel__form input::placeholder {
+  color: var(--text-dim);
+}
+
+/* Attendance */
+[data-theme="dark"] .attendance-list__item {
+  background-color: var(--card-bg);
+  border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .attendance-list__status--pending {
+  background-color: #33260d;
+  color: #fde68a;
+}
+
+[data-theme="dark"] .attendance-list__status--validated {
+  background-color: #0f2f24;
+  color: #a7f3d0;
+}
+
+[data-theme="dark"] .attendance-list__status--absent {
+  background-color: #2a1111;
+  color: #ef4444;
+}
+
+[data-theme="dark"] .attendance-list__validate:disabled {
+  background-color: #f1f5f9;
+  color: var(--text-dim);
+}
+
+/* Manager workspace */
+[data-theme="dark"] .manager-sessions {
+  --manager-button-bg: #cdf0f8;
+  --manager-button-hover: #26405f;
+  --manager-button-border: #35506f;
+}
+
+[data-theme="dark"] .manager-sessions__action {
+  background-color: var(--manager-button-bg);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .manager-sessions__action:not(:disabled):hover {
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .manager-sessions__table-wrapper {
+  background: var(--card-bg);
+}
+
+/* Password change and footer logo */
+[data-theme="dark"] .change-password__form input {
+  background-color: var(--card-bg);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .public-footer__logo {
+  filter: brightness(0) invert(1);
+}
+
+
+
+/* ------------------------------------------------------------------ */
+/* Cyan accent for primary actions                                     */
+/* ------------------------------------------------------------------ */
+
+[data-theme="dark"] .auth-form__submit,
+[data-theme="dark"] .forgot-password-card button,
+[data-theme="dark"] .ran-form__submit,
+[data-theme="dark"] .change-password__submit,
+[data-theme="dark"] .attendance-toolbar__validate,
+[data-theme="dark"] .profile-panel__primary,
+[data-theme="dark"] .home-cta__primary-link,
+[data-theme="dark"] .training-card__button--register,
+[data-theme="dark"] .training-card__button_view--details,
+[data-theme="dark"] .manager-sessions__create,
+[data-theme="dark"] .cancel-session-dialog__actions button,
+[data-theme="dark"] .not-found__actions a:first-child {
+  background: var(--button-blue);
+  border-color: var(--button-blue);
+  color: #fff;
+}
+
+[data-theme="dark"] .auth-form__submit:hover,
+[data-theme="dark"] .forgot-password-card button:hover,
+[data-theme="dark"] .ran-form__submit:hover,
+[data-theme="dark"] .change-password__submit:hover,
+[data-theme="dark"] .attendance-toolbar__validate:hover,
+[data-theme="dark"] .profile-panel__primary:hover,
+[data-theme="dark"] .home-cta__primary-link:hover,
+[data-theme="dark"] .training-card__button--register:hover,
+[data-theme="dark"] .training-card__button_view--details:hover,
+[data-theme="dark"] .manager-sessions__create:hover,
+[data-theme="dark"] .cancel-session-dialog__actions button:not(:disabled):hover,
+[data-theme="dark"] .not-found__actions a:first-child:hover {
+  background: var(--button-blue-hover);
+  border-color: var(--button-blue-hover);
+  color: #fff;
+}
+
+[data-theme="dark"] .home-cta__secondary-link {
+  border-color: var(--primary-blue);
+  color: #cfe6ff;
+}
+
+[data-theme="dark"] .home-cta__secondary-link:hover {
+  background-color: rgb(127 184 245 / 14%);
+}
+
+[data-theme="dark"] .public-footer {
+  background-color: var(--footer-bg);
+  color: var(--text-footer);
+}
+
+[data-theme="dark"] .public-footer__navigation a:hover {
+  color: var(--accent-cyan);
+}
+
+[data-theme="dark"] .public-footer__bottom p {
+  color: #9db2c8;
+}
+
+
+/* Progress fill for normal sessions (urgent/full keep their own colours). */
+[data-theme="dark"] .training-card:not(.training-card--urgent):not(.training-card--full) .training-card__capacity-fill {
+  background: linear-gradient(90deg, var(--button-blue) 0%, var(--primary-blue) 100%);
+}
+
+
+
+/* ------------------------------------------------------------------ */
+/* Hybrid night mode: light cards on the dark blue canvas              */
+/* ------------------------------------------------------------------ */
+
+[data-theme="dark"] :is(
+  .training-card,
+  .session-details,
+  .profile-panel__surface,
+  .profile-certificates,
+  .auth-card,
+  .forgot-password-card,
+  .change-password-page__card,
+  .not-found__card,
+  .instructor-card,
+  .cancel-session-dialog,
+  .manager-sessions__table-wrapper,
+  .attendance-summary__item,
+  .attendance-list__item,
+  .attendance-toolbar,
+  .session-form__section,
+  .signup-layout,
+  .signup-layout__content
+) {
+  --card-bg: #fff;
+  --text-main: #0f2238;
+  --text-muted: #46596e;
+  --text-dim: #5c7085;
+  --primary-navy: #14385f;
+  --primary-navy-dark: #0b2743;
+  --primary-blue: #1d63c8;
+  --border-subtle: #e1e8f0;
+  --border-hover: #c7d4e2;
+  --bg-soft-blue: #eef4fb;
+  --accent-cyan: #63c5da;
+  background-color: var(--card-bg);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .training-card__details {
+  background-color: #f8fafc;
+  border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .training-card__capacity-bar {
+  background-color: #e2e8f0;
+}
+
+[data-theme="dark"] .training-card__button--full {
+  background-color: #f1f5f9;
+  color: var(--text-dim);
+}
+
+[data-theme="dark"] .training-card__instructor-fade {
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0%) 0%,
+    rgb(255 255 255 / 25%) 68%,
+    rgb(255 255 255 / 75%) 75%,
+    var(--card-bg) 80%
+  );
+}
+
+[data-theme="dark"] .profile-panel__surface {
+  background: linear-gradient(
+    115deg,
+    #d9eff7,
+    var(--bg-soft-blue),
+    #d9eff7
+  );
+}
+
+[data-theme="dark"] .profile-panel__password-link a {
+  color: #1d63c8;
+}
+
+[data-theme="dark"] .signup-layout__image {
+  background-color: #eaf3fc;
+}
+
+[data-theme="dark"] .session-details__cutoff-message {
+  color: #992b2b;
+}
+
+[data-theme="dark"] .session-details__notice {
+  background-color: #fdf1f1;
+  border-color: #f3bfbf;
+  color: #992b2b;
+}
+
+[data-theme="dark"] .session-details__registered {
+  background-color: #e8f7f1;
+  border-color: #a9e3ce;
+  color: #075e49;
+}
+
+[data-theme="dark"] .not-found__card .not-found__code {
+  color: #1d63c8;
+}
+
+[data-theme="dark"] .manager-sessions__table-wrapper .manager-sessions__action {
+  background-color: #e4f0fb;
+  border-color: #bcd8ef;
+  color: #14385f;
+}
+
+[data-theme="dark"] .manager-sessions__table-wrapper .manager-sessions__action:not(:disabled):hover {
+  background-color: #d2e6f8;
+  color: #14385f;
+}
+
+[data-theme="dark"] .manager-sessions__table-wrapper .manager-sessions__action:disabled {
+  color: #5c7085;
+}
+
+/* Badges and attendance chips follow their light surfaces. */
+[data-theme="dark"] .status-badge--open {
+  background-color: #e9f4fa;
+  border-color: #c4e3ef;
+  color: #0b4760;
+}
+
+[data-theme="dark"] .status-badge--running {
+  background-color: #e8f7f1;
+  border-color: #a9e3ce;
+  color: #075e49;
+}
+
+[data-theme="dark"] .status-badge--full {
+  background-color: #fff7e6;
+  border-color: #f4d79b;
+  color: #7a4a06;
+}
+
+[data-theme="dark"] .status-badge--completed {
+  background-color: #eff4fa;
+  border-color: #e1e8f0;
+  color: #2c3e52;
+}
+
+[data-theme="dark"] .status-badge--cancelled {
+  background-color: #fdf1f1;
+  border-color: #f3bfbf;
+  color: #992b2b;
+}
+
+[data-theme="dark"] .attendance-list__status--pending {
+  background-color: #fff4d6;
+  color: #704b00;
+}
+
+[data-theme="dark"] .attendance-list__status--validated {
+  background-color: #e7f6ed;
+  color: #1c5b40;
+}
+
+[data-theme="dark"] .attendance-list__status--absent {
+  background-color: #fdecec;
+  color: #992b2b;
+}
+
+[data-theme="dark"] .attendance-list__validate:disabled {
+  background-color: #eff4fa;
+  color: #51657a;
+}
+
+/* Split session detail layout in the hybrid dark theme */
+[data-theme="dark"] .session-details {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .session-details__cutoff-message {
+  color: var(--text-muted);
+  background: var(--bg-soft-blue);
+  border-color: var(--border-subtle);
+}

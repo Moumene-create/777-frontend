@@ -1,241 +1,247 @@
-import PublicHeader from '../components/PublicHeader'
-import { getSessionStatus } from '../utils/sessionStatus'
-import './ManagerSessionsPage.css'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import './ManagerSessionsPage.css'
 import CancelSessionDialog from '../components/CancelSessionDialog'
 import ManagerHeader from '../components/ManagerHeader'
+import { useNow } from '../hooks/useNow'
+import { formatSessionDate, formatSessionTime } from '../utils/format'
+import { getAgeCategoryLabelsFromIds } from '../utils/ageCategory'
+import {
+  getSessionBadgeStatus,
+  getSessionStatus,
+} from '../utils/sessionStatus'
+
+const STATUS_LABELS = {
+  OPEN: 'Open',
+  RUNNING: 'Running',
+  FULL: 'Full',
+  COMPLETED: 'Completed',
+  CANCELLED: 'Cancelled',
+}
 
 export default function ManagerSessionsPage({
   sessions = [],
-  isAuthenticated,
   currentUser,
   onLogout,
   onCancelSession,
 }) {
+  const now = useNow()
   const [sessionToCancel, setSessionToCancel] = useState(null)
-  const now = new Date()
   const [sessionSearch, setSessionSearch] = useState('')
   const [scheduleDate, setScheduleDate] = useState('')
+
   const searchTerm = sessionSearch.trim().toLowerCase()
 
-  const filteredSessions = sessions.filter((session) => {
-    const searchableText =
-      `${session.title ?? ''} ${session.instructor ?? ''}`.toLowerCase()
+  const filteredSessions = [...sessions]
+    .filter((session) => {
+      const searchableText = `${session.title ?? ''} ${
+        session.instructorName ?? ''
+      }`.toLowerCase()
 
-    const matchesSearch = searchableText.includes(searchTerm)
+      const matchesSearch = searchableText.includes(searchTerm)
 
-    const matchesDate =
-      !scheduleDate ||
-      new Date(session.startDateTime).toDateString() ===
-        new Date(`${scheduleDate}T00:00:00`).toDateString()
+      const matchesDate =
+        !scheduleDate || session.date === scheduleDate
 
-    return matchesSearch && matchesDate
-  })
-  
+      return matchesSearch && matchesDate
+    })
+    .sort((left, right) => {
+      const leftTime = left.startDateTime?.getTime() ?? 0
+      const rightTime = right.startDateTime?.getTime() ?? 0
+      return leftTime - rightTime
+    })
+
   return (
-     <>
-    <ManagerHeader onLogout={onLogout} />
+    <>
+      <ManagerHeader onLogout={onLogout} />
 
-    <main className="manager-sessions">
+      <main className="manager-sessions">
+        <header className="manager-sessions__heading">
+          <div className="manager-sessions__heading-text">
+            <h1>Session management</h1>
+            <p>
+              Signed in as {currentUser?.fullName || 'session manager'}.
+            </p>
+          </div>
 
-    <header className="manager-sessions__heading">
-      <div className="manager-sessions__heading-text">
-        <h1>Session management</h1>
-      </div>
+          <div className="manager-sessions__header-actions">
+            <Link
+              className="manager-sessions__action manager-sessions__create"
+              to="/manager/new"
+            >
+              Create session
+            </Link>
 
-      <div className="manager-sessions__header-actions">
-        <Link
-          className="manager-sessions__action manager-sessions__create"
-          to="/manager/new"
-        >
-          Create session
-        </Link>
+            <button
+              className="manager-sessions__clear"
+              type="button"
+              onClick={() => {
+                setSessionSearch('')
+                setScheduleDate('')
+              }}
+              disabled={!sessionSearch && !scheduleDate}
+            >
+              Clear filters
+            </button>
+          </div>
+        </header>
 
-        <button
-          className="manager-sessions__clear"
-          type="button"
-          onClick={() => {
-            setSessionSearch('')
-            setScheduleDate('')
-          }}
-          disabled={!sessionSearch && !scheduleDate}
-        >
-          Clear filters
-        </button>
-      </div>
-    </header>
+        {sessions.length === 0 ? (
+          <p className="manager-sessions__empty">
+            No sessions have been created yet. Use “Create session” to schedule
+            the first one.
+          </p>
+        ) : (
+          <>
+            <div className="manager-sessions__filter-toolbar">
+              <p role="status">
+                {filteredSessions.length} of {sessions.length} sessions
+              </p>
+            </div>
 
-{sessions.length === 0 ? (
-  <p className="manager-sessions__empty">
-    No sessions have been created yet.
-  </p>
-) : (
-  <>
-    <div className="manager-sessions__filter-toolbar">
-      <p role="status">
-        {filteredSessions.length} of {sessions.length} sessions
-      </p>
-    </div>
+            <div
+              className="manager-sessions__table-wrapper"
+              role="region"
+              aria-label="Training sessions"
+              tabIndex={0}
+            >
+              <table className="manager-sessions__table">
+                <caption>Training session overview</caption>
 
-    <div
-      className="manager-sessions__table-wrapper"
-      role="region"
-      aria-label="Training sessions"
-      tabIndex={0}
-    >
-          
-          <table className="manager-sessions__table">
-            <caption>Training session overview</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">
+                      <label className="manager-sessions__filter">
+                        <span>Session</span>
 
-            <thead>
-              <tr>
-                <th scope="col">
-                  <label className="manager-sessions__filter">
-                    <span>Session</span>
-
-                    <span className="manager-sessions__search-field">
-                      <svg
-                        className="manager-sessions__search-icon"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        aria-hidden="true"
-                        focusable="false"
-                      >
-                      </svg>
-
-                      <input
-                        type="search"
-                        aria-label="Search sessions by title or instructor"
-                        placeholder="Search sessions..."
-                        value={sessionSearch}
-                        onChange={(event) => setSessionSearch(event.target.value)}
-                      />
-                    </span>
-                  </label>
-                </th>
-                <th scope="col">
-                  <label className="manager-sessions__filter">
-                    <span>Schedule</span>
-
-                    <span className="manager-sessions__search-field manager-sessions__date-field">
-                      <input
-                        type="date"
-                        aria-label="Filter sessions by scheduled date"
-                        value={scheduleDate}
-                        onChange={(event) => setScheduleDate(event.target.value)}
-                      />
-                    </span>
-                  </label>
-                </th>
-                <th scope="col">Status</th>
-                <th scope="col">Registrations</th>
-                <th scope="col">Age categories</th>
-                <th scope="col">Actions</th>
-
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredSessions.length === 0 && (
-                <tr>
-                  <td colSpan={6}>
-                    No sessions match your search.
-                  </td>
-                </tr>
-              )}
-              {filteredSessions.map((session) => {
-                const status = session.isCancelled
-                ? 'CANCELLED'
-                : getSessionStatus(session, now)
-
-                return (
-                  <tr key={session.id}>
-                    <th scope="row">
-                      <span className="manager-sessions__session-title">
-                        {session.title}
-                      </span>
-                      <span className="manager-sessions__instructor">
-                        {session.instructor}
-                      </span>
-                      <Link
-                        className="manager-sessions__action"
-                        to={`/manager/${session.id}/attendance`}
-                      >
-                        Attendance
-                      </Link>
+                        <span className="manager-sessions__search-field">
+                          <input
+                            type="search"
+                            aria-label="Search sessions by title or instructor"
+                            placeholder="Search sessions…"
+                            value={sessionSearch}
+                            onChange={(event) =>
+                              setSessionSearch(event.target.value)
+                            }
+                          />
+                        </span>
+                      </label>
                     </th>
+                    <th scope="col">
+                      <label className="manager-sessions__filter">
+                        <span>Schedule</span>
 
-                    <td>
-                      <time dateTime={session.startDateTime}>
-                        {new Date(session.startDateTime).toLocaleString(
-                          undefined,
-                          {
-                            dateStyle: 'medium',
-                            timeStyle: 'short',
-                          }
-                        )}
-                      </time>
-                    </td>
-
-                    <td>
-                      <span className="manager-sessions__status">
-                        {status}
-                      </span>
-                    </td>
-
-                    <td>
-                      {session.registeredCount} / {session.maxCapacity}
-                    </td>
-
-                  <td>
-                    {session.targetAgeCategories?.join(', ') ?? 'Not specified'}
-                  </td>
-
-    
-
-                  <td>
-                    <div className="manager-sessions__actions">
-                      <Link
-                        className="manager-sessions__action"
-                        to={`/manager/${session.id}/edit`}
-                      >
-                        Edit
-                      </Link>
-
-                      <button
-                        className="manager-sessions__action"
-                        type="button"
-                        onClick={() => setSessionToCancel(session)}
-                        disabled={status === 'CANCELLED'}
-                      >
-                        Cancel
-                      </button>
-                      
-                    </div>
-                  </td>
-                  
+                        <span className="manager-sessions__search-field manager-sessions__date-field">
+                          <input
+                            type="date"
+                            aria-label="Filter sessions by scheduled date"
+                            value={scheduleDate}
+                            onChange={(event) =>
+                              setScheduleDate(event.target.value)
+                            }
+                          />
+                        </span>
+                      </label>
+                    </th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Registrations</th>
+                    <th scope="col">Age categories</th>
+                    <th scope="col">Actions</th>
                   </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-        </>
-      )}
-      {sessionToCancel && (
-        <CancelSessionDialog
-          session={sessionToCancel}
-          onClose={() => setSessionToCancel(null)}
-          onConfirm={onCancelSession}
-        />
-      )}
-    </main>
+                </thead>
+
+                <tbody>
+                  {filteredSessions.length === 0 && (
+                    <tr>
+                      <td colSpan={6}>No sessions match your filters.</td>
+                    </tr>
+                  )}
+
+                  {filteredSessions.map((session) => {
+                    const badgeStatus = getSessionBadgeStatus(session, now)
+                    const canCancel =
+                      getSessionStatus(session, now) !== 'CANCELLED' &&
+                      getSessionStatus(session, now) !== 'COMPLETED'
+
+                    return (
+                      <tr key={session.id}>
+                        <th scope="row">
+                          <span className="manager-sessions__session-title">
+                            {session.title}
+                          </span>
+                          <span className="manager-sessions__instructor">
+                            {session.instructorName}
+                          </span>
+                          <Link
+                            className="manager-sessions__action"
+                            to={`/manager/${session.id}/attendance`}
+                          >
+                            Attendance
+                          </Link>
+                        </th>
+
+                        <td>
+                          <time dateTime={session.startDateTime?.toISOString()}>
+                            {formatSessionDate(session.date)}
+                            <br />
+                            {formatSessionTime(session.startTime)}
+                          </time>
+                        </td>
+
+                        <td>
+                          <span
+                            className={`status-badge status-badge--${badgeStatus.toLowerCase()}`}
+                          >
+                            {STATUS_LABELS[badgeStatus] ?? badgeStatus}
+                          </span>
+                        </td>
+
+                        <td>
+                          {session.registeredCount} / {session.maxCapacity}
+                        </td>
+
+                        <td>
+                          {getAgeCategoryLabelsFromIds(
+                            session.targetAgeCategoryIds
+                          ).join(', ') || 'Not specified'}
+                        </td>
+
+                        <td>
+                          <div className="manager-sessions__actions">
+                            <Link
+                              className="manager-sessions__action"
+                              to={`/manager/${session.id}/edit`}
+                            >
+                              Edit
+                            </Link>
+
+                            <button
+                              className="manager-sessions__action"
+                              type="button"
+                              onClick={() => setSessionToCancel(session)}
+                              disabled={!canCancel}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {sessionToCancel && (
+          <CancelSessionDialog
+            session={sessionToCancel}
+            onClose={() => setSessionToCancel(null)}
+            onConfirm={onCancelSession}
+          />
+        )}
+      </main>
     </>
   )
 }

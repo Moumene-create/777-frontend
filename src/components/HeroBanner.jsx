@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import logoAT from '../assets/logo_AT_white.png'
-import logoMobilis from '../assets/logo_mobilis_white.png'
 import logoMinistry from '../assets/logo-ministry-white.png'
-import logocolor from "../assets/logo_777_black.png"
+import logoAT from '../assets/logo_AT_white.png'
 import image_1 from "../assets/image_1.jpg"
 import image_2 from "../assets/image_2.jpg"
 import image_3 from "../assets/image_3.jpg"
@@ -14,7 +12,6 @@ import image_7 from "../assets/image_7.jpg"
 import image_8 from "../assets/image_8.jpg"
 import image_9 from "../assets/image_9.jpg"
 import image_10 from "../assets/image_10.jpg"
-import image_11 from "../assets/image_11.jpg"
 
 
 import './HeroBanner.css'
@@ -81,7 +78,7 @@ useEffect(() => {
 const currentSlide = slides[currentSlideIndex]
 
   return (
-    <section className="hero-banner">
+    <section className="hero-banner home-section">
       <img
         className="hero-banner__image"
         src={currentSlide.image}
@@ -91,9 +88,8 @@ const currentSlide = slides[currentSlideIndex]
       <div className="hero-banner__overlay" />
 
       <div className="hero-banner__content">
-
         <h1>Digital skills for every generation</h1>
-        
+
         <p className="hero-banner__description">
           From 7 to 77, empowered by digital.
         </p>
@@ -101,12 +97,22 @@ const currentSlide = slides[currentSlideIndex]
         <Link className="hero-banner__button" to="/sessions">
           Join the programmes
         </Link>
-      
 
         <div className="hero-banner__partner-logos">
-      
-          <img src={logoMinistry} alt="Ministry of Post and Telecommunications" />
+          <div className="hero-banner__powered">
+            <span className="hero-banner__powered-label">Powered by</span>
+            <img
+              className="hero-banner__powered-logo"
+              src={logoAT}
+              alt="Algérie Télécom"
+            />
+          </div>
 
+          <img
+            className="hero-banner__partner-logo"
+            src={logoMinistry}
+            alt="Ministry of Post and Telecommunications"
+          />
         </div>
 
         

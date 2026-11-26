@@ -1,31 +1,39 @@
 import { API_BASE_URL } from './config'
 import { apiFetch } from './apiClient'
+import { ApiError, readErrorResponse } from './errors'
+import { normalizeTrainingType } from '../utils/trainingType'
 
+/**
+ * GET /training-types — the reusable training catalogue used by the session
+ * form (existing training selection).
+ */
 export async function getTrainingTypes(accessToken) {
   if (!accessToken) {
-    throw new Error('You must be logged in to load training types.')
+    throw new ApiError('You must be logged in to load training types.', {
+      status: 401,
+    })
   }
 
   const response = await apiFetch(`${API_BASE_URL}/training-types`, {
+    method: 'GET',
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
   })
 
-  const data = await response.json().catch(() => null)
-
   if (!response.ok) {
-    throw new Error(
-      typeof data?.detail === 'string'
-        ? data.detail
-        : `Could not load training types (HTTP ${response.status}).`
+    throw await readErrorResponse(
+      response,
+      `Could not load training types (HTTP ${response.status}).`
     )
   }
 
+  const data = await response.json().catch(() => null)
+
   if (!Array.isArray(data)) {
-    throw new Error('The training types response was not a list.')
+    throw new ApiError('The training types response was not a list.')
   }
 
-  return data
+  return data.map(normalizeTrainingType)
 }

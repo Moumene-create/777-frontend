@@ -4,40 +4,9 @@ import PublicHeader from '../components/PublicHeader'
 import './SignUpPage.css'
 import logo from '../assets/logo_7.svg'
 import { registerUser } from '../api/auth'
+import { getAgeCategoryFromDateOfBirth } from '../utils/ageCategory'
 
-function getAgeFromdateOfBirth(date_of_birth) {
-  if (!date_of_birth) return null
-
-  const today = new Date()
-  const birthDate = new Date(date_of_birth)
-
-  let age = today.getFullYear() - birthDate.getFullYear()
-  const monthDifference = today.getMonth() - birthDate.getMonth()
-  const dayDifference = today.getDate() - birthDate.getDate()
-
-  if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
-    age -= 1
-  }
-
-  return age
-}
-
-function getAgeCategory(age) {
-  if (age === null || Number.isNaN(age)) return ''
-
-  if (age >= 7 && age <= 10) return '7-10'
-  if (age >= 11 && age <= 14) return '11-14'
-  if (age >= 15 && age <= 17) return '15-17'
-  if (age >= 18 && age <= 23) return '18-23'
-  if (age >= 24 && age <= 30) return '24-30'
-  if (age >= 31 && age <= 45) return '31-45'
-  if (age >= 46 && age <= 60) return '46-60'
-  if (age >= 61 && age <= 77) return '61-77'
-
-  return 'Outside current platform categories'
-}
-
-function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
+function SignUpPage({ isAuthenticated, currentUser, onLogout }) {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     first_name: '',
@@ -59,8 +28,10 @@ function SignUpPage({onLogin, isAuthenticated, currentUser, onLogout }) {
     }));
   }; 
 
-  const age = useMemo(() => getAgeFromdateOfBirth(formData.date_of_birth), [formData.date_of_birth])
-  const ageCategory = useMemo(() => getAgeCategory(age), [age])
+  const ageCategory = useMemo(
+    () => getAgeCategoryFromDateOfBirth(formData.date_of_birth),
+    [formData.date_of_birth]
+  )
   const isPasswordTooShort = formData.password.length > 0 && formData.password.length < 8;
   const isPhonenumberTooshort =  formData.phone_number.length > 0 && formData.phone_number.length < 10;
   const isPhonenumberToolong =  formData.phone_number.length > 0 && formData.phone_number.length > 10 ;
@@ -194,9 +165,15 @@ return (
               id="ageCategory"
               name="ageCategory"
               type="text"
-              value={ageCategory}
+              value={ageCategory ?? 'Derived from your date of birth'}
               readOnly
+              aria-describedby="ageCategoryHint"
             />
+            <p id="ageCategoryHint" className="ran-form__hint">
+              {formData.date_of_birth && ageCategory === null
+                ? 'This date of birth is outside the current age categories (7 to 60). Your account may not be eligible for sessions.'
+                : 'Your category is derived from your date of birth and cannot be edited.'}
+            </p>
           </div>
 
           <div className="ran-form__field">

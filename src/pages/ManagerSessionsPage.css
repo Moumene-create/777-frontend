@@ -1,4 +1,4 @@
-/* ===== 1. Page layout ===== */
+﻿/* ===== 1. Page layout ===== */
 
 .manager-sessions {
   box-sizing: border-box;
@@ -7,9 +7,9 @@
   margin-inline: auto;
   padding: 24px clamp(16px, 4vw, 64px) 64px;
   
-  --manager-button-bg: #dbeefa;
-  --manager-button-hover: #c7e4f5;
-  --manager-button-border: #b9dcef;
+  --manager-button-bg: var(--manager-action-bg);
+  --manager-button-hover: var(--manager-action-hover);
+  --manager-button-border: var(--manager-action-border);
 }
 
 
@@ -38,7 +38,7 @@
 .manager-sessions__eyebrow {
   margin: 0 0 8px;
   color: var(--button-blue);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .manager-sessions__subtitle {
@@ -59,7 +59,7 @@
 
 .manager-sessions__empty {
   padding: 32px;
-  border: 1px dashed var(--border-subtle);
+  border: var(--border-width) dashed var(--border-subtle);
   border-radius: var(--radius-card);
   color: var(--text-muted);
 }
@@ -70,7 +70,7 @@
 .manager-sessions__table-wrapper {
   max-width: 100%;
   overflow-x: auto;
-  border: 1px solid var(--border-subtle);
+  border: var(--border-width) solid var(--border-subtle);
   border-radius: var(--radius-card);
   background: var(--card-bg);
 }
@@ -84,14 +84,14 @@
 .manager-sessions__table caption {
   padding: 18px;
   color: var(--primary-navy);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   text-align: left;
 }
 
 .manager-sessions__table th,
 .manager-sessions__table td {
   padding: 18px;
-  border-top: 1px solid var(--border-subtle);
+  border-top: var(--border-width) solid var(--border-subtle);
   vertical-align: top;
 }
 
@@ -102,7 +102,7 @@
 
 .manager-sessions__table tbody th {
   min-width: 220px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .manager-sessions__session-title,
@@ -113,8 +113,8 @@
 .manager-sessions__instructor {
   margin-top: 6px;
   color: var(--text-muted);
-  font-size: 0.875rem;
-  font-weight: 400;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
 }
 
 .manager-sessions__status {
@@ -123,8 +123,8 @@
   border-radius: var(--radius-pill);
   background: var(--bg-soft-blue);
   color: var(--primary-navy);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: var(--font-size-xs-lg);
+  font-weight: var(--font-weight-semibold);
 }
 
 
@@ -145,13 +145,13 @@
   box-sizing: border-box;
   min-height: 36px;
   padding: 8px 16px;
-  border: 1px solid var(--manager-button-border);
+  border: var(--border-width) solid var(--manager-button-border);
   border-radius: var(--radius-pill);
-  background-color: #b9dcef;
+  background-color: var(--manager-action-border);
   color:var(--primary-navy);
   font: inherit;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
   line-height: 1.2;
   text-decoration: none;
   white-space: nowrap;
@@ -163,12 +163,12 @@
   width: 100%;
   min-height: 40px;
   padding: 8px 14px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-xs);
   background: var(--card-bg);
   color: var(--primary-navy);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   cursor: pointer;
 }
 
@@ -194,9 +194,9 @@
 
 .manager-sessions__create {
   width: 100%;
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   background-color:rgb(107 185 230);
-  border-radius:0.5rem;
+  border-radius: var(--radius-xs);
   padding : 0.5rem;
   color : white;
 }
@@ -218,8 +218,8 @@
   max-width: 280px;
   min-height: 42px;
   padding: 9px 12px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
   background: var(--card-bg);
   box-shadow: 0 2px 5px rgb(0 0 0 / 3%);
   transition:
@@ -243,8 +243,8 @@
   background: transparent;
   color: var(--text-main);
   font: inherit;
-  font-size: 0.875rem;
-  font-weight: 400;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
   line-height: 1.5;
 }
 
@@ -283,17 +283,17 @@
 .manager-sessions__filter-toolbar p {
   margin: 0;
   color: var(--text-muted);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
 
 .manager-sessions__filter-toolbar button {
   padding: 8px 14px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 10px;
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   background: var(--card-bg);
   color: var(--primary-navy);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   cursor: pointer;
 }
 
@@ -312,12 +312,12 @@
 .manager-sessions__action:focus-visible,
 .manager-sessions__filter-toolbar button:focus-visible,
 .manager-sessions__table-wrapper:focus-visible {
-  outline: 3px solid var(--primary-blue);
+  outline: var(--border-width-thick) solid var(--primary-blue);
   outline-offset: 3px;
 }
 
 .manager-sessions__search-field:focus-within {
-  outline: 2px solid var(--primary-blue);
+  outline: var(--border-width-heavy) solid var(--primary-blue);
   outline-offset: 2px;
   border-color: var(--button-blue);
 }
@@ -345,4 +345,31 @@
   .manager-sessions__table td {
     padding: 14px;
   }
+}.manager-sessions__heading-text p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
 }
+
+/* ===== Responsive heading ===== */
+@media (max-width: 900px) {
+  .manager-sessions__heading {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-right: 0;
+  }
+
+  .manager-sessions__header-actions {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .manager-sessions__header-actions > * {
+    flex: 1 1 10rem;
+  }
+}
+
+
+
+
+

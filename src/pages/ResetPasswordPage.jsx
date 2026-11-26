@@ -85,6 +85,7 @@ function ResetPasswordPage() {
                 name="newPassword"
                 type="password"
                 autoComplete="new-password"
+                minLength={8}
                 value={newPassword}
                 onChange={(event) =>
                   setNewPassword(event.target.value)
@@ -102,6 +103,7 @@ function ResetPasswordPage() {
                 name="confirmPassword"
                 type="password"
                 autoComplete="new-password"
+                minLength={8}
                 value={confirmPassword}
                 onChange={(event) =>
                   setConfirmPassword(event.target.value)

@@ -1,463 +1,406 @@
 import { API_BASE_URL } from './config'
 import { apiFetch } from './apiClient'
+import { ApiError, readErrorResponse } from './errors'
+import {
+  normalizeManagedSession,
+  normalizeManagementSession,
+  normalizeMySession,
+  normalizeSession,
+  normalizeSessionMutationResult,
+} from '../utils/sessionModel'
 
+function requireToken(accessToken, message) {
+  if (!accessToken) {
+    throw new ApiError(message, { status: 401 })
+  }
+}
 
-export async function getSessions(accessToken) {
-  // to acceot json response
-  const headers = {
+function sessionUrl(sessionId, suffix = '') {
+  return `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}${suffix}`
+}
+
+function authorizationHeaders(accessToken, extra = {}) {
+  return {
     Accept: 'application/json',
+    ...extra,
+    Authorization: `Bearer ${accessToken}`,
   }
+}
 
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`
-  }
+/**
+ * GET /sessions — sessions eligible for the authenticated participant's age
+ * category. The backend enforces eligibility, so no client-side filtering
+ * is needed. The response never includes `zoom_url`.
+ */
+export async function getSessions(accessToken) {
+  requireToken(accessToken, 'You must be logged in to view sessions.')
 
   const response = await apiFetch(`${API_BASE_URL}/sessions`, {
     method: 'GET',
-    headers,
+    headers: authorizationHeaders(accessToken),
   })
 
   if (!response.ok) {
-    throw new Error(
+    throw await readErrorResponse(
+      response,
       `Could not retrieve sessions (HTTP ${response.status}).`
     )
   }
 
-  const sessions = await response.json()
+  const sessions = await response.json().catch(() => null)
 
   if (!Array.isArray(sessions)) {
-    throw new Error('The sessions response was not a list.')
+    throw new ApiError('The sessions response was not a list.')
   }
 
   return sessions.map(normalizeSession)
 }
 
-function normalizeSession(session) {
-  const startDateTime =
-    session.date && session.start_time
-      ? new Date(`${session.date}T${session.start_time}`)
-      : null
-
-  return {
-    id: session.id,
-    title: session.title,
-    description: session.description,
-    date: session.date,
-    startTime: session.start_time,
-    startDateTime,
-    durationMinutes: session.duration_minutes,
-    maxCapacity: session.max_capacity,
-    registeredCount: session.registered_count,
-    instructorName: session.instructor_name,
-    isCancelled: session.is_cancelled,
-    status: session.status,
-    isRegistered: session.is_registered ?? false,
-  }
-}
-
+/**
+ * GET /sessions/{id} — participant session detail (no `zoom_url`).
+ */
 export async function getSessionById(sessionId, accessToken) {
   if (!sessionId) {
-    throw new Error('A session ID is required.')
+    throw new ApiError('A session ID is required.')
   }
 
-  const headers = {
-    Accept: 'application/json',
-  }
+  requireToken(accessToken, 'You must be logged in to view this session.')
 
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`
-  }
-
-  const response = await apiFetch(
-    `${API_BASE_URL}/sessions/${sessionId}`,
-    {
-      method: 'GET',
-      headers,
-    }
-  )
+  const response = await apiFetch(sessionUrl(sessionId), {
+    method: 'GET',
+    headers: authorizationHeaders(accessToken),
+  })
 
   if (!response.ok) {
     if (response.status === 404) {
-  throw new Error('This session could not be found.')
-  }
+      throw new ApiError('This session is not available for your account.', {
+        status: 404,
+      })
+    }
 
-  if (response.status === 422) {
-    throw new Error('This session link is invalid.')
-  }
-
-    throw new Error(
+    throw await readErrorResponse(
+      response,
       `Could not retrieve the session (HTTP ${response.status}).`
     )
   }
 
-  const session = await response.json()
+  const session = await response.json().catch(() => null)
+
+  if (!session?.id) {
+    throw new ApiError('The server did not return valid session details.')
+  }
 
   return normalizeSession(session)
 }
 
-function getErrorMessage(errorBody, fallbackMessage) {
-  if (typeof errorBody?.detail === 'string') {
-    return errorBody.detail
-  }
-
-  if (Array.isArray(errorBody?.detail) && errorBody.detail.length > 0) {
-    return errorBody.detail[0].msg ?? fallbackMessage
-  }
-
-  return fallbackMessage
-}
-
-export async function registerForSession(sessionId, accessToken) {
-  if (!sessionId) {
-    throw new Error('A session ID is required.')
-  }
-
-  if (!accessToken) {
-    throw new Error('You must be logged in to register.')
-  }
-
-  const response = await apiFetch(
-    `${API_BASE_URL}/sessions/${sessionId}/register`,
-    {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  )
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => null)
-
-    throw new Error(
-      getErrorMessage(
-        errorBody,
-        `Could not register for this session (HTTP ${response.status}).`
-      )
-    )
-  }
-
-  return response.json()
-}
-
-export async function unregisterFromSession(sessionId, accessToken) {
-  if (!sessionId) {
-    throw new Error('A session ID is required.')
-  }
-
-  if (!accessToken) {
-    throw new Error('You must be logged in to cancel a registration.')
-  }
-
-  const response = await apiFetch(
-    `${API_BASE_URL}/sessions/${sessionId}/register`,
-    {
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  )
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => null)
-
-    throw new Error(
-      getErrorMessage(
-        errorBody,
-        `Could not cancel this registration (HTTP ${response.status}).`
-      )
-    )
-  }
-
-  return 
-}
-
+/**
+ * GET /sessions/my — the participant's registrations, including
+ * `registration_state`, which drives the My Sessions states.
+ */
 export async function getMySessions(accessToken) {
-  if (!accessToken) {
-    throw new Error('You must be logged in to retrieve your sessions.')
-  }
+  requireToken(accessToken, 'You must be logged in to retrieve your sessions.')
 
   const response = await apiFetch(`${API_BASE_URL}/sessions/my`, {
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers: authorizationHeaders(accessToken),
   })
 
   if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('The access token was rejected or has expired.')
-    }
-
-    throw new Error(
+    throw await readErrorResponse(
+      response,
       `Could not retrieve your sessions (HTTP ${response.status}).`
     )
   }
 
-  const mySessions = await response.json()
+  const sessions = await response.json().catch(() => null)
 
-  if (!Array.isArray(mySessions)) {
-    throw new Error('The my-sessions response was not a list.')
+  if (!Array.isArray(sessions)) {
+    throw new ApiError('The my-sessions response was not a list.')
   }
 
-  return mySessions
+  return sessions.map(normalizeMySession)
 }
 
-export async function createSession(payload, accessToken) {
-  if (!accessToken) {
-    throw new Error('You must be logged in to create a session.')
+/**
+ * GET /sessions/management — the manager's session list. This is the
+ * manager data source (the participant endpoint only returns sessions
+ * eligible for the manager's own age category).
+ */
+export async function getManagedSessions(accessToken) {
+  requireToken(accessToken, 'You must be logged in to manage sessions.')
+
+  const response = await apiFetch(`${API_BASE_URL}/sessions/management`, {
+    method: 'GET',
+    headers: authorizationHeaders(accessToken),
+  })
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      `Could not retrieve the managed sessions (HTTP ${response.status}).`
+    )
   }
+
+  const sessions = await response.json().catch(() => null)
+
+  if (!Array.isArray(sessions)) {
+    throw new ApiError('The management sessions response was not a list.')
+  }
+
+  return sessions.map(normalizeManagedSession)
+}
+
+/**
+ * GET /sessions/{id}/management — counts, Zoom URL (manager only),
+ * target categories and the attendee list used for attendance validation.
+ */
+export async function getManagementSession(sessionId, accessToken) {
+  if (!sessionId) {
+    throw new ApiError('A session ID is required.')
+  }
+
+  requireToken(accessToken, 'You must be logged in to manage this session.')
+
+  const response = await apiFetch(sessionUrl(sessionId, '/management'), {
+    method: 'GET',
+    headers: authorizationHeaders(accessToken),
+  })
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      `Could not load management details (HTTP ${response.status}).`
+    )
+  }
+
+  const data = await response.json().catch(() => null)
+
+  if (!data?.id) {
+    throw new ApiError('The server did not return valid session details.')
+  }
+
+  return normalizeManagementSession(data)
+}
+
+/**
+ * POST /sessions — SessionCreateRequest (training_id or new_training_type,
+ * instructor_id, target_age_category_ids, zoom_url …).
+ */
+export async function createSession(payload, accessToken) {
+  requireToken(accessToken, 'You must be logged in to create a session.')
 
   const response = await apiFetch(`${API_BASE_URL}/sessions`, {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
+    headers: authorizationHeaders(accessToken, {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
+    }),
     body: JSON.stringify(payload),
   })
 
-  const data = await response.json().catch(() => null)
-
   if (!response.ok) {
-    let message = `Could not create the session (HTTP ${response.status}).`
-
-    if (typeof data?.detail === 'string') {
-      message = data.detail
-    } else if (Array.isArray(data?.detail)) {
-      message = data.detail
-        .map((error) => {
-          const field = (error.loc || [])
-            .filter((part) => part !== 'body')
-            .join('.')
-
-          return field ? `${field}: ${error.msg}` : error.msg
-        })
-        .filter(Boolean)
-        .join('\n') || message
-    }
-
-    throw new Error(message)
+    throw await readErrorResponse(
+      response,
+      `Could not create the session (HTTP ${response.status}).`
+    )
   }
-
-  if (!data?.id) {
-    throw new Error('The server did not return the created session ID.')
-  }
-
-  return data
-}
-
-export async function getManagementSession(sessionId, accessToken) {
-  if (!sessionId || !accessToken) {
-    throw new Error('A session ID and login are required.')
-  }
-
-  const response = await apiFetch(
-    `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}/management`,
-    {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  )
 
   const data = await response.json().catch(() => null)
 
-  if (!response.ok) {
-    let message =
-      `Could not load management details (HTTP ${response.status}).`
-
-    if (typeof data?.detail === 'string') {
-      message = data.detail
-    } else if (Array.isArray(data?.detail)) {
-      message = data.detail
-        .map((error) => error.msg)
-        .filter(Boolean)
-        .join(' ') || message
-    }
-
-    throw new Error(message)
-  }
-
   if (!data?.id) {
-    throw new Error('The server did not return valid session details.')
+    throw new ApiError('The server did not return the created session ID.')
   }
 
-  return {
-    ...normalizeSession(data),
-    trainingId: data.training_id,
-    attendedCount: data.attended_count,
-    absentCount: data.absent_count,
-    zoomUrl: data.zoom_url,
-    targetAgeCategoryIds: data.target_age_category_ids,
-  }
+  return normalizeSessionMutationResult(data)
 }
 
+/**
+ * PUT /sessions/{id} — SessionUpdateRequest (training type is immutable).
+ */
 export async function updateSession(sessionId, payload, accessToken) {
-  if (!sessionId || !accessToken) {
-    throw new Error('A session ID and login are required.')
+  if (!sessionId) {
+    throw new ApiError('A session ID is required.')
   }
 
-  const response = await apiFetch(
-    `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}`,
-    {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify(payload),
-    }
-  )
+  requireToken(accessToken, 'You must be logged in to update a session.')
+
+  const response = await apiFetch(sessionUrl(sessionId), {
+    method: 'PUT',
+    headers: authorizationHeaders(accessToken, {
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify(payload),
+  })
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      `Could not update the session (HTTP ${response.status}).`
+    )
+  }
 
   const data = await response.json().catch(() => null)
 
-  if (!response.ok) {
-    let message = `Could not update the session (HTTP ${response.status}).`
-
-    if (typeof data?.detail === 'string') {
-      message = data.detail
-    } else if (Array.isArray(data?.detail)) {
-      message = data.detail
-        .map((error) => {
-          const field = (error.loc || [])
-            .filter((part) => part !== 'body')
-            .join('.')
-
-          return field ? `${field}: ${error.msg}` : error.msg
-        })
-        .filter(Boolean)
-        .join('\n') || message
-    }
-
-    throw new Error(message)
-  }
-
   if (!data?.id) {
-    throw new Error('The server did not return the updated session ID.')
+    throw new ApiError('The server did not return the updated session ID.')
   }
 
-  return data
+  return normalizeSessionMutationResult(data)
 }
 
+/**
+ * POST /sessions/{id}/cancel
+ */
 export async function cancelSession(sessionId, accessToken) {
-  if (!sessionId || !accessToken) {
-    throw new Error('A session ID and login are required.')
+  if (!sessionId) {
+    throw new ApiError('A session ID is required.')
   }
 
-  const response = await apiFetch(
-    `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}/cancel`,
-    {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  )
+  requireToken(accessToken, 'You must be logged in to cancel a session.')
+
+  const response = await apiFetch(sessionUrl(sessionId, '/cancel'), {
+    method: 'POST',
+    headers: authorizationHeaders(accessToken),
+  })
 
   if (!response.ok) {
-    const data = await response.json().catch(() => null)
-
-    let message = `Could not cancel the session (HTTP ${response.status}).`
-
-    if (typeof data?.detail === 'string') {
-      message = data.detail
-    } else if (Array.isArray(data?.detail)) {
-      message = data.detail
-        .map((error) => error.msg)
-        .filter(Boolean)
-        .join(' ') || message
-    }
-
-    throw new Error(message)
+    throw await readErrorResponse(
+      response,
+      `Could not cancel the session (HTTP ${response.status}).`
+    )
   }
 }
 
+/**
+ * POST /sessions/{id}/register
+ */
+export async function registerForSession(sessionId, accessToken) {
+  if (!sessionId) {
+    throw new ApiError('A session ID is required.')
+  }
+
+  requireToken(accessToken, 'You must be logged in to register.')
+
+  const response = await apiFetch(sessionUrl(sessionId, '/register'), {
+    method: 'POST',
+    headers: authorizationHeaders(accessToken),
+  })
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      `Could not register for this session (HTTP ${response.status}).`
+    )
+  }
+
+  if (response.status === 204) {
+    return null
+  }
+
+  return response.json().catch(() => null)
+}
+
+/**
+ * DELETE /sessions/{id}/register
+ */
+export async function unregisterFromSession(sessionId, accessToken) {
+  if (!sessionId) {
+    throw new ApiError('A session ID is required.')
+  }
+
+  requireToken(accessToken, 'You must be logged in to cancel a registration.')
+
+  const response = await apiFetch(sessionUrl(sessionId, '/register'), {
+    method: 'DELETE',
+    headers: authorizationHeaders(accessToken),
+  })
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      `Could not cancel this registration (HTTP ${response.status}).`
+    )
+  }
+}
+
+/**
+ * POST /sessions/{id}/join — the only endpoint that returns `zoom_url`.
+ * The backend re-validates registration, eligibility and the time window,
+ * and records attendance idempotently.
+ */
+export async function joinSession(sessionId, accessToken) {
+  if (!sessionId) {
+    throw new ApiError('A session ID is required.')
+  }
+
+  requireToken(accessToken, 'You must be logged in to join a session.')
+
+  const response = await apiFetch(sessionUrl(sessionId, '/join'), {
+    method: 'POST',
+    headers: authorizationHeaders(accessToken),
+  })
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      `Could not join the session (HTTP ${response.status}).`
+    )
+  }
+
+  const data = await response.json().catch(() => null)
+
+  if (!data?.zoom_url) {
+    throw new ApiError(
+      'The meeting link is not available yet. Please try again shortly.'
+    )
+  }
+
+  return data.zoom_url
+}
+
+/**
+ * POST /sessions/{id}/attendance/validate — validates attended
+ * registrations in bulk and makes the certificates available.
+ */
 export async function validateSessionAttendance(
   sessionId,
   registrationIds,
   accessToken
 ) {
-  if (!sessionId || !accessToken) {
-    throw new Error('A session ID and login are required.')
+  if (!sessionId) {
+    throw new ApiError('A session ID is required.')
   }
 
+  requireToken(accessToken, 'You must be logged in to validate attendance.')
+
   if (!Array.isArray(registrationIds) || registrationIds.length === 0) {
-    throw new Error('Select at least one registration to validate.')
+    throw new ApiError('Select at least one registration to validate.')
   }
 
   const response = await apiFetch(
-    `${API_BASE_URL}/sessions/${encodeURIComponent(sessionId)}/attendance/validate`,
+    sessionUrl(sessionId, '/attendance/validate'),
     {
       method: 'POST',
-      headers: {
-        Accept: 'application/json',
+      headers: authorizationHeaders(accessToken, {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
+      }),
       body: JSON.stringify({
         registration_ids: registrationIds,
       }),
     }
   )
 
-  const data = await response.json().catch(() => null)
-
   if (!response.ok) {
-    let message =
+    throw await readErrorResponse(
+      response,
       `Could not validate attendance (HTTP ${response.status}).`
-
-    if (typeof data?.detail === 'string') {
-      message = data.detail
-    } else if (Array.isArray(data?.detail)) {
-      message = data.detail
-        .map((error) => error.msg)
-        .filter(Boolean)
-        .join(' ') || message
-    }
-
-    throw new Error(message)
+    )
   }
 
+  const data = await response.json().catch(() => null)
+
   if (!Number.isInteger(data?.validated_count) || data.validated_count < 0) {
-    throw new Error('The server returned an invalid validation count.')
+    throw new ApiError('The server returned an invalid validation count.')
   }
 
   return data.validated_count
 }
-
-export async function joinSession(sessionId) {
-  const response = await apiClient(`/sessions/${sessionId}/join`, {
-    method: 'POST',
-  })
-
-  if (!response.ok) {
-    const error = new Error(
-      'Could not join the session. Please try again later.'
-    )
-    error.status = response.status
-    throw error
-  }
-
-  const data = await response.json()
-
-  if (!data?.zoom_url) {
-    const error = new Error(
-      'The meeting link is not available yet. Please contact the trainer.'
-    )
-    error.status = response.status
-    throw error
-  }
-
-  return data.zoom_url
-}
-

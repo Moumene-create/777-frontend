@@ -1,77 +1,66 @@
 import TrainingCard from '../components/TrainingCard'
-import FolderIllustration from '../components/FolderIllustration'
 import PublicHeader from '../components/PublicHeader'
 import './SessionsPage.css'
+import { useNow } from '../hooks/useNow'
+import {
+  getSessionStatus,
+  sortSessionsForDisplay,
+} from '../utils/sessionStatus'
+
 function SessionsPage({
   sessions,
   registeredSessionIds,
-  onRegister,
-  onUnregister,
   isAuthenticated,
   currentUser,
   onLogout,
 }) {
-  const now = new Date()
+  const now = useNow()
 
-  const isSessionCompleted = (session) => {
-    const sessionEndTime = new Date(session.startDateTime)
-    sessionEndTime.setMinutes(
-      sessionEndTime.getMinutes() + session.durationMinutes
-    )
+  // Completed sessions the participant is not registered for are excluded
+  // from the discovery list; everything else is ordered by lifecycle status.
+  const visibleSessions = sortSessionsForDisplay(
+    sessions.filter(
+      (session) =>
+        !(
+          getSessionStatus(session, now) === 'COMPLETED' &&
+          !registeredSessionIds.includes(session.id)
+        )
+    ),
+    now
+  )
 
-    return sessionEndTime < now
-  }
-  const visibleSessions = isAuthenticated
-  ? sessions.filter((session) => {
-      if (!session.targetAgeCategories) {
-        return true
-      }
-
-      return session.targetAgeCategories.includes(
-        currentUser?.ageCategory
-      )
-    })
-  : sessions
   return (
-    <main className='page_width'>
-      
+    <main className="page_width">
       <PublicHeader
         isAuthenticated={isAuthenticated}
         currentUser={currentUser}
         onLogout={onLogout}
       />
 
-      <h1 className='sessions-page__title'>Upcoming training sessions</h1>
+      <h1 className="sessions-page__title">Upcoming training sessions</h1>
+
    
-      {/* <p className='session-page__sub_title'>Discover sessions available for you.</p> */}
-      <section className="sessions-grid" aria-label="Available training sessions">
-        {visibleSessions.length ===0 ? (
-          <p>No training sessions are available right now. Please check again later.</p>
-        ):(
-        
+
+      <section
+        className="sessions-grid"
+        aria-label="Available training sessions"
+      >
+        {visibleSessions.length === 0 ? (
+          <p>
+            No training sessions are available for your age category right now.
+            Please check again later.
+          </p>
+        ) : (
           visibleSessions.map((session) => (
-          <TrainingCard
-            key={session.id}
-            id={session.id}
-            title={session.title}
-            description={session.description}
-            date={session.date}
-            time={session.time}
-            duration={session.duration}
-            instructor={session.instructor}
-            instructorImage={session.instructorImage}
-            registeredCount={session.registeredCount}
-            maxCapacity={session.maxCapacity}
-            isRegistered={registeredSessionIds.includes(session.id)}
-            targetAgeCategories={session.targetAgeCategories}
-            onRegister={() => onRegister(session.id)}
-            onUnregister={() => onUnregister(session.id)}
-            isCompleted={isSessionCompleted(session)}
-          />
-        )))}
+            <TrainingCard
+              key={session.id}
+              session={session}
+              isRegistered={registeredSessionIds.includes(session.id)}
+            />
+          ))
+        )}
       </section>
     </main>
-    
   )
 }
 

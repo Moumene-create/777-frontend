@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import './ProfilePanel.css'
 import FolderIllustration from './FolderIllustration'
 import folderImage from '../assets/certificat.jpg'
@@ -14,7 +15,7 @@ function createDraft(user) {
   }
 }
 
-export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenChange, }) {
+export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenChange }) {
   const [isEditing, setIsEditing] = useState(false)
   const [draft, setDraft] = useState(() => createDraft(currentUser))
   const [isSaving, setIsSaving] = useState(false)
@@ -23,16 +24,18 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
 
   const profile = createDraft(currentUser)
   const displayName =
-  [profile.firstName, profile.lastName].filter(Boolean).join(' ') ||
-  currentUser?.fullName ||
-  'Participant'
+    [profile.firstName, profile.lastName].filter(Boolean).join(' ') ||
+    currentUser?.fullName ||
+    'Participant'
   const initials =
-  [profile.firstName, profile.lastName]
-    .filter(Boolean)
-    .map((part) => part.trim().charAt(0))
-    .join('')
-    .toUpperCase() ||
-  displayName.charAt(0).toUpperCase()
+    [profile.firstName, profile.lastName]
+      .filter(Boolean)
+      .map((part) => part.trim().charAt(0))
+      .join('')
+      .toUpperCase() || displayName.charAt(0).toUpperCase()
+
+  const roleLabel =
+    currentUser?.role === 'SESSION_MANAGER' ? 'Session manager' : 'Participant'
 
   function startEditing() {
     setDraft(createDraft(currentUser))
@@ -62,24 +65,21 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
     event.preventDefault()
 
     const updatedProfile = {
-        firstName: draft.firstName.trim(),
-        lastName: draft.lastName.trim(),
-        email: draft.email.trim(),
-        phone: draft.phone.trim(),
-        dateOfBirth: draft.dateOfBirth,
-        wilaya: draft.wilaya.trim(),
+      firstName: draft.firstName.trim(),
+      lastName: draft.lastName.trim(),
+      email: draft.email.trim(),
+      phone: draft.phone.trim(),
+      dateOfBirth: draft.dateOfBirth,
+      wilaya: draft.wilaya.trim(),
     }
 
     if (Object.values(updatedProfile).some((value) => !value)) {
-      setError('Veuillez remplir tous les champs.')
+      setError('Please fill in every field.')
       return
     }
 
-    updatedProfile.fullName =
-    `${updatedProfile.firstName} ${updatedProfile.lastName}`
-    
     if (typeof onSave !== 'function') {
-      setError('La sauvegarde du profil n’est pas encore connectée.')
+      setError('Profile saving is not connected.')
       return
     }
 
@@ -89,34 +89,33 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
     try {
       await onSave(updatedProfile)
       setIsEditing(false)
-      setMessage('')
+      setMessage('Your profile has been updated.')
     } catch (saveError) {
-      setError(saveError.message || 'profile could not be updated.')
+      setError(saveError.message || 'Your profile could not be updated.')
     } finally {
       setIsSaving(false)
     }
   }
 
   return (
-    <section className="profile-panel" aria-label="Mon profil">
-      
-
+    <section className="profile-panel" aria-label="My profile">
       <div
         className={`profile-panel__surface ${
           isEditing ? 'profile-panel__surface--editing' : ''
         }`}
       >
         <div className="profile-panel__toolbar" hidden={isEditing}>
-        {!isEditing && (
-          <button
-            type="button"
-            className="profile-panel__primary"
-            onClick={startEditing}
-          >
-            update profile
-          </button>
-        )}
-      </div>
+          {!isEditing && (
+            <button
+              type="button"
+              className="profile-panel__primary"
+              onClick={startEditing}
+            >
+              Update profile
+            </button>
+          )}
+        </div>
+
         <div className="profile-panel__avatar" aria-hidden="true">
           {initials}
         </div>
@@ -125,36 +124,38 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
           <form
             className="profile-panel__form"
             onSubmit={handleSubmit}
-            aria-label="Modifier mes informations"
+            aria-label="Edit my information"
           >
-            <h1>update profile</h1>
+            <h1>Update profile</h1>
 
             <fieldset disabled={isSaving}>
               <legend className="profile-panel__legend">
-                Personnel infromation
+                Personal information
               </legend>
 
               <div className="profile-panel__fields">
                 <label className="profile-panel__field">
-                <span>First name</span>
-                <input
+                  <span>First name</span>
+                  <input
                     name="firstName"
                     value={draft.firstName}
                     onChange={handleChange}
                     autoComplete="given-name"
+                    maxLength={100}
                     required
-                />
+                  />
                 </label>
 
                 <label className="profile-panel__field">
-                <span>Last Name</span>
-                <input
+                  <span>Last name</span>
+                  <input
                     name="lastName"
                     value={draft.lastName}
                     onChange={handleChange}
                     autoComplete="family-name"
+                    maxLength={100}
                     required
-                />
+                  />
                 </label>
 
                 <label className="profile-panel__field">
@@ -170,19 +171,20 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
                 </label>
 
                 <label className="profile-panel__field">
-                  <span>phone</span>
+                  <span>Phone</span>
                   <input
                     name="phone"
                     type="tel"
                     value={draft.phone}
                     onChange={handleChange}
                     autoComplete="tel"
+                    maxLength={30}
                     required
                   />
                 </label>
 
                 <label className="profile-panel__field">
-                  <span>Date Of Birth</span>
+                  <span>Date of birth</span>
                   <input
                     name="dateOfBirth"
                     type="date"
@@ -199,10 +201,15 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
                     name="wilaya"
                     value={draft.wilaya}
                     onChange={handleChange}
+                    maxLength={100}
                     required
                   />
                 </label>
               </div>
+
+              <p className="profile-panel__password-link">
+                <Link to="/profile/password">Change my password</Link>
+              </p>
 
               {error && <p role="alert">{error}</p>}
 
@@ -212,58 +219,52 @@ export default function ProfilePanel({ currentUser, onSave, onCertificatesOpenCh
                   className="profile-panel__cancel"
                   onClick={cancelEditing}
                 >
-                  Annuler
+                  Cancel
                 </button>
 
-                <button
-                  type="submit"
-                  className="profile-panel__primary"
-                >
-                  {isSaving ? 'Enregistrement…' : 'Enregistrer'}
+                <button type="submit" className="profile-panel__primary">
+                  {isSaving ? 'Saving…' : 'Save'}
                 </button>
               </div>
             </fieldset>
           </form>
         ) : (
           <div className="profile-panel__information">
-            <p className="profile-panel__role">Participant</p>
+            <p className="profile-panel__role">{roleLabel}</p>
             <h1>{displayName}</h1>
 
             <dl className="profile-panel__details">
               <div>
                 <dt>Email</dt>
-                <dd>{profile.email || 'Non renseigné'}</dd>
+                <dd>{profile.email || 'Not provided'}</dd>
               </div>
               <div>
                 <dt>Phone</dt>
-                <dd>{profile.phone || 'Non renseigné'}</dd>
+                <dd>{profile.phone || 'Not provided'}</dd>
               </div>
               <div>
                 <dt>Wilaya</dt>
-                <dd>{profile.wilaya || 'Non renseignée'}</dd>
+                <dd>{profile.wilaya || 'Not provided'}</dd>
               </div>
               <div>
                 <dt>Date of birth</dt>
-                <dd>{profile.dateOfBirth || 'Non renseignée'}</dd>
+                <dd>{profile.dateOfBirth || 'Not provided'}</dd>
               </div>
               <div>
                 <dt>Age category</dt>
-                <dd>{currentUser?.ageCategory || 'Non renseignée'}</dd>
+                <dd>{currentUser?.ageCategory || 'Not available'}</dd>
               </div>
             </dl>
           </div>
         )}
 
-        <div
-        className="profile-panel__folder"
-        hidden={isEditing}
-      >
-        <FolderIllustration
-          documentImage={folderImage}
-          label="Certificates"
-          onOpenChange={onCertificatesOpenChange}
-        />
-      </div>
+        <div className="profile-panel__folder" hidden={isEditing}>
+          <FolderIllustration
+            documentImage={folderImage}
+            label="Certificates"
+            onOpenChange={onCertificatesOpenChange}
+          />
+        </div>
       </div>
 
       {message && <p role="status">{message}</p>}

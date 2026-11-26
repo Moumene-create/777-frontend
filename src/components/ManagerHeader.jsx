@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import ThemeToggle from './ThemeToggle'
 import './ManagerHeader.css'
 
 export default function ManagerHeader({ onLogout }) {
@@ -24,17 +25,15 @@ export default function ManagerHeader({ onLogout }) {
             Manage sessions
           </NavLink>
 
-          <NavLink to="/sessions">
-            Browse sessions
-          </NavLink>
-
-          <NavLink to="/my-sessions">
-            My sessions
+          <NavLink to="/manager/instructors">
+            Instructors
           </NavLink>
 
           <NavLink to="/profile">
             Profile
           </NavLink>
+
+          <ThemeToggle inline />
 
           <button type="button" onClick={handleLogout}>
             Log out

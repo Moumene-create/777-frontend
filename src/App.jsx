@@ -1,5 +1,5 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react'
-import { Route, Routes, Navigate } from 'react-router-dom'
+import { useLayoutEffect, useMemo, useState, useEffect, useCallback } from 'react'
+import { Route, Routes } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/loginPage'
@@ -7,95 +7,169 @@ import SessionsPage from './pages/SessionsPage'
 import SessionDetailsPage from './pages/SessionDetailsPage'
 import MySessionsPage from './pages/MySessionsPage'
 import ProfilePage from './pages/ProfilePage'
+import ChangePasswordPage from './pages/ChangePasswordPage'
 import ManagerSessionsPage from './pages/ManagerSessionsPage'
 import CreateSessionPage from './pages/CreateSessionPage'
 import EditSessionPage from './pages/EditSessionPage'
+import InstructorDirectoryPage from './pages/InstructorDirectoryPage'
+import CreateInstructorPage from './pages/CreateInstructorPage'
+import InstructorDetailPage from './pages/InstructorDetailPage'
 import AttendanceValidationPage from './pages/AttendanceValidationPage'
+import NotFoundPage from './pages/NotFoundPage'
+import RequireAuth from './components/RequireAuth'
+import RequireParticipant from './components/RequireParticipant'
 import RequireManager from './components/RequireManager'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import VerifyEmailPage from './pages/VerifyEmailPage'
 import CheckEmailPage from './pages/CheckEmailPage'
-import { getSessions, registerForSession, unregisterFromSession,getMySessions,cancelSession } from './api/sessions'
-import { getCurrentUser, updateCurrentUser, toProfileUpdatePayload, normalizeUserInfo,logout,refreshAuthTokens,} from './api/auth'
+import {
+  cancelSession,
+  createSession,
+  getManagedSessions,
+  getMySessions,
+  getSessions,
+  joinSession,
+  registerForSession,
+  unregisterFromSession,
+  updateSession,
+} from './api/sessions'
+import {
+  getCurrentUser,
+  logout,
+  normalizeUserInfo,
+  refreshAuthTokens,
+  toProfileUpdatePayload,
+  updateCurrentUser,
+} from './api/auth'
+import { ApiError } from './api/errors'
 import { createAuthenticatedFetch } from './api/authenticatedFetch'
 import { configureApiClient } from './api/apiClient'
+import { isActiveRegistration } from './utils/sessionStatus'
 
+function readStoredToken(key) {
+  try {
+    return sessionStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+
+function writeStoredToken(key, value) {
+  try {
+    if (value) {
+      sessionStorage.setItem(key, value)
+    } else {
+      sessionStorage.removeItem(key)
+    }
+  } catch {
+    // Storage can be unavailable (private mode); the in-memory session still works.
+  }
+}
+
+/**
+ * Holds the mutable auth session outside React state so the shared fetch
+ * client always reads the latest tokens without re-creating itself.
+ */
+function createAuthStore(initial = {}) {
+  let state = {
+    accessToken: initial.accessToken ?? null,
+    refreshToken: initial.refreshToken ?? null,
+    sessionId: 0,
+  }
+
+  return {
+    getAccessToken: () => state.accessToken,
+    getRefreshToken: () => state.refreshToken,
+    getSessionId: () => state.sessionId,
+    setTokens(accessToken, refreshToken) {
+      state = { ...state, accessToken, refreshToken }
+    },
+    startSession(accessToken, refreshToken) {
+      state = {
+        accessToken,
+        refreshToken,
+        sessionId: state.sessionId + 1,
+      }
+    },
+    reset() {
+      state = {
+        accessToken: null,
+        refreshToken: null,
+        sessionId: state.sessionId + 1,
+      }
+    },
+  }
+}
 
 function App() {
-  // IDs of sessions the logged-in user is registered for. to be modified in useEffect.
-  const [registeredSessionIds, setRegisteredSessionIds] = useState([])
-  // The logged-in user
-  const [currentUser, setCurrentUser] = useState(null)
-  // Pauses the app while it checks whether that key still works.
-  const [isUserLoading, setIsUserLoading] = useState(() => Boolean(sessionStorage.getItem('accessToken')))
-  // acces token Remembers that you were logged in. It’s the saved key that survives the refresh.
-  const [accessToken, setAccessToken] = useState(() => sessionStorage.getItem('accessToken'))
-  // Authorization check
-  const isAuthenticated = Boolean(currentUser)
-  // the list of all sessions from the backend ( for now only the sessions from the same )
-  const [sessions, setSessions] = useState([])
-  const [refreshToken, setRefreshToken] = useState(
-    () => sessionStorage.getItem('refreshToken')
+  const [initialAccessToken] = useState(() => readStoredToken('accessToken'))
+  const [initialRefreshToken] = useState(() => readStoredToken('refreshToken'))
+
+  const [accessToken, setAccessToken] = useState(initialAccessToken)
+  const [refreshToken, setRefreshToken] = useState(initialRefreshToken)
+  const [authStore] = useState(() =>
+    createAuthStore({
+      accessToken: initialAccessToken,
+      refreshToken: initialRefreshToken,
+    })
   )
-  const authRef = useRef({
-    accessToken,
-    refreshToken,
-    sessionId: 0,
-  })
 
-  function clearLocalSession() {
-    authRef.current = {
-      accessToken: null,
-      refreshToken: null,
-      sessionId: authRef.current.sessionId + 1,
-    }
+  const [currentUser, setCurrentUser] = useState(null)
+  const [authStatus, setAuthStatus] = useState(() =>
+    initialAccessToken ? 'checking' : 'signed-out'
+  )
+  const [authError, setAuthError] = useState('')
 
-    sessionStorage.removeItem('accessToken')
-    sessionStorage.removeItem('refreshToken')
+  const [sessions, setSessions] = useState([])
+  const [mySessions, setMySessions] = useState([])
+  const [managedSessions, setManagedSessions] = useState([])
+  const [dataError, setDataError] = useState('')
+
+  const clearLocalSession = useCallback(() => {
+    authStore.reset()
+    writeStoredToken('accessToken', null)
+    writeStoredToken('refreshToken', null)
     setCurrentUser(null)
     setAccessToken(null)
     setRefreshToken(null)
-    setRegisteredSessionIds([])
     setSessions([])
-  }
+    setMySessions([])
+    setManagedSessions([])
+    setDataError('')
+    setAuthStatus('signed-out')
+    setAuthError('')
+  }, [authStore])
 
   const [authenticatedRequest] = useState(() =>
     createAuthenticatedFetch({
-      getAccessToken: () => authRef.current.accessToken,
-      getSessionId: () => authRef.current.sessionId,
+      getAccessToken: () => authStore.getAccessToken(),
+      getSessionId: () => authStore.getSessionId(),
 
       refreshSession: async () => {
-        const session = authRef.current
+        const sessionId = authStore.getSessionId()
+        const storedRefreshToken = authStore.getRefreshToken()
 
-        if (!session.refreshToken) {
+        if (!storedRefreshToken) {
           clearLocalSession()
-
-          const error = new Error('Please log in again.')
-          error.status = 401
-          throw error
+          throw new ApiError('Please log in again.', { status: 401 })
         }
 
         try {
-          const tokens = await refreshAuthTokens(session.refreshToken)
+          const tokens = await refreshAuthTokens(storedRefreshToken)
 
-          if (authRef.current.sessionId !== session.sessionId) {
+          if (authStore.getSessionId() !== sessionId) {
             throw new Error('The login session changed.')
           }
 
-          authRef.current = {
-            ...session,
-            accessToken: tokens.access_token,
-            refreshToken: tokens.refresh_token,
-          }
+          authStore.setTokens(tokens.access_token, tokens.refresh_token)
+          writeStoredToken('accessToken', tokens.access_token)
+          writeStoredToken('refreshToken', tokens.refresh_token)
 
           setAccessToken(tokens.access_token)
           setRefreshToken(tokens.refresh_token)
         } catch (error) {
-          if (
-            error.status === 401 &&
-            authRef.current.sessionId === session.sessionId
-          ) {
+          if (error.status === 401 && authStore.getSessionId() === sessionId) {
             clearLocalSession()
           }
 
@@ -106,410 +180,555 @@ function App() {
   )
 
   useLayoutEffect(() => {
-    authRef.current = {
-      ...authRef.current,
-      accessToken,
-      refreshToken,
-    }
-  }, [accessToken, refreshToken])
-
-  useLayoutEffect(() => {
     return configureApiClient(authenticatedRequest)
   }, [authenticatedRequest])
 
-  // gets the sessions registered by the user 
   useEffect(() => {
-    if (!accessToken) {
-      setRegisteredSessionIds([])
-      return
+    writeStoredToken('accessToken', accessToken)
+  }, [accessToken])
+
+  useEffect(() => {
+    writeStoredToken('refreshToken', refreshToken)
+  }, [refreshToken])
+
+  // Restore the backend user for a token left in sessionStorage.
+  useEffect(() => {
+    if (!accessToken || authStatus !== 'checking') {
+      return undefined
     }
+
     let isActive = true
-    async function loadRegisteredSessionIds() {
+
+    async function restoreUser() {
       try {
-        const mySessions = await getMySessions(accessToken)
+        const backendUser = await getCurrentUser(
+          accessToken,
+          authenticatedRequest
+        )
+
         if (!isActive) {
           return
         }
-        const activeRegistrationIds = mySessions
-          .filter((session) => session.registration_state === 'registered')
-          .map((session) => session.id)
 
-        setRegisteredSessionIds(activeRegistrationIds)
+        setCurrentUser(normalizeUserInfo(backendUser))
+        setAuthStatus('authenticated')
+        setAuthError('')
       } catch (error) {
-        console.error(
-          'Could not load your registered sessions:',
-          error.message
+        if (!isActive) {
+          return
+        }
+
+        if (error.status === 401) {
+          clearLocalSession()
+          return
+        }
+
+        setAuthStatus('error')
+        setAuthError(
+          error.message || 'Could not restore your session. Please retry.'
         )
       }
     }
-    loadRegisteredSessionIds()
+
+    restoreUser()
+
     return () => {
       isActive = false
     }
-  }, [accessToken])
-  // save the token to sessionStorage
+  }, [accessToken, authStatus, authenticatedRequest, clearLocalSession])
+
+  const isAuthenticated = Boolean(currentUser)
+  const isManager = currentUser?.role === 'SESSION_MANAGER'
+  const currentUserId = currentUser?.id ?? null
+
+  // Participant data: eligible sessions + the user's registrations.
+  // Managers only use the management endpoints, so this is skipped for them.
   useEffect(() => {
-    if (accessToken) {
-      sessionStorage.setItem('accessToken', accessToken)
-    } else {
-      sessionStorage.removeItem('accessToken')
+    if (authStatus !== 'authenticated' || !accessToken || isManager) {
+      return undefined
     }
 
-    if (refreshToken) {
-      sessionStorage.setItem('refreshToken', refreshToken)
-    } else {
-      sessionStorage.removeItem('refreshToken')
-    }
-  }, [accessToken, refreshToken])
+    let isActive = true
 
+    async function loadParticipantData() {
+      try {
+        const [sessionList, mySessionList] = await Promise.all([
+          getSessions(accessToken),
+          getMySessions(accessToken),
+        ])
+
+        if (!isActive) {
+          return
+        }
+
+        setSessions(sessionList)
+        setMySessions(mySessionList)
+        setDataError('')
+      } catch (error) {
+        if (!isActive) {
+          return
+        }
+
+        if (error.status === 401) {
+          clearLocalSession()
+          return
+        }
+
+        setDataError(error.message)
+      }
+    }
+
+    loadParticipantData()
+
+    return () => {
+      isActive = false
+    }
+  }, [authStatus, accessToken, currentUserId, isManager, clearLocalSession])
+
+  // Manager data: the management endpoint is the only source that includes
+  // target categories, instructor ids and non-eligible sessions.
   useEffect(() => {
-  if (!accessToken) {
-    return
+    if (authStatus !== 'authenticated' || !accessToken || !isManager) {
+      return undefined
+    }
+
+    let isActive = true
+
+    async function loadManagedSessions() {
+      try {
+        const managed = await getManagedSessions(accessToken)
+
+        if (isActive) {
+          setManagedSessions(managed)
+        }
+      } catch (error) {
+        if (!isActive) {
+          return
+        }
+
+        if (error.status === 401) {
+          clearLocalSession()
+          return
+        }
+
+        setDataError(error.message)
+      }
+    }
+
+    loadManagedSessions()
+
+    return () => {
+      isActive = false
+    }
+  }, [authStatus, accessToken, isManager, clearLocalSession])
+
+  const registeredSessionIds = useMemo(
+    () =>
+      mySessions
+        .filter((session) => isActiveRegistration(session.registrationState))
+        .map((session) => session.id),
+    [mySessions]
+  )
+
+  async function refreshParticipantData() {
+    if (!accessToken || isManager) {
+      return
+    }
+
+    const [sessionList, mySessionList] = await Promise.all([
+      getSessions(accessToken),
+      getMySessions(accessToken),
+    ])
+
+    setSessions(sessionList)
+    setMySessions(mySessionList)
   }
 
-  let isActive = true
+  async function refreshManagedSessions() {
+    if (!accessToken || !isManager) {
+      return
+    }
 
-  async function loadSessions() {
+    setManagedSessions(await getManagedSessions(accessToken))
+  }
+
+  async function handleRegister(sessionId) {
+    if (!accessToken) {
+      throw new ApiError('Please log in before registering.', { status: 401 })
+    }
+
+    await registerForSession(sessionId, accessToken)
+    await refreshParticipantData()
+  }
+
+  async function handleUnregister(sessionId) {
+    if (!accessToken) {
+      throw new ApiError('Please log in before cancelling your registration.', {
+        status: 401,
+      })
+    }
+
+    await unregisterFromSession(sessionId, accessToken)
+    await refreshParticipantData()
+  }
+
+  async function handleJoin(sessionId) {
+    if (!accessToken) {
+      throw new ApiError('Please log in before joining a session.', {
+        status: 401,
+      })
+    }
+
+    const zoomUrl = await joinSession(sessionId, accessToken)
+    await refreshParticipantData()
+
+    return zoomUrl
+  }
+
+  async function handleCancelSession(sessionId) {
+    if (!accessToken) {
+      throw new ApiError('Please log in again to cancel this session.', {
+        status: 401,
+      })
+    }
+
+    await cancelSession(sessionId, accessToken)
+    await Promise.all([refreshManagedSessions(), refreshParticipantData()])
+  }
+
+  async function handleCreateSession(payload) {
+    if (!accessToken) {
+      throw new ApiError('Please log in again to create a session.', {
+        status: 401,
+      })
+    }
+
+    const created = await createSession(payload, accessToken)
+    await Promise.all([refreshManagedSessions(), refreshParticipantData()])
+
+    return created
+  }
+
+  async function handleUpdateSession(sessionId, payload) {
+    if (!accessToken) {
+      throw new ApiError('Please log in again to update this session.', {
+        status: 401,
+      })
+    }
+
+    const updated = await updateSession(sessionId, payload, accessToken)
+    await Promise.all([refreshManagedSessions(), refreshParticipantData()])
+
+    return updated
+  }
+
+  async function handleAttendanceValidated() {
+    await refreshManagedSessions()
+  }
+
+  function handleLogin(userData, newAccessToken, newRefreshToken) {
+    authStore.startSession(newAccessToken, newRefreshToken ?? null)
+    setCurrentUser(normalizeUserInfo(userData))
+    setAccessToken(newAccessToken)
+    setRefreshToken(newRefreshToken ?? null)
+    setAuthStatus('authenticated')
+    setAuthError('')
+  }
+
+  async function handleLogout() {
+    const tokenToRevoke = authStore.getAccessToken()
+
+    clearLocalSession()
+
     try {
-      const sessions = await getSessions(accessToken)
-
-      if (isActive) {
-        setSessions(sessions)
+      if (tokenToRevoke) {
+        await logout(tokenToRevoke)
       }
     } catch (error) {
-      console.error('Could not load sessions:', error.message)
+      console.error('Could not revoke the session on the server:', error.message)
     }
   }
 
-  loadSessions()
+  async function handleUpdateProfile(updatedData) {
+    const payload = toProfileUpdatePayload(updatedData)
+    const savedUser = await updateCurrentUser(payload, accessToken)
+    const normalizedUser = normalizeUserInfo(savedUser)
 
-  return () => {
-    isActive = false
-  }
-  }, [accessToken])
+    setCurrentUser(normalizedUser)
 
- useEffect(() => {
-  if (!accessToken) {
-    setIsUserLoading(false)
-    return
+    return normalizedUser
   }
 
-  let isActive = true
-
-  async function loadCurrentUser() {
-    try {
-      const backendUser = await getCurrentUser(
-        accessToken,
-        authenticatedRequest
-      )
-
-      if (isActive) {
-        setCurrentUser(normalizeUserInfo(backendUser))
-      }
-    } catch (error) {
-      if (!isActive) return
-
-      console.error('Could not restore your session:', error.message)
-
-      if (error.status === 401) {
-        clearLocalSession()
-      }
-    } finally {
-      if (isActive) {
-        setIsUserLoading(false)
-      }
-    }
-  }
-
-  loadCurrentUser()
-
-  return () => {
-    isActive = false
-  }
-}, [accessToken, authenticatedRequest])
-
-//////////////
-const sessionsWithLiveCounts = sessions
-
-async function refreshSessions() {
-  if (!accessToken) {
-    return
-  }
-
-  try {
-    const updatedSessions = await getSessions(accessToken)
-    setSessions(updatedSessions)
-  } catch (error) {
-    console.error('Could not refresh sessions:', error.message)
-  }
-}
-
-async function handleRegister(sessionId) {
-  if (!isAuthenticated || !accessToken) {
-    throw new Error('Please log in before registering.')
-  }
-
-  await registerForSession(sessionId, accessToken)
-
-  setRegisteredSessionIds((currentIds) =>
-    currentIds.includes(sessionId)
-      ? currentIds
-      : [...currentIds, sessionId]
-  )
-
-  await refreshSessions()
-}
-
-async function handleUnregister(sessionId) {
-  if (!isAuthenticated || !accessToken) {
-    throw new Error('Please log in before cancelling your registration.')
-  }
-
-  await unregisterFromSession(sessionId, accessToken)
-
-  setRegisteredSessionIds((currentIds) =>
-    currentIds.filter((id) => id !== sessionId)
-  )
-
-  await refreshSessions()
-}
-
-function handleLogin(userData, token, newRefreshToken) {
-  authRef.current = {
-    accessToken: token,
-    refreshToken: newRefreshToken ?? null,
-    sessionId: authRef.current.sessionId + 1,
-  }
-
-  setCurrentUser(normalizeUserInfo(userData))
-  setAccessToken(token)
-  setRefreshToken(newRefreshToken ?? null)
-}
-
-async function handleLogout() {
-  const tokenToRevoke = authRef.current.accessToken
-
-  clearLocalSession()
-
-  try {
-    if (tokenToRevoke) {
-      await logout(tokenToRevoke)
-    }
-  } catch (error) {
-    console.error('Could not log out on the server:', error.message)
-  }
-}
-
-async function handleUpdateProfile(updatedData) {
-  const payload = toProfileUpdatePayload(updatedData)
-  const savedUser = await updateCurrentUser(payload, accessToken)
-  const normalizedUser = normalizeUserInfo(savedUser)
-
- setCurrentUser({
-  ...normalizedUser,
-  fullName: `${normalizedUser.firstName} ${normalizedUser.lastName}`.trim(),
-})}
-
-if (isUserLoading) {
-  return (
-    <main className="app-loading">
-      <p>Loading your account…</p>
-    </main>
-  )
-}
-
-async function handleCancelSession(sessionId) {
-  if (!accessToken) {
-    throw new Error('Please log in again to cancel this session.')
-  }
-
-  await cancelSession(sessionId, accessToken)
-
-  setSessions((currentSessions) =>
-    currentSessions.map((session) =>
-      session.id === sessionId
-        ? {
-            ...session,
-            isCancelled: true,
-            status: 'CANCELLED',
-          }
-        : session
+  if (authStatus === 'checking') {
+    return (
+      <main className="app-loading">
+        <p>Loading your account…</p>
+      </main>
     )
-  )
-}
+  }
+
+  if (authStatus === 'error') {
+    return (
+      <main className="app-loading">
+        <h1>We could not restore your session</h1>
+        <p role="alert">{authError}</p>
+        <button
+          type="button"
+          onClick={() => {
+            setAuthError('')
+            setAuthStatus('checking')
+          }}
+        >
+          Try again
+        </button>
+      </main>
+    )
+  }
+
   return (
-     <>
-    <Routes>
-      <Route 
-      path="/" 
-      element={<HomePage 
-      onLogin={handleLogin}
-      isAuthenticated={isAuthenticated}
-      currentUser={currentUser}
-      onLogout={handleLogout}
-      />} />
-      <Route
-        path="/login"
-        element={<LoginPage
-        onLogin={handleLogin}
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        onLogout={handleLogout}
-      />}
-      />
-      <Route
-        path="/forgot-password"
-        element={<ForgotPasswordPage />}
-      />
-      <Route
-        path="/reset-password"
-        element={<ResetPasswordPage />}
-      />
-      <Route
-        path="/verify-email"
-        element={<VerifyEmailPage />}
-      />
-      <Route
-        path="/check-email"
-        element={<CheckEmailPage />}
-      />
-      <Route 
-        path="/signup" 
-        element={<SignUpPage
-        onLogin={handleLogin}
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        onLogout={handleLogout}
-      />} />
-      <Route
-        path="/sessions"
-        element={
-          <SessionsPage
-            sessions={sessionsWithLiveCounts}
-            registeredSessionIds={registeredSessionIds}
-            onRegister={handleRegister}
-            onUnregister={handleUnregister}
-            isAuthenticated={isAuthenticated}
-            currentUser={currentUser}
-            onLogout={handleLogout}
-          />
-        }
-      />
-      <Route
-        path="/sessions/:sessionId"
-        element={
-        <SessionDetailsPage
-          registeredSessionIds={registeredSessionIds}
-          onRegister={handleRegister}
-          onUnregister={handleUnregister}
-          isAuthenticated={isAuthenticated}
-          currentUser={currentUser}
-          onLogout={handleLogout}
-          accessToken={accessToken}
+    <>
+      {isAuthenticated && dataError && (
+        <p className="app-banner" role="alert">
+          {dataError}
+        </p>
+      )}
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <HomePage
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+              onLogout={handleLogout}
+            />
+          }
         />
-        }
-      />
-      <Route
-        path="/my-sessions"
-        element={
-          <MySessionsPage
-            sessions={sessionsWithLiveCounts}
-            registeredSessionIds={registeredSessionIds}
-            isAuthenticated={isAuthenticated}
-            currentUser={currentUser}
-            onLogout={handleLogout}
-          />
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          isAuthenticated ? (
-            <ProfilePage
+        <Route
+          path="/login"
+          element={
+            <LoginPage
+              onLogin={handleLogin}
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
               onLogout={handleLogout}
-              onUpdateProfile={handleUpdateProfile}
-              accessToken={accessToken}
             />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
+          }
+        />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/check-email" element={<CheckEmailPage />} />
+        <Route
+          path="/signup"
+          element={
+            <SignUpPage
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+              onLogout={handleLogout}
+            />
+          }
+        />
 
-      <Route
-        path="/manager"
-        element={
-          <RequireManager
-            isAuthenticated={isAuthenticated}
-            currentUser={currentUser}
-          >
-            <ManagerSessionsPage
-              sessions={sessionsWithLiveCounts}
+        <Route
+          path="/sessions"
+          element={
+            <RequireParticipant
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
-              onLogout={handleLogout}
-              onCancelSession={handleCancelSession}
-            />
-          </RequireManager>
-        }
-      />
-    {import.meta.env.DEV && (
-      <Route
-        path="/manager/new"
-        element={
-          isAuthenticated ? (
-            <CreateSessionPage
+            >
+              <SessionsPage
+                sessions={sessions}
+                registeredSessionIds={registeredSessionIds}
+                isAuthenticated={isAuthenticated}
+                currentUser={currentUser}
+                onLogout={handleLogout}
+              />
+            </RequireParticipant>
+          }
+        />
+        <Route
+          path="/sessions/:sessionId"
+          element={
+            <RequireParticipant
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
-              onLogout={handleLogout}
-              accessToken={accessToken}
-            />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
-    )}
-    {import.meta.env.DEV && (
-      <Route
-        path="/manager/:sessionId/edit"
-        element={
-          isAuthenticated ? (
-            <EditSessionPage
-              sessions={sessionsWithLiveCounts}
+            >
+              <SessionDetailsPage
+                registeredSessionIds={registeredSessionIds}
+                onRegister={handleRegister}
+                onUnregister={handleUnregister}
+                isAuthenticated={isAuthenticated}
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                accessToken={accessToken}
+              />
+            </RequireParticipant>
+          }
+        />
+        <Route
+          path="/my-sessions"
+          element={
+            <RequireParticipant
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
-              onLogout={handleLogout}
-              accessToken={accessToken}
-            />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
-    )}
-  {import.meta.env.DEV && (
-    <Route
-      path="/manager/:sessionId/attendance"
-      element={
-        isAuthenticated ? (
-          <AttendanceValidationPage
-            sessions={sessionsWithLiveCounts}
-            isAuthenticated={isAuthenticated}
-            currentUser={currentUser}
-            onLogout={handleLogout}
-          />
-        ) : (
-          <Navigate to="/login" replace />
-        )
-      }
-    />
-  )}
+            >
+              <MySessionsPage
+                mySessions={mySessions}
+                isAuthenticated={isAuthenticated}
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                onJoin={handleJoin}
+              />
+            </RequireParticipant>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth isAuthenticated={isAuthenticated}>
+              <ProfilePage
+                isAuthenticated={isAuthenticated}
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                onUpdateProfile={handleUpdateProfile}
+                accessToken={accessToken}
+              />
+            </RequireAuth>
+          }
+        />
 
-    </Routes>
-   </>
+        <Route
+          path="/profile/password"
+          element={
+            <RequireAuth isAuthenticated={isAuthenticated}>
+              <ChangePasswordPage
+                isAuthenticated={isAuthenticated}
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                accessToken={accessToken}
+              />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/manager"
+          element={
+            <RequireManager
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+            >
+              <ManagerSessionsPage
+                sessions={managedSessions}
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                onCancelSession={handleCancelSession}
+              />
+            </RequireManager>
+          }
+        />
+        <Route
+          path="/manager/instructors"
+          element={
+            <RequireManager
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+            >
+              <InstructorDirectoryPage
+                accessToken={accessToken}
+                onLogout={handleLogout}
+              />
+            </RequireManager>
+          }
+        />
+        <Route
+          path="/manager/instructors/new"
+          element={
+            <RequireManager
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+            >
+              <CreateInstructorPage
+                accessToken={accessToken}
+                onLogout={handleLogout}
+              />
+            </RequireManager>
+          }
+        />
+        <Route
+          path="/manager/instructors/:instructorId"
+          element={
+            <RequireManager
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+            >
+              <InstructorDetailPage
+                accessToken={accessToken}
+                onLogout={handleLogout}
+              />
+            </RequireManager>
+          }
+        />
+
+        <Route
+          path="/manager/new"
+          element={
+            <RequireManager
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+            >
+              <CreateSessionPage
+                accessToken={accessToken}
+                onLogout={handleLogout}
+                onCreateSession={handleCreateSession}
+              />
+            </RequireManager>
+          }
+        />
+        <Route
+          path="/manager/:sessionId/edit"
+          element={
+            <RequireManager
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+            >
+              <EditSessionPage
+                accessToken={accessToken}
+                onLogout={handleLogout}
+                onUpdateSession={handleUpdateSession}
+              />
+            </RequireManager>
+          }
+        />
+        <Route
+          path="/manager/:sessionId/attendance"
+          element={
+            <RequireManager
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+            >
+              <AttendanceValidationPage
+                accessToken={accessToken}
+                onLogout={handleLogout}
+                onAttendanceValidated={handleAttendanceValidated}
+              />
+            </RequireManager>
+          }
+        />
+
+        <Route
+          path="*"
+          element={
+            <NotFoundPage
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+              onLogout={handleLogout}
+            />
+          }
+        />
+      </Routes>
+    </>
   )
 }
 

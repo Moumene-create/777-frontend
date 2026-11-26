@@ -1,4 +1,4 @@
-html,
+﻿html,
 body,
 #root {
   min-width: 0;
@@ -11,33 +11,46 @@ img {
 }
 
 .hero-banner {
-  width : 100%;
-  min-height: clamp(420px, 52vw, 663px);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  background-color: var(--hero-scrim);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .hero-banner__image {
   position: absolute;
-  inset: 1rem;
-  width: calc(100% - 2rem);
-  height: calc(100% - 2rem);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
-  border-radius: 1rem;
 }
 
 .hero-banner__overlay {
   position: absolute;
-  inset: 1rem;
-  width: calc(100% - 2rem);
-  height: calc(100% - 2rem);
+  inset: 0;
+  width: 100%;
+  height: 100%;
 
-  /* background:rgba(2, 36, 68, 0.418) ; */
-  background: linear-gradient(
-    360deg,
-    rgb(2 27 51 / 82.2%)  ,
-    rgb(4 84 175 / 10.3%) 
-  );
-  border-radius: 1rem;
+  background:
+    linear-gradient(
+      100deg,
+      rgb(2 12 26 / 90%) 0%,
+      rgb(2 12 26 / 68%) 28%,
+      rgb(2 12 26 / 26%) 55%,
+      rgb(2 12 26 / 0%) 78%
+    ),
+    linear-gradient(
+      0deg,
+      rgb(1 15 30 / 92%) 0%,
+      rgb(1 15 30 / 45%) 34%,
+      rgb(1 15 30 / 0%) 66%
+    );
 }
 
 
@@ -48,38 +61,28 @@ img {
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-start;
-  min-height: clamp(23rem, 55vw, 38rem);
+  min-height: 100vh;
+  min-height: 100svh;
   width: min(100% - 2rem, 87.5rem);
   margin-inline: auto;
-  padding-block: clamp(3rem, 8vw, 7rem);
+  padding-block: clamp(6rem, 10vw, 8rem) clamp(3rem, 6vw, 5rem);
   padding-inline-start: clamp(1rem, 3vw, 3rem);
-  color: #fff;
-  outline : #081d38;
-}
-
-.hero-banner__eyebrow {
-  margin-top: 20px;
-  color: #b9dcff;
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: var(--color-white);
 }
 
 .hero-banner__content h1 {
   max-width: 12ch;
   margin: clamp(1rem, 3vw, 1.875rem) 0 0;
-  font-size: clamp(2.5rem, 6vw, 6.5rem);
+  font-size: var(--font-size-hero);
   line-height: 1.05;
-  color: #fff;
+  color: var(--color-white);
 }
 
 .hero-banner__description {
   max-width: 38rem;
   margin: clamp(1rem, 2vw, 1.25rem) 0 0;
-  font-size: clamp(1rem, 1.5vw, 1.5rem);
+  font-size: var(--font-size-hero-copy);
   line-height: 1.6;
-  
 }
 
 .hero-banner__button {
@@ -89,21 +92,21 @@ img {
   min-height: clamp(2.75rem, 5vw, 3.25rem);
   margin-top: clamp(1.5rem, 4vw, 2rem);
   padding: 0.75rem clamp(.5rem, 3vw, 1rem);
-  border-radius: 0.5rem;
-  background: #fff;
-  color: #0b2540;
-  font-weight: 700;
+  border-radius: var(--radius-xs);
+  background: var(--color-white);
+  color: var(--primary-navy-dark);
+  font-weight: var(--font-weight-bold);
   text-decoration: none;
   transition: background-color 160ms ease, transform 160ms ease;
 }
 
 .hero-banner__button:hover {
-  background: #dceeff;
+  background: var(--button-light-hover);
   transform: translateY(-2px);
 }
 
 .hero-banner__button:focus-visible {
-  outline: 3px solid #fff;
+  outline: var(--border-width-thick) solid var(--color-white);
   outline-offset: 4px;
 }
 
@@ -113,11 +116,14 @@ img {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: clamp(1rem, 3vw, 2rem);
-  margin-top: clamp(1.5rem, 4vw, 2.5rem);
-   padding: 0.75rem 1.25rem;
-  border-radius: 9px;
-  background-color: #0b25405d;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  margin-top: var(--font-size-ticket-title);
+  padding: 0.8rem 1.1rem;
+  border: var(--border-width) solid rgb(255 255 255 / 16%);
+  border-radius: var(--radius-lg);
+  background-color: rgb(3 14 27 / 48%);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 20px 44px -32px rgb(0 0 0 / 80%);
 }
 
 .hero-banner__partner-logos img {
@@ -134,15 +140,49 @@ img {
   width: min(100%, 42rem);
   height: auto;
   margin-top: clamp(1.5rem, 4vw, 2.5rem);
-  border-radius: 1rem;
+  border-radius: var(--radius-lg);
+  object-fit: contain;
+}
+/* "Powered by" lockup */
+.hero-banner__powered {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hero-banner__powered-label {
+  color: var(--accent-ice);
+  font-size: var(--font-size-2xs-plus);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hero-banner__partner-logos .hero-banner__powered-logo {
+  height: clamp(1.9rem, 3vw, 2.6rem);
+  width: auto;
+  max-width: 11rem;
   object-fit: contain;
 }
 
-.hero-banner {
-  width: 100%;
-  min-height: clamp(32rem, 65vw, 48rem);
-  background-color: #feffff28;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+.hero-banner__partner-logos .hero-banner__partner-logo {
+  height: clamp(2.4rem, 3.6vw, 3.2rem);
+  width: auto;
+  max-width: 10rem;
+  object-fit: contain;
+  padding-left: clamp(0.75rem, 2vw, 1.25rem);
+  border-left: var(--border-width) solid rgb(255 255 255 / 28%);
 }
+
+@media (max-width: 48rem) {
+  .hero-banner__partner-logos {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+
+
+
+
